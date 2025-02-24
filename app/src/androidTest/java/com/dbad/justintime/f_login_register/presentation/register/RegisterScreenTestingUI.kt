@@ -1,6 +1,10 @@
 package com.dbad.justintime.f_login_register.presentation.register
 
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.activity.ComponentActivity
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithText
+import com.dbad.justintime.R
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -9,7 +13,7 @@ import org.junit.Test
 class RegisterScreenTestingUI {
 
     @get:Rule
-    val testRule = createComposeRule()
+    val testRule = createAndroidComposeRule<ComponentActivity>()
 
     @Before
     fun reset() = runTest {
@@ -19,7 +23,18 @@ class RegisterScreenTestingUI {
     // Primary Screen
 
     @Test
-    fun checkRegistrationPrimaryScreenValuesDisplayed() = runTest {}
+    fun checkRegistrationPrimaryScreenValuesDisplayed() = runTest {
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.email))
+            .assertIsDisplayed()
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.password))
+            .assertIsDisplayed()
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.rePassword))
+            .assertIsDisplayed()
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.cancel))
+            .assertIsDisplayed()
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
+            .assertIsDisplayed()
+    }
 
     @Test
     fun checkEmailFieldErrors() = runTest {}
