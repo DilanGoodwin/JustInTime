@@ -2,9 +2,16 @@ package com.dbad.justintime.f_login_register.presentation.login
 
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
+import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.performTextReplacement
 import com.dbad.justintime.R
+import com.dbad.justintime.core.presentation.TestTagEmailField
+import com.dbad.justintime.core.presentation.TestTagErrorNotifier
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -19,7 +26,7 @@ class LoginScreenTestingUI {
     fun reset() = runTest {
         testRule.setContent { LoginScreen() }
     }
-    
+
     private fun checkValuesExist(screenValue: String) {
         testRule.onNodeWithText(text = screenValue)
             .assertExists(errorMessageOnFail = "Login Screen component '$screenValue' does not exist")
@@ -35,7 +42,34 @@ class LoginScreenTestingUI {
     }
 
     @Test
-    fun checkEmailFieldErrors() = runTest {}
+    fun checkEmailFieldErrors() = runTest {
+        var invalidEmail = "test"
+        testRule.onNodeWithTag(testTag = TestTagEmailField).performTextInput(text = invalidEmail)
+        testRule.onNodeWithTag(testTag = TestTagErrorNotifier)
+            .assertTextContains(value = testRule.activity.getString(R.string.invalidEmailError))
+
+        invalidEmail = "test@test"
+        testRule.onNodeWithTag(testTag = TestTagEmailField)
+            .performTextReplacement(text = invalidEmail)
+        testRule.onNodeWithTag(testTag = TestTagErrorNotifier)
+            .assertTextContains(value = testRule.activity.getString(R.string.invalidEmailError))
+
+        invalidEmail = "test.test@test"
+        testRule.onNodeWithTag(testTag = TestTagEmailField)
+            .performTextReplacement(text = invalidEmail)
+        testRule.onNodeWithTag(testTag = TestTagErrorNotifier)
+            .assertTextContains(value = testRule.activity.getString(R.string.invalidEmailError))
+
+        invalidEmail = "test@test.com"
+        testRule.onNodeWithTag(testTag = TestTagEmailField)
+            .performTextReplacement(text = invalidEmail)
+        testRule.onNodeWithTag(testTag = TestTagErrorNotifier).assertIsNotDisplayed()
+
+        invalidEmail = "test.test@test.com"
+        testRule.onNodeWithTag(testTag = TestTagEmailField)
+            .performTextReplacement(text = invalidEmail)
+        testRule.onNodeWithTag(testTag = TestTagErrorNotifier).assertIsNotDisplayed()
+    }
 
     @Test
     fun checkPasswordFieldErrors() = runTest {}
