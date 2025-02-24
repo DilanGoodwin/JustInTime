@@ -11,6 +11,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTextReplacement
 import com.dbad.justintime.R
+import com.dbad.justintime.core.presentation.TestTagCalendarView
 import com.dbad.justintime.core.presentation.TestTagEmailField
 import com.dbad.justintime.core.presentation.TestTagErrorNotifier
 import com.dbad.justintime.core.presentation.TestTagPasswordField
@@ -20,6 +21,10 @@ import org.junit.Rule
 import org.junit.Test
 
 class LoginScreenTestingUI {
+
+    //TODO Fill in values for testing
+    private val validEmail: String = ""
+    private val validPassword: String = ""
 
     @get:Rule
     val testRule = createAndroidComposeRule<ComponentActivity>()
@@ -62,9 +67,8 @@ class LoginScreenTestingUI {
         testRule.onNodeWithTag(testTag = TestTagErrorNotifier)
             .assertTextContains(value = testRule.activity.getString(R.string.invalidEmailError))
 
-        invalidEmail = "test@test.com"
         testRule.onNodeWithTag(testTag = TestTagEmailField)
-            .performTextReplacement(text = invalidEmail)
+            .performTextReplacement(text = validEmail)
         testRule.onNodeWithTag(testTag = TestTagErrorNotifier).assertIsNotDisplayed()
 
         invalidEmail = "test.test@test.com"
@@ -91,10 +95,28 @@ class LoginScreenTestingUI {
     }
 
     @Test
-    fun checkValidLoginAttempt() = runTest {}
+    fun checkValidLoginAttempt() = runTest {
+        testRule.onNodeWithTag(testTag = TestTagEmailField)
+            .performTextReplacement(text = validEmail)
+        testRule.onNodeWithTag(testTag = TestTagPasswordField)
+            .performTextReplacement(text = validPassword)
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.login)).performClick()
+
+        testRule.onNodeWithTag(testTag = TestTagErrorNotifier).assertIsNotDisplayed()
+        testRule.onNodeWithTag(testTag = TestTagCalendarView).assertIsDisplayed()
+    }
 
     @Test
-    fun checkInvalidLoginAttempt() = runTest {}
+    fun checkInvalidLoginAttempt() = runTest {
+        testRule.onNodeWithTag(testTag = TestTagEmailField)
+            .performTextReplacement(text = "test@test.com")
+        testRule.onNodeWithTag(testTag = TestTagPasswordField)
+            .performTextReplacement(text = "P4ssw0rd!")
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.login)).performClick()
+
+        testRule.onNodeWithTag(testTag = TestTagErrorNotifier)
+            .assertTextContains(value = testRule.activity.getString(R.string.emailOrPasswordError))
+    }
 
     @Test
     fun checkRegisterButton() = runTest {}
