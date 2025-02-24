@@ -119,5 +119,18 @@ class LoginScreenTestingUI {
     }
 
     @Test
-    fun checkRegisterButton() = runTest {}
+    fun checkRegisterButtonWithoutEmail() = runTest {
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
+            .performClick()
+        testRule.onNodeWithTag(testTag = TestTagEmailField).assertIsDisplayed()
+    }
+
+    @Test
+    fun checkRegisterButtonWithEmail() = runTest {
+        testRule.onNodeWithTag(testTag = TestTagEmailField)
+            .performTextReplacement(text = validEmail)
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
+            .performClick()
+        testRule.onNodeWithTag(testTag = TestTagEmailField).assertTextContains(value = validEmail)
+    }
 }
