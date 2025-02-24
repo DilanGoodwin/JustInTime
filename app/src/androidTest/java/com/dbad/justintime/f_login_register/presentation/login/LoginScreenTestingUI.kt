@@ -8,13 +8,13 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTextReplacement
 import com.dbad.justintime.R
 import com.dbad.justintime.core.presentation.TestTagCalendarView
 import com.dbad.justintime.core.presentation.TestTagEmailField
 import com.dbad.justintime.core.presentation.TestTagErrorNotifier
 import com.dbad.justintime.core.presentation.TestTagPasswordField
+import com.dbad.justintime.util.emailValidation
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -50,30 +50,10 @@ class LoginScreenTestingUI {
 
     @Test
     fun checkEmailFieldErrors() = runTest {
-        var invalidEmail = "test"
-        testRule.onNodeWithTag(testTag = TestTagEmailField).performTextInput(text = invalidEmail)
-        testRule.onNodeWithTag(testTag = TestTagErrorNotifier)
-            .assertTextContains(value = testRule.activity.getString(R.string.invalidEmailError))
-
-        invalidEmail = "test@test"
-        testRule.onNodeWithTag(testTag = TestTagEmailField)
-            .performTextReplacement(text = invalidEmail)
-        testRule.onNodeWithTag(testTag = TestTagErrorNotifier)
-            .assertTextContains(value = testRule.activity.getString(R.string.invalidEmailError))
-
-        invalidEmail = "test.test@test"
-        testRule.onNodeWithTag(testTag = TestTagEmailField)
-            .performTextReplacement(text = invalidEmail)
-        testRule.onNodeWithTag(testTag = TestTagErrorNotifier)
-            .assertTextContains(value = testRule.activity.getString(R.string.invalidEmailError))
+        emailValidation(testRule = testRule)
 
         testRule.onNodeWithTag(testTag = TestTagEmailField)
             .performTextReplacement(text = validEmail)
-        testRule.onNodeWithTag(testTag = TestTagErrorNotifier).assertIsNotDisplayed()
-
-        invalidEmail = "test.test@test.com"
-        testRule.onNodeWithTag(testTag = TestTagEmailField)
-            .performTextReplacement(text = invalidEmail)
         testRule.onNodeWithTag(testTag = TestTagErrorNotifier).assertIsNotDisplayed()
     }
 
