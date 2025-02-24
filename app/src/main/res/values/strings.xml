@@ -4,6 +4,7 @@
     <string name="password">Password</string>
     <string name="login">Login</string>
     <string name="register">Register</string>
+    <string name="emailOrPasswordError">Email Address or Password is Incorrect</string>
 
     <!-- Email Field Errors -->
     <string name="invalidEmailError">Entered Email is Invalid</string>

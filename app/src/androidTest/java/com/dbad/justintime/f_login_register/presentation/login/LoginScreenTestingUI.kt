@@ -7,11 +7,13 @@ import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTextReplacement
 import com.dbad.justintime.R
 import com.dbad.justintime.core.presentation.TestTagEmailField
 import com.dbad.justintime.core.presentation.TestTagErrorNotifier
+import com.dbad.justintime.core.presentation.TestTagPasswordField
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -72,7 +74,21 @@ class LoginScreenTestingUI {
     }
 
     @Test
-    fun checkPasswordFieldErrors() = runTest {}
+    fun checkPasswordFieldErrors() = runTest {
+        var invalidPassword = ""
+        testRule.onNodeWithTag(testTag = TestTagPasswordField)
+            .performTextReplacement(text = invalidPassword)
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.login)).performClick()
+        testRule.onNodeWithTag(testTag = TestTagErrorNotifier)
+            .assertTextContains(value = testRule.activity.getString(R.string.emailOrPasswordError))
+
+        invalidPassword = "password"
+        testRule.onNodeWithTag(testTag = TestTagPasswordField)
+            .performTextReplacement(text = invalidPassword)
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.login)).performClick()
+        testRule.onNodeWithTag(testTag = TestTagErrorNotifier)
+            .assertTextContains(value = testRule.activity.getString(R.string.emailOrPasswordError))
+    }
 
     @Test
     fun checkValidLoginAttempt() = runTest {}
