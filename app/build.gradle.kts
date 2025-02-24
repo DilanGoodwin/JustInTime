@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -56,4 +57,22 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    // RoomDB Additions
+    implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
+
+    // Compose Testing
+    debugImplementation(libs.ui.test.manifest)
+
+    // Glance Widget
+    implementation(libs.androidx.glance.material3)
+    implementation(libs.androidx.glance)
+    implementation(libs.androidx.glance.preview)
+    implementation(libs.androidx.glance.appwidget.preview)
+    implementation(libs.androidx.glance.appwidget)
+
+    // Coroutines Testing
+    testImplementation(libs.kotlinx.coroutines.test)
 }
