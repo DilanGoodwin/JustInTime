@@ -10,4 +10,12 @@
     <!-- Email Field Errors -->
     <string name="invalidEmailError">Entered Email is Invalid</string>
     <string name="emailOrPasswordError">Email Address or Password is Incorrect</string>
+
+    <!-- Password Enter Errors -->
+    <string name="passwordNoCapitals">Password should contain at least one uppercase character</string>
+    <string name="passwordNoLowercase">Password should contain at least on lowercase character</string>
+    <string name="passwordNoDigits">Password should contain at least one digit</string>
+    <string name="passwordNoSymbols">Password should contain at least one symbol</string>
+    <string name="passwordLength">Password should be 10 characters long</string>
+    <string name="passwordDoNotMatch">Passwords do not match</string>
 </resources>
