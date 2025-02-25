@@ -5,6 +5,9 @@
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="rePassword">Re-Enter Password</string>
+    <string name="name">Name</string>
+    <string name="preferredName">Preferred Name</string>
+    <string name="phoneNumb">Phone Number</string>
 
     <!-- Buttons -->
     <string name="login">Login</string>
@@ -25,4 +28,10 @@
     <string name="passwordNoSymbols">Password should contain at least one symbol</string>
     <string name="passwordLength">Password should be 10 characters long</string>
     <string name="passwordDoNotMatch">Passwords do not match</string>
+
+    <!-- Phone Number Errors -->
+    <string name="invalidPhoneNumb">Please enter a valid phone number</string>
+
+    <!-- Messages -->
+    <string name="savingMessage">Saving Changes</string>
 </resources>
