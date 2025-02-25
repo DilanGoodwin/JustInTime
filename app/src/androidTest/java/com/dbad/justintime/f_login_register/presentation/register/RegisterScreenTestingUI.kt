@@ -3,6 +3,7 @@ package com.dbad.justintime.f_login_register.presentation.register
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
+import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -79,7 +80,12 @@ class RegisterScreenTestingUI {
     }
 
     @Test
-    fun checkCancelButton() = runTest {}
+    fun checkCancelButton() = runTest {
+        testRule.onNodeWithTag(testTag = TestTagEmailField)
+            .performTextReplacement(text = validEmail)
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.cancel)).performClick()
+        testRule.onNodeWithTag(testTag = TestTagEmailField).assertTextContains(value = validEmail)
+    }
 
     @Test
     fun checkRegisterButton() = runTest {}
