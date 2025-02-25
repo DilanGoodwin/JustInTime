@@ -22,7 +22,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
-class RegisterScreenTestingUI {
+class RegisterPrimaryScreenTestingUI {
 
     //TODO Fill in values for testing
     private val validEmail: String = ""
@@ -35,8 +35,6 @@ class RegisterScreenTestingUI {
     fun reset() = runTest {
         testRule.setContent { RegisterScreen() }
     }
-
-    // Primary Screen
 
     @Test
     fun checkRegistrationPrimaryScreenValuesDisplayed() = runTest {
@@ -95,32 +93,4 @@ class RegisterScreenTestingUI {
 
     @Test
     fun checkInvalidRegistrationAttempt() = runTest {}
-
-    // Secondary Screen
-
-    @Test
-    fun checkRegistrationSecondaryScreenValuesDisplayed() = runTest {}
-
-    @Test
-    fun checkPhoneNumberErrors() = runTest {}
-
-    @Test
-    fun checkPreferredContactMethodOptions() = runTest {}
-
-    // Emergency Contact Area
-
-    @Test
-    fun checkCollapsedEmergencyContactSummaryShown() = runTest {}
-
-    @Test
-    fun checkExpandedEmergencyContactValuesDisplayed() = runTest {}
-
-    @Test
-    fun checkEmergencyContactPhoneErrors() = runTest {}
-
-    @Test
-    fun checkEmergencyContactEmailErrors() = runTest {}
-
-    @Test
-    fun checkEmergencyContactPreferredContactMethodOptions() = runTest {}
 }
