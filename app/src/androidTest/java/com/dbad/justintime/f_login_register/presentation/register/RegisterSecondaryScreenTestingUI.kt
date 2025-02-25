@@ -1,22 +1,21 @@
 package com.dbad.justintime.f_login_register.presentation.register
 
 import androidx.activity.ComponentActivity
-import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.hasAnyChild
 import androidx.compose.ui.test.hasParent
 import androidx.compose.ui.test.hasTestTag
-import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextReplacement
 import com.dbad.justintime.R
 import com.dbad.justintime.core.presentation.TestTagEmergencyContactExpandableField
 import com.dbad.justintime.core.presentation.TestTagNameField
+import com.dbad.justintime.core.presentation.TestTagPhoneNumberField
 import com.dbad.justintime.core.presentation.TestTagPreferredContactMethodField
-import com.dbad.justintime.util.fillInEmergencyContact
+import com.dbad.justintime.util.EmergencyContactAreaTests
+import com.dbad.justintime.util.EmergencyContactAreaTests.Companion.fillInEmergencyContact
+import com.dbad.justintime.util.contactMethodValidation
 import com.dbad.justintime.util.phoneNumberValidation
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -25,12 +24,14 @@ import org.junit.Test
 
 class RegisterSecondaryScreenTestingUI {
 
+    @get:Rule
+    val testRule = createAndroidComposeRule<ComponentActivity>()
+
     private val name: String = "Daniel"
     private val validEmail: String = "daniel@justintime.com"
     private val validPhoneNumb: String = "07665599200"
-
-    @get:Rule
-    val testRule = createAndroidComposeRule<ComponentActivity>()
+    private val emergencyContactTests: EmergencyContactAreaTests =
+        EmergencyContactAreaTests(testRule = testRule)
 
     @Before
     fun reset() = runTest {
@@ -64,21 +65,39 @@ class RegisterSecondaryScreenTestingUI {
         )
         phoneNumberValidation(
             testRule = testRule,
+            phoneField = testRule.onNodeWithTag(testTag = TestTagPhoneNumberField),
             buttonToPress = testRule.activity.getString(R.string.next)
         )
     }
 
     @Test
     fun checkPreferredContactMethodOptions() = runTest {
-        testRule.onNodeWithTag(testTag = TestTagPreferredContactMethodField).performClick()
-        testRule.onNodeWithTag(testTag = TestTagPreferredContactMethodField)
-            .assert(matcher = hasAnyChild(matcher = hasText(text = testRule.activity.getString(R.string.email))))
-            .assertIsDisplayed()
-        testRule.onNodeWithTag(testTag = TestTagPreferredContactMethodField)
-            .assert(matcher = hasAnyChild(matcher = hasText(text = testRule.activity.getString(R.string.phoneNumb))))
-            .assertIsDisplayed().performClick()
-        testRule.onNodeWithText(text = testRule.activity.getString(R.string.phoneNumb))
-            .assert(matcher = hasParent(matcher = hasTestTag(testTag = TestTagPreferredContactMethodField)))
-            .assertIsDisplayed()
+        testRule.onNodeWithTag(testTag = TestTagNameField).performTextReplacement(text = name)
+        testRule.onNodeWithTag(testTag = TestTagPhoneNumberField)
+            .performTextReplacement(text = validPhoneNumb)
+        contactMethodValidation(
+            testRule = testRule,
+            parentNode = hasParent(matcher = hasTestTag(testTag = TestTagPreferredContactMethodField))
+        )
+    }
+
+    @Test
+    fun emergencyContactAreaDisplayedValues() = runTest {
+        emergencyContactTests.checkExpandedEmergencyContactValuesDisplayed()
+    }
+
+    @Test
+    fun emergencyContactAreaPhoneErrors() = runTest {
+        emergencyContactTests.checkEmergencyContactPhoneErrors()
+    }
+
+    @Test
+    fun emergencyContactAreaEmailErrors() = runTest {
+        emergencyContactTests.checkEmergencyContactEmailErrors()
+    }
+
+    @Test
+    fun emergencyContactAreaContactOptions() = runTest {
+        emergencyContactTests.checkEmergencyContactPreferredContactMethodOptions()
     }
 }

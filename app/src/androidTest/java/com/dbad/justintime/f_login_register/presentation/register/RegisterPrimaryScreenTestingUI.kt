@@ -52,7 +52,11 @@ class RegisterPrimaryScreenTestingUI {
 
     @Test
     fun checkEmailFieldErrors() = runTest {
-        emailValidation(testRule = testRule)
+        emailValidation(
+            testRule = testRule,
+            emailField = testRule.onNodeWithTag(testTag = TestTagEmailField),
+            buttonToPress = testRule.activity.getString(R.string.register)
+        )
 
         testRule.onNodeWithTag(testTag = TestTagEmailField)
             .performTextReplacement(text = validEmail)

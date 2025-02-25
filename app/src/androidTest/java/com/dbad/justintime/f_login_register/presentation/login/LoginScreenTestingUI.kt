@@ -50,7 +50,11 @@ class LoginScreenTestingUI {
 
     @Test
     fun checkEmailFieldErrors() = runTest {
-        emailValidation(testRule = testRule)
+        emailValidation(
+            testRule = testRule,
+            emailField = testRule.onNodeWithTag(testTag = TestTagEmailField),
+            buttonToPress = testRule.activity.getString(R.string.login)
+        )
 
         testRule.onNodeWithTag(testTag = TestTagEmailField)
             .performTextReplacement(text = validEmail)

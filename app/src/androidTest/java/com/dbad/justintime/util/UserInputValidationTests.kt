@@ -1,11 +1,11 @@
 package com.dbad.justintime.util
 
 import androidx.activity.ComponentActivity
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.assert
-import androidx.compose.ui.test.assertIsNotDisplayed
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextContains
-import androidx.compose.ui.test.hasParent
-import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -15,36 +15,67 @@ import androidx.compose.ui.test.performTextReplacement
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import com.dbad.justintime.R
 import com.dbad.justintime.core.presentation.TestTagEmailField
-import com.dbad.justintime.core.presentation.TestTagEmergencyContactExpandableField
 import com.dbad.justintime.core.presentation.TestTagErrorNotifier
 import com.dbad.justintime.core.presentation.TestTagPasswordField
 import com.dbad.justintime.core.presentation.TestTagPasswordMatchField
-import com.dbad.justintime.core.presentation.TestTagPhoneNumberField
+import com.dbad.justintime.core.presentation.TestTagPreferredContactMethodField
 
 fun emailValidation(
-    testRule: AndroidComposeTestRule<ActivityScenarioRule<ComponentActivity>, ComponentActivity>
+    testRule: AndroidComposeTestRule<ActivityScenarioRule<ComponentActivity>, ComponentActivity>,
+    emailField: SemanticsNodeInteraction,
+    buttonToPress: String
 ) {
-    var invalidEmail = "test"
-    testRule.onNodeWithTag(testTag = TestTagEmailField).performTextReplacement(text = invalidEmail)
-    testRule.onNodeWithTag(testTag = TestTagErrorNotifier)
-        .assertTextContains(value = testRule.activity.getString(R.string.invalidEmailError))
+    fun inputEmail(emailText: String) {
+        emailField.performTextReplacement(text = emailText)
+        testRule.onNodeWithText(text = buttonToPress).performClick()
+        testRule.onNodeWithTag(testTag = TestTagErrorNotifier)
+            .assertTextContains(value = testRule.activity.getString(R.string.invalidEmailError))
+    }
 
-    invalidEmail = "test@test"
-    testRule.onNodeWithTag(testTag = TestTagEmailField)
-        .performTextReplacement(text = invalidEmail)
-    testRule.onNodeWithTag(testTag = TestTagErrorNotifier)
-        .assertTextContains(value = testRule.activity.getString(R.string.invalidEmailError))
+    inputEmail(emailText = "test")
+    inputEmail(emailText = "test@test")
+    inputEmail(emailText = "test.test@test")
 
-    invalidEmail = "test.test@test"
     testRule.onNodeWithTag(testTag = TestTagEmailField)
-        .performTextReplacement(text = invalidEmail)
-    testRule.onNodeWithTag(testTag = TestTagErrorNotifier)
-        .assertTextContains(value = testRule.activity.getString(R.string.invalidEmailError))
+        .performTextReplacement(text = "test.test@test.com")
+    testRule.onNodeWithText(text = buttonToPress).performClick()
+    if (testRule.onNodeWithTag(testTag = TestTagErrorNotifier).isDisplayed()) {
+        testRule.onNodeWithTag(testTag = TestTagErrorNotifier)
+            .assertTextContains(value = testRule.activity.getString(R.string.savingMessage))
+    }
+}
 
-    invalidEmail = "test.test@test.com"
-    testRule.onNodeWithTag(testTag = TestTagEmailField)
-        .performTextReplacement(text = invalidEmail)
-    testRule.onNodeWithTag(testTag = TestTagErrorNotifier).assertIsNotDisplayed()
+fun phoneNumberValidation(
+    testRule: AndroidComposeTestRule<ActivityScenarioRule<ComponentActivity>, ComponentActivity>,
+    phoneField: SemanticsNodeInteraction,
+    buttonToPress: String
+) {
+    phoneField.performTextReplacement(text = "07")
+    testRule.onNodeWithText(text = buttonToPress).performClick()
+    testRule.onNodeWithTag(testTag = TestTagErrorNotifier).assertTextContains(
+        substring = true,
+        value = testRule.activity.getString(R.string.invalidPhoneNumb)
+    )
+
+    phoneField.performTextReplacement(text = "07665599200")
+    testRule.onNodeWithText(text = buttonToPress).performClick()
+    if (testRule.onNodeWithTag(testTag = TestTagErrorNotifier).isDisplayed()) {
+        testRule.onNodeWithTag(testTag = TestTagErrorNotifier)
+            .assertTextContains(value = testRule.activity.getString(R.string.savingMessage))
+    }
+}
+
+fun contactMethodValidation(
+    testRule: AndroidComposeTestRule<ActivityScenarioRule<ComponentActivity>, ComponentActivity>,
+    parentNode: SemanticsMatcher
+) {
+    testRule.onNodeWithTag(testTag = TestTagPreferredContactMethodField).performClick()
+    testRule.onNodeWithText(text = testRule.activity.getString(R.string.email)).assert(parentNode)
+        .assertIsDisplayed()
+    testRule.onNodeWithText(text = testRule.activity.getString(R.string.phoneNumb))
+        .assert(parentNode).assertIsDisplayed().performClick()
+    testRule.onNodeWithText(text = testRule.activity.getString(R.string.phoneNumb))
+        .assert(parentNode).isDisplayed()
 }
 
 fun passwordValidation(
@@ -98,49 +129,11 @@ fun passwordMatchValidation(
         }
     }
 
-    val firstPassword: String = "MyP@ssw0rd"
+    val firstPassword = "MyP@ssw0rd"
     testRule.onNodeWithTag(testTag = TestTagPasswordField)
         .performTextReplacement(text = firstPassword)
 
     inputMatchingPassword(password = "password")
     inputMatchingPassword(password = "MyPassword")
     inputMatchingPassword(password = firstPassword, errorExpected = false)
-}
-
-fun fillInEmergencyContact(
-    testRule: AndroidComposeTestRule<ActivityScenarioRule<ComponentActivity>, ComponentActivity>,
-    name: String = "",
-    phone: String = "",
-    email: String = ""
-) {
-    testRule.onNodeWithTag(testTag = TestTagEmailField)
-        .assert(matcher = hasParent(matcher = hasTestTag(testTag = TestTagEmergencyContactExpandableField)))
-        .performTextReplacement(text = name)
-    testRule.onNodeWithTag(testTag = TestTagEmailField)
-        .assert(matcher = hasParent(matcher = hasTestTag(testTag = TestTagEmergencyContactExpandableField)))
-        .performTextReplacement(text = email)
-    testRule.onNodeWithTag(testTag = TestTagPhoneNumberField)
-        .assert(matcher = hasParent(matcher = hasTestTag(testTag = TestTagEmergencyContactExpandableField)))
-        .performTextReplacement(text = phone)
-}
-
-fun phoneNumberValidation(
-    testRule: AndroidComposeTestRule<ActivityScenarioRule<ComponentActivity>, ComponentActivity>,
-    buttonToPress: String
-) {
-    testRule.onNodeWithTag(testTag = TestTagPhoneNumberField)
-        .performTextReplacement(text = "07")
-    testRule.onNodeWithText(text = buttonToPress).performClick()
-    testRule.onNodeWithTag(testTag = TestTagErrorNotifier).assertTextContains(
-        substring = true,
-        value = testRule.activity.getString(R.string.invalidPhoneNumb)
-    )
-
-    testRule.onNodeWithTag(testTag = TestTagPhoneNumberField)
-        .performTextReplacement(text = "07665599200")
-    testRule.onNodeWithText(text = buttonToPress).performClick()
-    if (testRule.onNodeWithTag(testTag = TestTagErrorNotifier).isDisplayed()) {
-        testRule.onNodeWithTag(testTag = TestTagErrorNotifier)
-            .assertTextContains(value = testRule.activity.getString(R.string.savingMessage))
-    }
 }
