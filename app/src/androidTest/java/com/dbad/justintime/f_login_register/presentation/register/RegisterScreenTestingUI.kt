@@ -2,15 +2,24 @@ package com.dbad.justintime.f_login_register.presentation.register
 
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performTextReplacement
 import com.dbad.justintime.R
+import com.dbad.justintime.core.presentation.TestTagEmailField
+import com.dbad.justintime.core.presentation.TestTagErrorNotifier
+import com.dbad.justintime.util.emailValidation
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
 class RegisterScreenTestingUI {
+
+    //TODO Fill in values for testing
+    private val validEmail: String = ""
 
     @get:Rule
     val testRule = createAndroidComposeRule<ComponentActivity>()
@@ -37,7 +46,13 @@ class RegisterScreenTestingUI {
     }
 
     @Test
-    fun checkEmailFieldErrors() = runTest {}
+    fun checkEmailFieldErrors() = runTest {
+        emailValidation(testRule = testRule)
+
+        testRule.onNodeWithTag(testTag = TestTagEmailField)
+            .performTextReplacement(text = validEmail)
+        testRule.onNodeWithTag(testTag = TestTagErrorNotifier).assertIsNotDisplayed()
+    }
 
     @Test
     fun checkPasswordFieldErrors() = runTest {}
