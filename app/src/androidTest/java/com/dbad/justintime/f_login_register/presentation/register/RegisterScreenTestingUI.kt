@@ -6,11 +6,16 @@ import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextReplacement
 import com.dbad.justintime.R
 import com.dbad.justintime.core.presentation.TestTagEmailField
 import com.dbad.justintime.core.presentation.TestTagErrorNotifier
+import com.dbad.justintime.core.presentation.TestTagPasswordField
+import com.dbad.justintime.core.presentation.TestTagPasswordMatchField
 import com.dbad.justintime.util.emailValidation
+import com.dbad.justintime.util.passwordMatchValidation
+import com.dbad.justintime.util.passwordValidation
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -20,6 +25,7 @@ class RegisterScreenTestingUI {
 
     //TODO Fill in values for testing
     private val validEmail: String = ""
+    private val validPassword: String = ""
 
     @get:Rule
     val testRule = createAndroidComposeRule<ComponentActivity>()
@@ -55,10 +61,22 @@ class RegisterScreenTestingUI {
     }
 
     @Test
-    fun checkPasswordFieldErrors() = runTest {}
+    fun checkPasswordFieldErrors() = runTest {
+        passwordValidation(testRule = testRule)
+
+        testRule.onNodeWithTag(testTag = TestTagPasswordField)
+            .performTextReplacement(text = validPassword)
+        testRule.onNodeWithTag(testTag = TestTagPasswordMatchField)
+            .performTextReplacement(text = validPassword)
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
+            .performClick()
+        testRule.onNodeWithTag(testTag = TestTagErrorNotifier).assertIsNotDisplayed()
+    }
 
     @Test
-    fun checkReEnterPasswordFieldErrors() = runTest {}
+    fun checkPasswordMatchFieldErrors() = runTest {
+        passwordMatchValidation(testRule = testRule)
+    }
 
     @Test
     fun checkCancelButton() = runTest {}
