@@ -86,11 +86,66 @@ class RegisterPrimaryScreenTestingUI {
     }
 
     @Test
-    fun checkRegisterButton() = runTest {}
+    fun checkRegisterButton() = runTest {
+        testRule.onNodeWithTag(testTag = TestTagEmailField)
+            .performTextReplacement(text = validEmail)
+        testRule.onNodeWithTag(testTag = TestTagPasswordField)
+            .performTextReplacement(text = validPassword)
+        testRule.onNodeWithTag(testTag = TestTagPasswordMatchField)
+            .performTextReplacement(text = validPassword)
+
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
+            .performClick()
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.next))
+            .assertIsDisplayed()
+    }
 
     @Test
-    fun checkValidRegistrationAttempt() = runTest {}
+    fun checkInvalidRegistrationAttempt() = runTest {
+        // No details entered
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
+            .performClick()
+        testRule.onNodeWithTag(testTag = TestTagErrorNotifier).assertTextContains(
+            substring = true,
+            value = testRule.activity.getString(R.string.enterEmail)
+        )
+        testRule.onNodeWithTag(testTag = TestTagErrorNotifier).assertTextContains(
+            substring = true,
+            value = testRule.activity.getString(R.string.enterPassword)
+        )
 
-    @Test
-    fun checkInvalidRegistrationAttempt() = runTest {}
+        // No passwords
+        testRule.onNodeWithTag(testTag = TestTagEmailField)
+            .performTextReplacement(text = validEmail)
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
+            .performClick()
+        testRule.onNodeWithTag(testTag = TestTagErrorNotifier).assertTextContains(
+            substring = true,
+            value = testRule.activity.getString(R.string.enterPassword)
+        )
+
+        // No matching password
+        testRule.onNodeWithTag(testTag = TestTagEmailField)
+            .performTextReplacement(text = validEmail)
+        testRule.onNodeWithTag(testTag = TestTagPasswordField)
+            .performTextReplacement(text = validPassword)
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
+            .performClick()
+        testRule.onNodeWithTag(testTag = TestTagErrorNotifier).assertTextContains(
+            substring = true,
+            value = testRule.activity.getString(R.string.passwordDoNotMatch)
+        )
+
+        // No email
+        testRule.onNodeWithTag(testTag = TestTagPasswordField)
+            .performTextReplacement(text = validPassword)
+        testRule.onNodeWithTag(testTag = TestTagPasswordMatchField)
+            .performTextReplacement(text = validPassword)
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
+            .performClick()
+        testRule.onNodeWithTag(testTag = TestTagErrorNotifier).assertTextContains(
+            substring = true,
+            value = testRule.activity.getString(R.string.enterPassword)
+        )
+    }
 }

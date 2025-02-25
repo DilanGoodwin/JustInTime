@@ -1,17 +1,24 @@
 <resources>
     <string name="app_name">JustInTime</string>
+
+    <!-- Fields -->
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="rePassword">Re-Enter Password</string>
+
+    <!-- Buttons -->
     <string name="login">Login</string>
     <string name="register">Register</string>
     <string name="cancel">Cancel</string>
+    <string name="next">Next</string>
 
     <!-- Email Field Errors -->
+    <string name="enterEmail">Please enter an email</string>
     <string name="invalidEmailError">Entered Email is Invalid</string>
     <string name="emailOrPasswordError">Email Address or Password is Incorrect</string>
 
     <!-- Password Enter Errors -->
+    <string name="enterPassword">Please enter a password</string>
     <string name="passwordNoCapitals">Password should contain at least one uppercase character</string>
     <string name="passwordNoLowercase">Password should contain at least on lowercase character</string>
     <string name="passwordNoDigits">Password should contain at least one digit</string>
