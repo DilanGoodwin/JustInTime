@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import com.dbad.justintime.f_login_register.presentation.login.LoginScreen
+import com.dbad.justintime.f_login_register.presentation.login.LoginViewModel
 import com.dbad.justintime.ui.theme.JustInTimeTheme
 
 class MainActivity : ComponentActivity() {
@@ -17,8 +18,13 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             JustInTimeTheme {
+                val loginViewModel = LoginViewModel()
+
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    LoginScreen(modifier = Modifier.padding(paddingValues = innerPadding))
+                    LoginScreen(
+                        viewModel = loginViewModel,
+                        modifier = Modifier.padding(paddingValues = innerPadding)
+                    )
                 }
             }
         }

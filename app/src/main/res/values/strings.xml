@@ -34,4 +34,8 @@
 
     <!-- Messages -->
     <string name="savingMessage">Saving Changes</string>
+
+    <!-- Logo Descriptions -->
+    <string name="fieldVisibility">View Text in Field</string>
+    <string name="fieldVisibilityOff">Hide Text in Field</string>
 </resources>
