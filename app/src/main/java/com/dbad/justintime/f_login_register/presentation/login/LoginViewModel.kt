@@ -8,11 +8,11 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 
 class LoginViewModel : ViewModel() {
-    private val _state = MutableStateFlow(LoginScreenState())
+    private val _state = MutableStateFlow(LoginState())
     val state = _state.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
-        LoginScreenState()
+        LoginState()
     )
 
     fun onEvent(event: LoginEvent) {

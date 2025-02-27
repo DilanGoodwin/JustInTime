@@ -34,7 +34,7 @@ fun LoginScreen(viewModel: LoginViewModel, modifier: Modifier = Modifier) {
 
 @Composable
 fun LoginScreen(
-    state: LoginScreenState,
+    state: LoginState,
     onEvent: (LoginEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -79,5 +79,5 @@ fun LoginScreen(
 @ViewingSystemThemes
 @Composable
 fun LoginScreenPreview() {
-    JustInTimeTheme { LoginScreen(state = LoginScreenState(), onEvent = {}) }
+    JustInTimeTheme { LoginScreen(state = LoginState(), onEvent = {}) }
 }
