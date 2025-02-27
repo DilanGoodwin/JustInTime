@@ -20,11 +20,7 @@ class LoginViewModel : ViewModel() {
             is LoginEvent.SetEmail -> _state.update { it.copy(email = event.email) }
             is LoginEvent.SetPassword -> _state.update { it.copy(password = event.password) }
             is LoginEvent.ToggleViewPassword -> {
-                if (_state.value.showPassword) {
-                    _state.update { it.copy(showPassword = false) }
-                } else {
-                    _state.update { it.copy(showPassword = true) }
-                }
+                _state.update { it.copy(showPassword = !(_state.value.showPassword)) }
             }
 
             LoginEvent.LoginUser -> {}

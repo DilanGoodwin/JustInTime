@@ -13,30 +13,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.dbad.justintime.R
 import com.dbad.justintime.core.presentation.ViewingSystemThemes
+import com.dbad.justintime.f_login_register.presentation.util.PasswordField
+import com.dbad.justintime.f_login_register.presentation.util.TextInputField
 import com.dbad.justintime.ui.theme.JustInTimeTheme
 
 // Stateful
@@ -61,22 +53,20 @@ fun LoginScreen(
 
             Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
                 Column(modifier = Modifier.padding(20.dp)) {
-                    TextField(
-                        value = state.email,
-                        onValueChange = { onEvent(LoginEvent.SetEmail(it)) },
-                        placeholder = { Text(text = stringResource(R.string.email)) },
-                        modifier = Modifier
-                            .clip(shape = RoundedCornerShape(size = 8.dp))
-                            .width(400.dp)
-                            .height(60.dp)
+                    TextInputField(
+                        currentValue = state.email,
+                        onValueChange = { onEvent(LoginEvent.SetEmail(email = it)) },
+                        placeHolderText = stringResource(R.string.email)
                     )
 
                     Spacer(modifier = Modifier.height(20.dp))
 
                     PasswordField(
                         currentValue = state.password,
+                        placeHolderText = stringResource(R.string.password),
                         showPassword = state.showPassword,
-                        onEvent = onEvent
+                        onValueChange = { onEvent(LoginEvent.SetPassword(password = it)) },
+                        visiblePassword = { onEvent(LoginEvent.ToggleViewPassword) }
                     )
                 }
             }
@@ -122,47 +112,6 @@ fun JustInTimeLogoDisplay() {
     )
 }
 
-@Composable
-fun PasswordField(currentValue: String,
-                  showPassword: Boolean,
-                  onEvent: (LoginEvent) -> Unit
-) {
-    TextField(
-        value = currentValue,
-        placeholder = {
-            Box(modifier = Modifier.fillMaxSize()) {
-                Text(text = stringResource(id = R.string.password))
-            }
-        },
-        trailingIcon = {
-            IconButton(
-                onClick = { onEvent(LoginEvent.ToggleViewPassword) }
-            ) {
-                if (showPassword) {
-                    Icon(
-                        imageVector = Icons.Filled.VisibilityOff,
-                        contentDescription = stringResource(R.string.fieldVisibilityOff)
-                    )
-                } else {
-                    Icon(
-                        imageVector = Icons.Filled.Visibility,
-                        contentDescription = stringResource(R.string.fieldVisibility)
-                    )
-                }
-            }
-        },
-        onValueChange = { onEvent(LoginEvent.SetPassword(password = it)) },
-        visualTransformation = if (showPassword) {
-            VisualTransformation.None
-        } else {
-            PasswordVisualTransformation()
-        },
-        modifier = Modifier
-            .clip(shape = RoundedCornerShape(size = 8.dp))
-            .width(400.dp)
-            .height(60.dp)
-    )
-}
 
 @ViewingSystemThemes
 @Composable
