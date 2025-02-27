@@ -95,23 +95,21 @@ fun DualButtonFields(
         contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()
     ) {
         Row {
-            Button(
-                onClick = { leftButtonOnClick() },
-                modifier = Modifier
-                    .width(120.dp)
-                    .height(60.dp)
-            ) {
-                Text(text = leftButtonValue)
-            }
+            FormatButtons(buttonValue = leftButtonValue, onClick = leftButtonOnClick)
             Spacer(modifier = Modifier.width(20.dp))
-            Button(
-                onClick = { rightButtonOnClick() },
-                modifier = Modifier
-                    .width(120.dp)
-                    .height(60.dp)
-            ) {
-                Text(text = rightButtonValue)
-            }
+            FormatButtons(buttonValue = rightButtonValue, onClick = rightButtonOnClick)
         }
+    }
+}
+
+@Composable
+private fun FormatButtons(buttonValue: String, onClick: () -> Unit) {
+    Button(
+        onClick = { onClick() },
+        modifier = Modifier
+            .width(120.dp)
+            .height(60.dp)
+    ) {
+        Text(text = buttonValue)
     }
 }
