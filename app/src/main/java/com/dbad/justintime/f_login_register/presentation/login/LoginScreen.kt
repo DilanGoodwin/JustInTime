@@ -59,6 +59,8 @@ fun LoginScreen(
                         currentValue = state.email,
                         onValueChange = { onEvent(LoginEvent.SetEmail(email = it)) },
                         placeHolderText = stringResource(R.string.email),
+                        textFieldError = state.showError,
+                        errorString = stringResource(R.string.emailOrPasswordError),
                         testingTag = TestTagEmailField
                     )
 

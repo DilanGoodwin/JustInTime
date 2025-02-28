@@ -53,6 +53,8 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+
+// Navigation Serialization objects
 @Serializable
 object TitleScreen
 

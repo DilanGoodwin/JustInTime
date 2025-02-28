@@ -54,6 +54,8 @@ fun RegisterScreen(
                         currentValue = state.email,
                         placeHolderText = stringResource(R.string.email),
                         onValueChange = { onEvent(RegisterEvent.SetEmail(it)) },
+                        textFieldError = false,
+                        errorString = "",
                         testingTag = TestTagEmailField
                     )
 

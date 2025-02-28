@@ -32,6 +32,8 @@ import com.dbad.justintime.R
 fun TextInputField(
     currentValue: String,
     placeHolderText: String,
+    textFieldError: Boolean,
+    errorString: String,
     onValueChange: (String) -> Unit,
     testingTag: String
 ) {
@@ -39,10 +41,20 @@ fun TextInputField(
         value = currentValue,
         onValueChange = { onValueChange(it) },
         placeholder = { Text(text = placeHolderText) },
+        isError = textFieldError,
+        supportingText = {
+            if (textFieldError) {
+                Text(
+                    text = errorString,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        },
         modifier = Modifier
             .clip(shape = RoundedCornerShape(size = 8.dp))
             .width(400.dp)
-            .height(60.dp)
+            .height(80.dp)
             .testTag(tag = testingTag)
     )
 }
