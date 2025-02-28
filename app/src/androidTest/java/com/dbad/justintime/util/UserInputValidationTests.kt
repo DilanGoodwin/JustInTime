@@ -24,12 +24,13 @@ import com.dbad.justintime.core.presentation.util.TestTagPreferredContactMethodF
 fun emailValidation(
     testRule: AndroidComposeTestRule<ActivityScenarioRule<ComponentActivity>, ComponentActivity>,
     emailField: SemanticsNodeInteraction,
+    expectedError: String,
     buttonToPress: String
 ) {
     fun inputEmail(emailText: String) {
         emailField.performTextReplacement(text = emailText)
         testRule.onNodeWithText(text = buttonToPress).performClick()
-        testRule.onAllNodesWithText(text = testRule.activity.getString(R.string.emailOrPasswordError))
+        testRule.onAllNodesWithText(text = expectedError)
             .onFirst().assertIsDisplayed()
     }
 
@@ -84,8 +85,7 @@ fun passwordValidation(
             .performTextReplacement(text = password)
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
             .performClick()
-        testRule.onNodeWithTag(testTag = TestTagErrorNotifier)
-            .assertTextContains(substring = true, value = expectedError)
+        testRule.onNodeWithText(expectedError).assertIsDisplayed()
     }
 
     inputPassword(password = "p@ssw0rdss", testRule.activity.getString(R.string.passwordNoCapitals))
@@ -117,11 +117,8 @@ fun passwordMatchValidation(
             .performClick()
 
         if (errorExpected) {
-            testRule.onNodeWithTag(testTag = TestTagErrorNotifier)
-                .assertTextContains(
-                    substring = true,
-                    value = testRule.activity.getString(R.string.passwordDoNotMatch)
-                )
+            testRule.onNodeWithText(text = testRule.activity.getString(R.string.passwordDoNotMatch))
+                .assertIsDisplayed()
         }
     }
 

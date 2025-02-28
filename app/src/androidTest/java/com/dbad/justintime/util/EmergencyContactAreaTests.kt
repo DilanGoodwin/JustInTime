@@ -60,6 +60,7 @@ class EmergencyContactAreaTests(
             testRule = testRule,
             emailField = testRule.onNodeWithTag(testTag = TestTagEmailField)
                 .assert(matcher = hasParent(matcher = hasTestTag(testTag = TestTagEmergencyContactExpandableField))),
+            expectedError = testRule.activity.getString(R.string.invalidEmailError),
             buttonToPress = testRule.activity.getString(R.string.next)
         )
     }

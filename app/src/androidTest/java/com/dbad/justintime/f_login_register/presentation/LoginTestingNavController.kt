@@ -1,4 +1,4 @@
-package com.dbad.justintime.f_login_register.presentation.login
+package com.dbad.justintime.f_login_register.presentation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
@@ -8,6 +8,8 @@ import androidx.navigation.toRoute
 import com.dbad.justintime.f_login_register.core.LoginScreenRoute
 import com.dbad.justintime.f_login_register.core.RegisterScreenRoute
 import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
+import com.dbad.justintime.f_login_register.presentation.login.LoginScreen
+import com.dbad.justintime.f_login_register.presentation.login.LoginViewModel
 import com.dbad.justintime.f_login_register.presentation.register.RegisterScreen
 import com.dbad.justintime.f_login_register.presentation.register.RegisterViewModel
 

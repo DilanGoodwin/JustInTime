@@ -23,6 +23,7 @@ import com.dbad.justintime.f_login_register.domain.use_case.UpsertUser
 import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
 import com.dbad.justintime.f_login_register.domain.use_case.ValidateEmail
 import com.dbad.justintime.f_login_register.domain.use_case.ValidatePassword
+import com.dbad.justintime.f_login_register.presentation.LoginTestingNavController
 import com.dbad.justintime.util.emailValidation
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -55,7 +56,7 @@ class LoginScreenTestingUI {
         )
 
         testRule.setContent {
-            LoginRegisterTestingNavController(useCases = useCases)
+            LoginTestingNavController(useCases = useCases)
         }
     }
 
@@ -78,6 +79,7 @@ class LoginScreenTestingUI {
         emailValidation(
             testRule = testRule,
             emailField = testRule.onNodeWithTag(testTag = TestTagEmailField),
+            expectedError = testRule.activity.getString(R.string.emailOrPasswordError),
             buttonToPress = testRule.activity.getString(R.string.login)
         )
 
@@ -134,7 +136,7 @@ class LoginScreenTestingUI {
     }
 
     @Test
-    fun checkRegisterButtonWithEmail() = runTest { //TODO not implemented
+    fun checkRegisterButtonWithEmail() = runTest {
         testRule.onNodeWithTag(testTag = TestTagEmailField)
             .performTextReplacement(text = validEmail)
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
