@@ -2,6 +2,8 @@ package com.dbad.justintime.f_login_register.domain.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.dbad.justintime.f_login_register.domain.model.util.PreferredContactMethod
+import com.dbad.justintime.f_login_register.domain.model.util.Relation
 
 @Entity
 data class EmergencyContact(
@@ -9,6 +11,6 @@ data class EmergencyContact(
     val name: String = "",
     val preferredName: String = "",
     val phone: String = "",
-    val preferredContactMethod: String = "",
-    val relation: String = ""
+    val preferredContactMethod: PreferredContactMethod = PreferredContactMethod.PHONE,
+    val relation: Relation = Relation.OTHER
 )
