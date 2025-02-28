@@ -28,10 +28,17 @@ import com.dbad.justintime.ui.theme.JustInTimeTheme
 
 // Stateful
 @Composable
-fun LoginScreen(viewModel: LoginViewModel, modifier: Modifier = Modifier) {
+fun LoginScreen(
+    viewModel: LoginViewModel,
+    onRegistration: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
     val state by viewModel.state.collectAsState()
 
-    LoginScreen(state = state, onEvent = viewModel::onEvent, modifier = modifier)
+    val event = viewModel::onEvent
+    event(LoginEvent.SetRegistrationAction(onRegistration))
+
+    LoginScreen(state = state, onEvent = event, modifier = modifier)
 }
 
 @Composable

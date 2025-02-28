@@ -6,7 +6,7 @@ import com.dbad.justintime.di.LoginRegisterModuleImplementation
 
 class App : Application() {
     companion object {
-        lateinit var appModule: LoginRegisterModule
+        lateinit var loginRegister: LoginRegisterModule
     }
 
     /**
@@ -14,6 +14,6 @@ class App : Application() {
      */
     override fun onCreate() {
         super.onCreate()
-        appModule = LoginRegisterModuleImplementation(this)
+        loginRegister = LoginRegisterModuleImplementation(this)
     }
 }

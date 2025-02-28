@@ -20,6 +20,7 @@ class LoginViewModel(private val useCases: UserUseCases) : ViewModel() {
         when (event) {
             is LoginEvent.SetEmail -> _state.update { it.copy(email = event.email) }
             is LoginEvent.SetPassword -> _state.update { it.copy(password = event.password) }
+            is LoginEvent.SetRegistrationAction -> _state.update { it.copy(onRegistration = event.registrationAction) }
             is LoginEvent.ToggleViewPassword -> _state.update { it.copy(showPassword = !(_state.value.showPassword)) }
 
             LoginEvent.LoginUser -> {
@@ -29,7 +30,11 @@ class LoginViewModel(private val useCases: UserUseCases) : ViewModel() {
                 _state.update { it.copy(showError = error) }
             }
 
-            LoginEvent.RegisterUser -> {}
+            LoginEvent.RegisterUser -> {
+                var email = ""
+                if (useCases.validateEmail(_state.value.email)) email = _state.value.email
+                _state.value.onRegistration(email)
+            }
         }
     }
 }
