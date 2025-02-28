@@ -17,6 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.dbad.justintime.R
+import com.dbad.justintime.core.presentation.TestTagEmailField
+import com.dbad.justintime.core.presentation.TestTagPasswordField
 import com.dbad.justintime.core.presentation.ViewingSystemThemes
 import com.dbad.justintime.f_login_register.presentation.util.DualButtonFields
 import com.dbad.justintime.f_login_register.presentation.util.JustInTimeLogoDisplay
@@ -51,7 +53,8 @@ fun RegisterScreen(
                     TextInputField(
                         currentValue = state.email,
                         placeHolderText = stringResource(R.string.email),
-                        onValueChange = {onEvent(RegisterEvent.SetEmail(it))}
+                        onValueChange = { onEvent(RegisterEvent.SetEmail(it)) },
+                        testingTag = TestTagEmailField
                     )
 
                     Spacer(modifier = Modifier.height(20.dp))
@@ -60,8 +63,11 @@ fun RegisterScreen(
                         currentValue = state.password,
                         placeHolderText = stringResource(R.string.password),
                         showPassword = state.showPassword,
-                        onValueChange = {onEvent(RegisterEvent.SetPassword(it))},
-                        visiblePassword = {onEvent(RegisterEvent.ToggleViewPassword)}
+                        onValueChange = { onEvent(RegisterEvent.SetPassword(it)) },
+                        visiblePassword = { onEvent(RegisterEvent.ToggleViewPassword) },
+                        textFieldError = false,
+                        errorString = "",
+                        testingTag = TestTagPasswordField
                     )
 
                     Spacer(modifier = Modifier.height(20.dp))
@@ -70,8 +76,11 @@ fun RegisterScreen(
                         currentValue = state.passwordMatch,
                         placeHolderText = stringResource(R.string.rePassword),
                         showPassword = state.showPasswordMatch,
-                        onValueChange = {onEvent(RegisterEvent.SetPasswordMatch(it))},
-                        visiblePassword = {onEvent(RegisterEvent.ToggleViewPasswordMatch)}
+                        onValueChange = { onEvent(RegisterEvent.SetPasswordMatch(it)) },
+                        visiblePassword = { onEvent(RegisterEvent.ToggleViewPasswordMatch) },
+                        textFieldError = false,
+                        errorString = "",
+                        testingTag = TestTagPasswordField
                     )
                 }
             }
@@ -81,9 +90,9 @@ fun RegisterScreen(
             // User Action Area
             DualButtonFields(
                 leftButtonValue = stringResource(R.string.cancel),
-                leftButtonOnClick = {onEvent(RegisterEvent.CancelUserRegister)},
+                leftButtonOnClick = { onEvent(RegisterEvent.CancelUserRegister) },
                 rightButtonValue = stringResource(R.string.register),
-                rightButtonOnClick = {onEvent(RegisterEvent.RegisterUser)}
+                rightButtonOnClick = { onEvent(RegisterEvent.RegisterUser) }
             )
         }
     }

@@ -14,12 +14,14 @@ import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -30,7 +32,8 @@ import com.dbad.justintime.R
 fun TextInputField(
     currentValue: String,
     placeHolderText: String,
-    onValueChange: (String) -> Unit
+    onValueChange: (String) -> Unit,
+    testingTag: String
 ) {
     TextField(
         value = currentValue,
@@ -40,6 +43,7 @@ fun TextInputField(
             .clip(shape = RoundedCornerShape(size = 8.dp))
             .width(400.dp)
             .height(60.dp)
+            .testTag(tag = testingTag)
     )
 }
 
@@ -48,8 +52,11 @@ fun PasswordField(
     currentValue: String,
     placeHolderText: String,
     showPassword: Boolean,
+    textFieldError: Boolean,
+    errorString: String,
     onValueChange: (String) -> Unit,
-    visiblePassword: () -> Unit
+    visiblePassword: () -> Unit,
+    testingTag: String
 ) {
     TextField(
         value = currentValue,
@@ -77,10 +84,21 @@ fun PasswordField(
         } else {
             PasswordVisualTransformation()
         },
+        isError = textFieldError,
+        supportingText = {
+            if (textFieldError) {
+                Text(
+                    text = errorString,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        },
         modifier = Modifier
             .clip(shape = RoundedCornerShape(size = 8.dp))
             .width(400.dp)
-            .height(60.dp)
+            .height(80.dp)
+            .testTag(tag = testingTag)
     )
 }
 
