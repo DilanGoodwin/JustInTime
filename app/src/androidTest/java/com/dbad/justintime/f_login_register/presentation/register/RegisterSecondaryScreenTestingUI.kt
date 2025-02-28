@@ -9,10 +9,10 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performTextReplacement
 import com.dbad.justintime.R
-import com.dbad.justintime.core.presentation.TestTagEmergencyContactExpandableField
-import com.dbad.justintime.core.presentation.TestTagNameField
-import com.dbad.justintime.core.presentation.TestTagPhoneNumberField
-import com.dbad.justintime.core.presentation.TestTagPreferredContactMethodField
+import com.dbad.justintime.core.presentation.util.TestTagEmergencyContactExpandableField
+import com.dbad.justintime.core.presentation.util.TestTagNameField
+import com.dbad.justintime.core.presentation.util.TestTagPhoneNumberField
+import com.dbad.justintime.core.presentation.util.TestTagPreferredContactMethodField
 import com.dbad.justintime.util.EmergencyContactAreaTests
 import com.dbad.justintime.util.EmergencyContactAreaTests.Companion.fillInEmergencyContact
 import com.dbad.justintime.util.contactMethodValidation

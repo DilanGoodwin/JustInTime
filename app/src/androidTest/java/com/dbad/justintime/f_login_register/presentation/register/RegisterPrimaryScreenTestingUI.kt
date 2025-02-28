@@ -10,10 +10,10 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextReplacement
 import com.dbad.justintime.R
-import com.dbad.justintime.core.presentation.TestTagEmailField
-import com.dbad.justintime.core.presentation.TestTagErrorNotifier
-import com.dbad.justintime.core.presentation.TestTagPasswordField
-import com.dbad.justintime.core.presentation.TestTagPasswordMatchField
+import com.dbad.justintime.core.presentation.util.TestTagEmailField
+import com.dbad.justintime.core.presentation.util.TestTagErrorNotifier
+import com.dbad.justintime.core.presentation.util.TestTagPasswordField
+import com.dbad.justintime.core.presentation.util.TestTagPasswordMatchField
 import com.dbad.justintime.util.emailValidation
 import com.dbad.justintime.util.passwordMatchValidation
 import com.dbad.justintime.util.passwordValidation

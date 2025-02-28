@@ -1,4 +1,4 @@
-package com.dbad.justintime.core.presentation
+package com.dbad.justintime.core.presentation.util
 
 import android.content.res.Configuration
 import androidx.compose.ui.tooling.preview.Preview

@@ -1,4 +1,4 @@
-package com.dbad.justintime.core.presentation
+package com.dbad.justintime.core.presentation.util
 
 const val TestTagEmailField = "EmailField"
 const val TestTagPasswordField = "PasswordField"

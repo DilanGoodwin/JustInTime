@@ -12,10 +12,10 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextReplacement
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import com.dbad.justintime.R
-import com.dbad.justintime.core.presentation.TestTagEmailField
-import com.dbad.justintime.core.presentation.TestTagEmergencyContactExpandableField
-import com.dbad.justintime.core.presentation.TestTagPhoneNumberField
-import com.dbad.justintime.core.presentation.TestTagPreferredContactMethodField
+import com.dbad.justintime.core.presentation.util.TestTagEmailField
+import com.dbad.justintime.core.presentation.util.TestTagEmergencyContactExpandableField
+import com.dbad.justintime.core.presentation.util.TestTagPhoneNumberField
+import com.dbad.justintime.core.presentation.util.TestTagPreferredContactMethodField
 
 class EmergencyContactAreaTests(
     private val testRule: AndroidComposeTestRule<ActivityScenarioRule<ComponentActivity>, ComponentActivity>

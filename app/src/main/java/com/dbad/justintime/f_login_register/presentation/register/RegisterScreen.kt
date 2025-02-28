@@ -17,9 +17,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.dbad.justintime.R
-import com.dbad.justintime.core.presentation.TestTagEmailField
-import com.dbad.justintime.core.presentation.TestTagPasswordField
-import com.dbad.justintime.core.presentation.ViewingSystemThemes
+import com.dbad.justintime.core.presentation.util.TestTagEmailField
+import com.dbad.justintime.core.presentation.util.TestTagPasswordField
+import com.dbad.justintime.core.presentation.util.ViewingSystemThemes
 import com.dbad.justintime.f_login_register.presentation.util.DualButtonFields
 import com.dbad.justintime.f_login_register.presentation.util.JustInTimeLogoDisplay
 import com.dbad.justintime.f_login_register.presentation.util.PasswordField

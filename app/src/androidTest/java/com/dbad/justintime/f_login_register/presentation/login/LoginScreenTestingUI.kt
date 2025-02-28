@@ -10,9 +10,9 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextReplacement
 import com.dbad.justintime.R
-import com.dbad.justintime.core.presentation.TestTagCalendarView
-import com.dbad.justintime.core.presentation.TestTagEmailField
-import com.dbad.justintime.core.presentation.TestTagPasswordField
+import com.dbad.justintime.core.presentation.util.TestTagCalendarView
+import com.dbad.justintime.core.presentation.util.TestTagEmailField
+import com.dbad.justintime.core.presentation.util.TestTagPasswordField
 import com.dbad.justintime.f_login_register.data.UsersRepositoryTestingImplementation
 import com.dbad.justintime.f_login_register.domain.model.User
 import com.dbad.justintime.f_login_register.domain.repository.UserRepository
