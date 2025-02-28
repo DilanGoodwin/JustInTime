@@ -28,6 +28,8 @@ class LoginViewModel(private val useCases: UserUseCases) : ViewModel() {
                 if (!useCases.validateEmail(_state.value.email)) error = true
                 if (!useCases.validatePassword(_state.value.password)) error = true
                 _state.update { it.copy(showError = error) }
+
+                //TODO move to next screen
             }
 
             LoginEvent.RegisterUser -> {

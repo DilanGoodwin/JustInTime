@@ -5,6 +5,8 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -34,7 +36,10 @@ class LoginScreenTestingUI {
 
     private lateinit var useCases: UserUseCases
     private val users: List<User> =
-        listOf(User(uid = 0, email = validEmail, password = validPassword))
+        listOf(
+            User(uid = 0, email = validEmail, password = validPassword),
+            User(uid = 1, email = "test.test@test.com", password = validPassword)
+        )
 
     @get:Rule
     val testRule = createAndroidComposeRule<ComponentActivity>()
@@ -48,7 +53,10 @@ class LoginScreenTestingUI {
             validateEmail = ValidateEmail(),
             validatePassword = ValidatePassword()
         )
-        testRule.setContent { LoginScreen(LoginViewModel(useCases = useCases)) }
+
+        testRule.setContent {
+            LoginRegisterTestingNavController(useCases = useCases)
+        }
     }
 
     private fun checkValuesExist(screenValue: String) {
@@ -83,19 +91,19 @@ class LoginScreenTestingUI {
         testRule.onNodeWithTag(testTag = TestTagPasswordField)
             .performTextReplacement(text = invalidPassword)
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.login)).performClick()
-        testRule.onNodeWithText(text = testRule.activity.getString(R.string.emailOrPasswordError))
-            .assertIsDisplayed()
+        testRule.onAllNodesWithText(text = testRule.activity.getString(R.string.emailOrPasswordError))
+            .onFirst().assertIsDisplayed()
 
         invalidPassword = "password"
         testRule.onNodeWithTag(testTag = TestTagPasswordField)
             .performTextReplacement(text = invalidPassword)
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.login)).performClick()
-        testRule.onNodeWithText(text = testRule.activity.getString(R.string.emailOrPasswordError))
-            .assertIsDisplayed()
+        testRule.onAllNodesWithText(text = testRule.activity.getString(R.string.emailOrPasswordError))
+            .onFirst().assertIsDisplayed()
     }
 
     @Test
-    fun checkValidLoginAttempt() = runTest {
+    fun checkValidLoginAttempt() = runTest { //TODO not implemented
         testRule.onNodeWithTag(testTag = TestTagEmailField)
             .performTextReplacement(text = validEmail)
         testRule.onNodeWithTag(testTag = TestTagPasswordField)
@@ -113,8 +121,8 @@ class LoginScreenTestingUI {
             .performTextReplacement(text = "P4ssw0rd!")
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.login)).performClick()
 
-        testRule.onNodeWithText(text = testRule.activity.getString(R.string.emailOrPasswordError))
-            .assertIsDisplayed()
+        testRule.onAllNodesWithText(text = testRule.activity.getString(R.string.emailOrPasswordError))
+            .onFirst().assertIsDisplayed()
     }
 
     @Test
@@ -126,7 +134,7 @@ class LoginScreenTestingUI {
     }
 
     @Test
-    fun checkRegisterButtonWithEmail() = runTest {
+    fun checkRegisterButtonWithEmail() = runTest { //TODO not implemented
         testRule.onNodeWithTag(testTag = TestTagEmailField)
             .performTextReplacement(text = validEmail)
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))

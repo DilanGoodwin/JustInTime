@@ -8,13 +8,14 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
+import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextReplacement
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import com.dbad.justintime.R
-import com.dbad.justintime.core.presentation.util.TestTagEmailField
 import com.dbad.justintime.core.presentation.util.TestTagErrorNotifier
 import com.dbad.justintime.core.presentation.util.TestTagPasswordField
 import com.dbad.justintime.core.presentation.util.TestTagPasswordMatchField
@@ -28,16 +29,15 @@ fun emailValidation(
     fun inputEmail(emailText: String) {
         emailField.performTextReplacement(text = emailText)
         testRule.onNodeWithText(text = buttonToPress).performClick()
-        testRule.onNodeWithText(text = testRule.activity.getString(R.string.emailOrPasswordError))
-            .assertIsDisplayed()
+        testRule.onAllNodesWithText(text = testRule.activity.getString(R.string.emailOrPasswordError))
+            .onFirst().assertIsDisplayed()
     }
 
     inputEmail(emailText = "test")
     inputEmail(emailText = "test@test")
     inputEmail(emailText = "test.test@test")
 
-    testRule.onNodeWithTag(testTag = TestTagEmailField)
-        .performTextReplacement(text = "test.test@test.com")
+    emailField.performTextReplacement(text = "test.test@test.com")
     testRule.onNodeWithText(text = buttonToPress).performClick()
 }
 
