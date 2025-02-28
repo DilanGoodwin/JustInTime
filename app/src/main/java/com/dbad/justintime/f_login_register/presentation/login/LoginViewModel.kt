@@ -3,6 +3,7 @@ package com.dbad.justintime.f_login_register.presentation.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
+import com.dbad.justintime.f_login_register.domain.util.PasswordErrors
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
@@ -26,7 +27,9 @@ class LoginViewModel(private val useCases: UserUseCases) : ViewModel() {
             LoginEvent.LoginUser -> {
                 var error = false
                 if (!useCases.validateEmail(_state.value.email)) error = true
-                if (!useCases.validatePassword(_state.value.password)) error = true
+                if (useCases.validatePassword(_state.value.password) != PasswordErrors.PASSWORD_NONE) {
+                    error = true
+                }
                 _state.update { it.copy(showError = error) }
 
                 //TODO move to next screen

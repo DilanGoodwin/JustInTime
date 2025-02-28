@@ -12,6 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.dbad.justintime.f_login_register.presentation.login.LoginScreen
 import com.dbad.justintime.f_login_register.presentation.login.LoginViewModel
 import com.dbad.justintime.f_login_register.presentation.register.RegisterScreen
@@ -29,10 +30,10 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     NavHost(navController = navController, startDestination = TitleScreen) {
                         navigation<TitleScreen>(startDestination = LoginScreen) {
+                            val useCases = App.loginRegister.useCases
                             composable<LoginScreen> {
-                                val loginViewModel = LoginViewModel(App.loginRegister.useCases)
                                 LoginScreen(
-                                    viewModel = loginViewModel,
+                                    viewModel = LoginViewModel(useCases = useCases),
                                     onRegistration = {
                                         navController.navigate(route = RegisterScreen(it))
                                     },
@@ -40,8 +41,11 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
                             composable<RegisterScreen> {
+                                val args = it.toRoute<RegisterScreen>()
                                 RegisterScreen(
-                                    viewModel = RegisterViewModel(),
+                                    viewModel = RegisterViewModel(useCases = useCases),
+                                    onCancelRegistration = { navController.navigate(LoginScreen) },
+                                    passedEmailValue = args.email,
                                     modifier = Modifier.padding(paddingValues = innerPadding)
                                 )
                             }
@@ -62,4 +66,4 @@ object TitleScreen
 object LoginScreen
 
 @Serializable
-data class RegisterScreen(val email: String?)
+data class RegisterScreen(val email: String = "")

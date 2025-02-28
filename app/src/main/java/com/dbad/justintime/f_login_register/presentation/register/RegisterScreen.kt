@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.dbad.justintime.R
 import com.dbad.justintime.core.presentation.util.TestTagEmailField
 import com.dbad.justintime.core.presentation.util.TestTagPasswordField
+import com.dbad.justintime.core.presentation.util.TestTagPasswordMatchField
 import com.dbad.justintime.core.presentation.util.ViewingSystemThemes
 import com.dbad.justintime.f_login_register.presentation.util.DualButtonFields
 import com.dbad.justintime.f_login_register.presentation.util.JustInTimeLogoDisplay
@@ -28,8 +29,17 @@ import com.dbad.justintime.ui.theme.JustInTimeTheme
 
 // Stateful
 @Composable
-fun RegisterScreen(viewModel: RegisterViewModel, modifier: Modifier = Modifier) {
+fun RegisterScreen(
+    viewModel: RegisterViewModel,
+    onCancelRegistration: () -> Unit,
+    passedEmailValue: String,
+    modifier: Modifier = Modifier
+) {
     val state by viewModel.state.collectAsState()
+
+    val event = viewModel::onEvent
+    event(RegisterEvent.SetCancelRegistrationEvent(onCancelRegistration))
+    if (passedEmailValue != "") event(RegisterEvent.SetEmail(email = passedEmailValue))
 
     RegisterScreen(state = state, onEvent = viewModel::onEvent, modifier = modifier)
 }
@@ -54,8 +64,8 @@ fun RegisterScreen(
                         currentValue = state.email,
                         placeHolderText = stringResource(R.string.email),
                         onValueChange = { onEvent(RegisterEvent.SetEmail(it)) },
-                        textFieldError = false,
-                        errorString = "",
+                        textFieldError = state.showEmailError,
+                        errorString = stringResource(R.string.invalidEmailError),
                         testingTag = TestTagEmailField
                     )
 
@@ -67,8 +77,8 @@ fun RegisterScreen(
                         showPassword = state.showPassword,
                         onValueChange = { onEvent(RegisterEvent.SetPassword(it)) },
                         visiblePassword = { onEvent(RegisterEvent.ToggleViewPassword) },
-                        textFieldError = false,
-                        errorString = "",
+                        textFieldError = state.showPasswordError,
+                        errorString = if (state.passwordErrorCode == 0) "" else stringResource(state.passwordErrorCode),
                         testingTag = TestTagPasswordField
                     )
 
@@ -80,9 +90,9 @@ fun RegisterScreen(
                         showPassword = state.showPasswordMatch,
                         onValueChange = { onEvent(RegisterEvent.SetPasswordMatch(it)) },
                         visiblePassword = { onEvent(RegisterEvent.ToggleViewPasswordMatch) },
-                        textFieldError = false,
-                        errorString = "",
-                        testingTag = TestTagPasswordField
+                        textFieldError = state.showMatchPasswordError,
+                        errorString = stringResource(R.string.passwordDoNotMatch),
+                        testingTag = TestTagPasswordMatchField
                     )
                 }
             }

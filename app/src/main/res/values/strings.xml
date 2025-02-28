@@ -27,6 +27,8 @@
     <string name="passwordNoDigits">Password should contain at least one digit</string>
     <string name="passwordNoSymbols">Password should contain at least one symbol</string>
     <string name="passwordLength">Password should be 10 characters long</string>
+    <string name="passwordWhitespace">Password should not contain whitespace</string>
+    <string name="passwordBlank">Password cannot be blank</string>
     <string name="passwordDoNotMatch">Passwords do not match</string>
 
     <!-- Phone Number Errors -->

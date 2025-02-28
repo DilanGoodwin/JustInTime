@@ -1,5 +1,7 @@
 package com.dbad.justintime.f_login_register.domain.use_case
 
+import com.dbad.justintime.f_login_register.domain.util.PasswordErrors
+
 /**
  * ValidatePassword
  * Ensures the entered password by the user contains:
@@ -11,16 +13,17 @@ package com.dbad.justintime.f_login_register.domain.use_case
  * * No whitespace
  */
 class ValidatePassword {
-    operator fun invoke(password: String): Boolean {
-        if (password.isBlank()) return false
-        if (password.length < 10) return false
-        if (password.filter { it.isLetter() }.firstOrNull { it.isLowerCase() } == null) return false
+    operator fun invoke(password: String): PasswordErrors {
+        if (password.isBlank()) return PasswordErrors.PASSWORD_BLANK
+        if (password.firstOrNull { !it.isWhitespace() } == null) return PasswordErrors.PASSWORD_WHITESPACE
         if (password.filter { it.isLetter() }
-                .firstOrNull { it.isUpperCase() } == null) return false
-        if (password.firstOrNull { it.isDigit() } == null) return false
-        if (password.firstOrNull { !it.isLetterOrDigit() } == null) return false
-        if (password.firstOrNull { !it.isWhitespace() } == null) return false
+                .firstOrNull { it.isLowerCase() } == null) return PasswordErrors.PASSWORD_NO_LOWERCASE
+        if (password.filter { it.isLetter() }
+                .firstOrNull { it.isUpperCase() } == null) return PasswordErrors.PASSWORD_NO_UPPERCASE
+        if (password.firstOrNull { it.isDigit() } == null) return PasswordErrors.PASSWORD_NO_DIGIT
+        if (password.firstOrNull { !it.isLetterOrDigit() } == null) return PasswordErrors.PASSWORD_NO_SYMBOLS
+        if (password.length < 10) return PasswordErrors.PASSWORD_LENGTH_UNDER_10
 
-        return true
+        return PasswordErrors.PASSWORD_NONE
     }
 }
