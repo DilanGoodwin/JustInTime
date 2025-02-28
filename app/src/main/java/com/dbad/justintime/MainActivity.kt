@@ -18,7 +18,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             JustInTimeTheme {
-                val loginViewModel = LoginViewModel()
+                val loginViewModel = LoginViewModel(App.appModule.useCases)
 
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     LoginScreen(
