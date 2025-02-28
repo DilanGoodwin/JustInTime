@@ -33,7 +33,7 @@ class RegisterPrimaryScreenTestingUI {
 
     @Before
     fun reset() = runTest {
-        testRule.setContent { RegisterScreen() }
+        testRule.setContent { RegisterScreen(RegisterViewModel()) }
     }
 
     @Test

@@ -17,6 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.dbad.justintime.R
+import com.dbad.justintime.core.presentation.TestTagEmailField
+import com.dbad.justintime.core.presentation.TestTagPasswordField
 import com.dbad.justintime.core.presentation.ViewingSystemThemes
 import com.dbad.justintime.f_login_register.presentation.util.DualButtonFields
 import com.dbad.justintime.f_login_register.presentation.util.JustInTimeLogoDisplay
@@ -49,7 +51,8 @@ fun LoginScreen(
                     TextInputField(
                         currentValue = state.email,
                         onValueChange = { onEvent(LoginEvent.SetEmail(email = it)) },
-                        placeHolderText = stringResource(R.string.email)
+                        placeHolderText = stringResource(R.string.email),
+                        testingTag = TestTagEmailField
                     )
 
                     Spacer(modifier = Modifier.height(20.dp))
@@ -59,7 +62,10 @@ fun LoginScreen(
                         placeHolderText = stringResource(R.string.password),
                         showPassword = state.showPassword,
                         onValueChange = { onEvent(LoginEvent.SetPassword(password = it)) },
-                        visiblePassword = { onEvent(LoginEvent.ToggleViewPassword) }
+                        visiblePassword = { onEvent(LoginEvent.ToggleViewPassword) },
+                        textFieldError = state.showError,
+                        errorString = stringResource(R.string.emailOrPasswordError),
+                        testingTag = TestTagPasswordField
                     )
                 }
             }

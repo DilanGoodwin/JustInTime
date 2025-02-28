@@ -28,8 +28,8 @@ fun emailValidation(
     fun inputEmail(emailText: String) {
         emailField.performTextReplacement(text = emailText)
         testRule.onNodeWithText(text = buttonToPress).performClick()
-        testRule.onNodeWithTag(testTag = TestTagErrorNotifier)
-            .assertTextContains(value = testRule.activity.getString(R.string.invalidEmailError))
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.emailOrPasswordError))
+            .assertIsDisplayed()
     }
 
     inputEmail(emailText = "test")
@@ -39,10 +39,6 @@ fun emailValidation(
     testRule.onNodeWithTag(testTag = TestTagEmailField)
         .performTextReplacement(text = "test.test@test.com")
     testRule.onNodeWithText(text = buttonToPress).performClick()
-    if (testRule.onNodeWithTag(testTag = TestTagErrorNotifier).isDisplayed()) {
-        testRule.onNodeWithTag(testTag = TestTagErrorNotifier)
-            .assertTextContains(value = testRule.activity.getString(R.string.savingMessage))
-    }
 }
 
 fun phoneNumberValidation(

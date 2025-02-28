@@ -12,8 +12,15 @@ import androidx.compose.ui.test.performTextReplacement
 import com.dbad.justintime.R
 import com.dbad.justintime.core.presentation.TestTagCalendarView
 import com.dbad.justintime.core.presentation.TestTagEmailField
-import com.dbad.justintime.core.presentation.TestTagErrorNotifier
 import com.dbad.justintime.core.presentation.TestTagPasswordField
+import com.dbad.justintime.f_login_register.data.UsersRepositoryTestingImplementation
+import com.dbad.justintime.f_login_register.domain.model.User
+import com.dbad.justintime.f_login_register.domain.repository.UserRepository
+import com.dbad.justintime.f_login_register.domain.use_case.GetUser
+import com.dbad.justintime.f_login_register.domain.use_case.UpsertUser
+import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
+import com.dbad.justintime.f_login_register.domain.use_case.ValidateEmail
+import com.dbad.justintime.f_login_register.domain.use_case.ValidatePassword
 import com.dbad.justintime.util.emailValidation
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -22,16 +29,26 @@ import org.junit.Test
 
 class LoginScreenTestingUI {
 
-    //TODO Fill in values for testing
-    private val validEmail: String = ""
-    private val validPassword: String = ""
+    private val validEmail: String = "testing@testing.com"
+    private val validPassword: String = "MyP@ssw0rds"
+
+    private lateinit var useCases: UserUseCases
+    private val users: List<User> =
+        listOf(User(uid = 0, email = validEmail, password = validPassword))
 
     @get:Rule
     val testRule = createAndroidComposeRule<ComponentActivity>()
 
     @Before
     fun reset() = runTest {
-        testRule.setContent { LoginScreen() }
+        val userRepo: UserRepository = UsersRepositoryTestingImplementation(users = users)
+        useCases = UserUseCases(
+            getUser = GetUser(repository = userRepo),
+            upsertUser = UpsertUser(repository = userRepo),
+            validateEmail = ValidateEmail(),
+            validatePassword = ValidatePassword()
+        )
+        testRule.setContent { LoginScreen(LoginViewModel(useCases = useCases)) }
     }
 
     private fun checkValuesExist(screenValue: String) {
@@ -58,7 +75,6 @@ class LoginScreenTestingUI {
 
         testRule.onNodeWithTag(testTag = TestTagEmailField)
             .performTextReplacement(text = validEmail)
-        testRule.onNodeWithTag(testTag = TestTagErrorNotifier).assertIsNotDisplayed()
     }
 
     @Test
@@ -67,15 +83,15 @@ class LoginScreenTestingUI {
         testRule.onNodeWithTag(testTag = TestTagPasswordField)
             .performTextReplacement(text = invalidPassword)
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.login)).performClick()
-        testRule.onNodeWithTag(testTag = TestTagErrorNotifier)
-            .assertTextContains(value = testRule.activity.getString(R.string.emailOrPasswordError))
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.emailOrPasswordError))
+            .assertIsDisplayed()
 
         invalidPassword = "password"
         testRule.onNodeWithTag(testTag = TestTagPasswordField)
             .performTextReplacement(text = invalidPassword)
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.login)).performClick()
-        testRule.onNodeWithTag(testTag = TestTagErrorNotifier)
-            .assertTextContains(value = testRule.activity.getString(R.string.emailOrPasswordError))
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.emailOrPasswordError))
+            .assertIsDisplayed()
     }
 
     @Test
@@ -86,7 +102,6 @@ class LoginScreenTestingUI {
             .performTextReplacement(text = validPassword)
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.login)).performClick()
 
-        testRule.onNodeWithTag(testTag = TestTagErrorNotifier).assertIsNotDisplayed()
         testRule.onNodeWithTag(testTag = TestTagCalendarView).assertIsDisplayed()
     }
 
@@ -98,15 +113,16 @@ class LoginScreenTestingUI {
             .performTextReplacement(text = "P4ssw0rd!")
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.login)).performClick()
 
-        testRule.onNodeWithTag(testTag = TestTagErrorNotifier)
-            .assertTextContains(value = testRule.activity.getString(R.string.emailOrPasswordError))
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.emailOrPasswordError))
+            .assertIsDisplayed()
     }
 
     @Test
     fun checkRegisterButtonWithoutEmail() = runTest {
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
             .performClick()
-        testRule.onNodeWithTag(testTag = TestTagEmailField).assertIsDisplayed()
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.login))
+            .assertIsNotDisplayed()
     }
 
     @Test
@@ -116,5 +132,7 @@ class LoginScreenTestingUI {
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
             .performClick()
         testRule.onNodeWithTag(testTag = TestTagEmailField).assertTextContains(value = validEmail)
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.login))
+            .assertIsNotDisplayed()
     }
 }
