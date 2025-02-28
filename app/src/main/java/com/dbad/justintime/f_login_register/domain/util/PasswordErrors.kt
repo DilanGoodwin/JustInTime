@@ -4,7 +4,7 @@ import androidx.annotation.StringRes
 import com.dbad.justintime.R
 
 enum class PasswordErrors(@StringRes val errorCode: Int) {
-    PASSWORD_BLANK(errorCode = R.string.passwordBlank),
+    PASSWORD_BLANK(errorCode = R.string.enterPassword),
     PASSWORD_LENGTH_UNDER_10(errorCode = R.string.passwordLength),
     PASSWORD_NO_LOWERCASE(errorCode = R.string.passwordNoLowercase),
     PASSWORD_NO_UPPERCASE(errorCode = R.string.passwordNoCapitals),

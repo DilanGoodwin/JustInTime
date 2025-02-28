@@ -20,29 +20,25 @@ class RegisterViewModel(private val useCases: UserUseCases) : ViewModel() {
     fun onEvent(event: RegisterEvent) {
         when (event) {
             RegisterEvent.CancelUserRegister -> _state.value.onCancelRegistration()
-            RegisterEvent.RegisterUser -> {}
+            RegisterEvent.RegisterUser -> {
+                showEmailError()
+                showPasswordError(password = _state.value.password)
+                showMatchPasswordError(password = _state.value.passwordMatch)
+            }
+
             is RegisterEvent.SetEmail -> {
                 _state.update { it.copy(email = event.email) }
-                var error = true
-                if (useCases.validateEmail(_state.value.email)) error = false
-                _state.update { it.copy(showEmailError = error) }
+                showEmailError()
             }
 
             is RegisterEvent.SetPassword -> {
                 _state.update { it.copy(password = event.password) }
-                val passwordError = useCases.validatePassword(event.password)
-                if (passwordError != PasswordErrors.PASSWORD_NONE) {
-                    _state.update { it.copy(passwordErrorCode = passwordError.errorCode) }
-                    _state.update { it.copy(showPasswordError = true) }
-                }
-
+                showPasswordError(password = event.password)
             }
 
             is RegisterEvent.SetPasswordMatch -> {
                 _state.update { it.copy(passwordMatch = event.password) }
-                var passwordError = true
-                if (event.password == _state.value.password) passwordError = false
-                _state.update { it.copy(showMatchPasswordError = passwordError) }
+                showMatchPasswordError(event.password)
             }
 
             is RegisterEvent.SetCancelRegistrationEvent -> _state.update {
@@ -52,5 +48,27 @@ class RegisterViewModel(private val useCases: UserUseCases) : ViewModel() {
             RegisterEvent.ToggleViewPassword -> _state.update { it.copy(showPassword = !(_state.value.showPassword)) }
             RegisterEvent.ToggleViewPasswordMatch -> _state.update { it.copy(showPasswordMatch = !(_state.value.showPasswordMatch)) }
         }
+    }
+
+    private fun showEmailError() {
+        var error = true
+        if (useCases.validateEmail(_state.value.email)) error = false
+        _state.update { it.copy(showEmailError = error) }
+    }
+
+    private fun showPasswordError(password: String) {
+        val passwordError = useCases.validatePassword(password = password)
+        if (passwordError != PasswordErrors.PASSWORD_NONE) {
+            _state.update { it.copy(passwordErrorCode = passwordError.errorCode) }
+            _state.update { it.copy(showPasswordError = true) }
+        } else {
+            _state.update { it.copy(showPasswordError = false) }
+        }
+    }
+
+    private fun showMatchPasswordError(password: String) {
+        var passwordError = true
+        if (password == _state.value.password) passwordError = false
+        _state.update { it.copy(showMatchPasswordError = passwordError) }
     }
 }
