@@ -24,6 +24,10 @@ class RegisterViewModel(private val useCases: UserUseCases) : ViewModel() {
                 showEmailError()
                 showPasswordError(password = _state.value.password)
                 showMatchPasswordError(password = _state.value.passwordMatch)
+
+                if (!(_state.value.showEmailError || _state.value.showPasswordError || _state.value.showMatchPasswordError)) {
+                    _state.value.onRegistration()
+                }
             }
 
             is RegisterEvent.SetEmail -> {
@@ -43,6 +47,10 @@ class RegisterViewModel(private val useCases: UserUseCases) : ViewModel() {
 
             is RegisterEvent.SetCancelRegistrationEvent -> _state.update {
                 it.copy(onCancelRegistration = event.cancelAction)
+            }
+
+            is RegisterEvent.SetRegistrationEvent -> _state.update {
+                it.copy(onRegistration = event.registerAction)
             }
 
             RegisterEvent.ToggleViewPassword -> _state.update { it.copy(showPassword = !(_state.value.showPassword)) }

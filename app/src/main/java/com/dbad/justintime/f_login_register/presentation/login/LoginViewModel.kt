@@ -36,9 +36,7 @@ class LoginViewModel(private val useCases: UserUseCases) : ViewModel() {
             }
 
             LoginEvent.RegisterUser -> {
-                var email = ""
-                if (useCases.validateEmail(_state.value.email)) email = _state.value.email
-                _state.value.onRegistration(email)
+                _state.value.onRegistration()
             }
         }
     }

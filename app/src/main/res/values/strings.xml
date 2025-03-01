@@ -8,6 +8,8 @@
     <string name="name">Name</string>
     <string name="preferredName">Preferred Name</string>
     <string name="phoneNumb">Phone Number</string>
+    <string name="prefContactMethod">Preferred Contact Method</string>
+    <string name="emergencyContact">Emergency Contact</string>
 
     <!-- Buttons -->
     <string name="login">Login</string>
@@ -30,6 +32,9 @@
     <string name="passwordWhitespace">Password should not contain whitespace</string>
     <string name="passwordBlank">Password cannot be blank</string>
     <string name="passwordDoNotMatch">Passwords do not match</string>
+
+    <!-- Name Errors -->
+    <string name="noNameProvided">Please enter a name</string>
 
     <!-- Phone Number Errors -->
     <string name="invalidPhoneNumb">Please enter a valid phone number</string>

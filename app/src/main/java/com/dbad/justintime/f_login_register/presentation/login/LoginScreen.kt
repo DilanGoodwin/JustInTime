@@ -30,7 +30,7 @@ import com.dbad.justintime.ui.theme.JustInTimeTheme
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel,
-    onRegistration: (String) -> Unit,
+    onRegistration: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val state by viewModel.state.collectAsState()

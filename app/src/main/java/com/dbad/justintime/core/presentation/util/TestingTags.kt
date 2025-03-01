@@ -6,6 +6,7 @@ const val TestTagPasswordMatchField = "PasswordConfirmField"
 const val TestTagErrorNotifier = "Errors"
 
 const val TestTagNameField = "NameField"
+const val TestTagPreferredName = "PreferredNameField"
 const val TestTagPhoneNumberField = "PhoneNumbField"
 const val TestTagPreferredContactMethodField = "PreferredContactMethod"
 const val TestTagEmergencyContactExpandableField = "EmergencyContactExpandable"

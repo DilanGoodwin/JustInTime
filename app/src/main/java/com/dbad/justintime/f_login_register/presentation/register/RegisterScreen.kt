@@ -32,14 +32,14 @@ import com.dbad.justintime.ui.theme.JustInTimeTheme
 fun RegisterScreen(
     viewModel: RegisterViewModel,
     onCancelRegistration: () -> Unit,
-    passedEmailValue: String,
+    onRegistration: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val state by viewModel.state.collectAsState()
 
     val event = viewModel::onEvent
     event(RegisterEvent.SetCancelRegistrationEvent(onCancelRegistration))
-    if (passedEmailValue != "") event(RegisterEvent.SetEmail(email = passedEmailValue))
+    event(RegisterEvent.SetRegistrationEvent(onRegistration))
 
     RegisterScreen(state = state, onEvent = viewModel::onEvent, modifier = modifier)
 }

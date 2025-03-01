@@ -5,5 +5,5 @@ data class LoginState(
     val password: String = "",
     val showPassword: Boolean = false,
     val showError: Boolean = false,
-    val onRegistration: (String) -> Unit = {}
+    val onRegistration: () -> Unit = {}
 )
