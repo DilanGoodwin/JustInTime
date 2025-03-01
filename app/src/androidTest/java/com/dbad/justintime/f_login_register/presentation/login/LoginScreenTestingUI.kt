@@ -3,7 +3,6 @@ package com.dbad.justintime.f_login_register.presentation.login
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
-import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onFirst
@@ -128,20 +127,9 @@ class LoginScreenTestingUI {
     }
 
     @Test
-    fun checkRegisterButtonWithoutEmail() = runTest {
+    fun checkRegisterButton() = runTest {
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
             .performClick()
-        testRule.onNodeWithText(text = testRule.activity.getString(R.string.login))
-            .assertIsNotDisplayed()
-    }
-
-    @Test
-    fun checkRegisterButtonWithEmail() = runTest {
-        testRule.onNodeWithTag(testTag = TestTagEmailField)
-            .performTextReplacement(text = validEmail)
-        testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
-            .performClick()
-        testRule.onNodeWithTag(testTag = TestTagEmailField).assertTextContains(value = validEmail)
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.login))
             .assertIsNotDisplayed()
     }

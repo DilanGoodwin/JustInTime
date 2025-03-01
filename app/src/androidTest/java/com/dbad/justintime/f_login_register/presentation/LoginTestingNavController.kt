@@ -22,7 +22,7 @@ fun LoginTestingNavController(useCases: UserUseCases) {
             LoginScreen(
                 viewModel = LoginViewModel(useCases = useCases),
                 onRegistration = {
-                    navControl.navigate(route = RegisterScreenRoute(it))
+                    navControl.navigate(route = RegisterScreenRoute)
                 }
             )
         }
@@ -30,8 +30,7 @@ fun LoginTestingNavController(useCases: UserUseCases) {
             val args = it.toRoute<RegisterScreenRoute>()
             RegisterScreen(
                 viewModel = RegisterViewModel(useCases = useCases),
-                onCancelRegistration = { navControl.navigate(route = LoginScreenRoute) },
-                passedEmailValue = args.email
+                onCancelRegistration = { navControl.navigate(route = LoginScreenRoute) }
             )
         }
     }

@@ -6,4 +6,4 @@ import kotlinx.serialization.Serializable
 object LoginScreenRoute
 
 @Serializable
-data class RegisterScreenRoute(val email: String = "")
+object RegisterScreenRoute
