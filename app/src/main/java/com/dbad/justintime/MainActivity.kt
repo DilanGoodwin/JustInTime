@@ -17,6 +17,7 @@ import com.dbad.justintime.f_login_register.presentation.login.LoginViewModel
 import com.dbad.justintime.f_login_register.presentation.register.RegisterScreen
 import com.dbad.justintime.f_login_register.presentation.register.RegisterViewModel
 import com.dbad.justintime.f_login_register.presentation.user_details.ExtraRegistrationDetails
+import com.dbad.justintime.f_login_register.presentation.user_details.UserDetailsViewModel
 import com.dbad.justintime.ui.theme.JustInTimeTheme
 import kotlinx.serialization.Serializable
 
@@ -44,23 +45,30 @@ class MainActivity : ComponentActivity() {
                             }
 
                             navigation<RegistrationNav>(startDestination = RegisterScreen) {
-                                val sharedViewModel = RegisterViewModel(useCases = useCases)
-
                                 composable<RegisterScreen> {
                                     RegisterScreen(
-                                        viewModel = sharedViewModel,
+                                        viewModel = RegisterViewModel(useCases = useCases),
                                         onCancelRegistration = {
-                                            navController.navigate(LoginScreen)
+                                            navController.navigate(route = LoginScreen)
                                         },
                                         onRegistration = {
-                                            navController.navigate(UserDetailsInformation)
+                                            navController.navigate(route = UserDetailsInformation)
                                         },
                                         modifier = Modifier.padding(paddingValues = innerPadding)
                                     )
                                 }
 
                                 composable<UserDetailsInformation> {
-                                    ExtraRegistrationDetails()
+                                    ExtraRegistrationDetails(
+                                        viewModel = UserDetailsViewModel(useCases = useCases),
+                                        onCancelUserDetails = {
+                                            navController.navigate(route = LoginNav)
+                                        },
+                                        onRegister = {}, //TODO next navifation screen
+                                        modifier = Modifier.padding(
+                                            paddingValues = innerPadding
+                                        )
+                                    )
                                 }
                             }
                         }

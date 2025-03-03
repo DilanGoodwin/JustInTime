@@ -42,7 +42,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.dbad.justintime.R
-import com.dbad.justintime.core.presentation.util.TestTagNameField
 import com.dbad.justintime.f_login_register.domain.model.util.PreferredContactMethod
 
 @Composable
@@ -68,6 +67,7 @@ fun TextInputField(
                 )
             }
         },
+        singleLine = true,
         modifier = Modifier
             .clip(shape = RoundedCornerShape(size = 8.dp))
             .width(400.dp)
@@ -123,6 +123,7 @@ fun PasswordField(
                 )
             }
         },
+        singleLine = true,
         modifier = Modifier
             .clip(shape = RoundedCornerShape(size = 8.dp))
             .width(400.dp)
@@ -134,57 +135,60 @@ fun PasswordField(
 @Composable
 fun PreferredContactField(
     currentValue: String,
-    onValueChange: (String) -> Unit,
     expandDropDown: Boolean,
-    textFieldError: Boolean = false,
-    errorString: String = "",
-    dropDownDismissEvent: () -> Unit
+    dropDownToggle: () -> Unit,
+    selectContactMethod: (PreferredContactMethod) -> Unit
 ) {
     TextField(
         value = currentValue,
-        onValueChange = { onValueChange(it) },
+        onValueChange = {},
         placeholder = { Text(text = stringResource(R.string.prefContactMethod)) },
         trailingIcon = {
-            IconButton(onClick = {}) {
+            IconButton(onClick = { dropDownToggle() }) {
                 Icon(
                     imageVector = if (expandDropDown) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
                     contentDescription = ""
                 )
+                DropdownMenu(expanded = expandDropDown, onDismissRequest = { dropDownToggle() }) {
+                    for (method in PreferredContactMethod.entries) {
+                        if (method != PreferredContactMethod.NONE) {
+                            DropdownMenuItem(
+                                text = { Text(text = method.name) },
+                                onClick = {
+                                    selectContactMethod(method)
+                                    dropDownToggle()
+                                }
+                            )
+                        }
+                    }
+                }
             }
         },
-        isError = textFieldError,
-        supportingText = {
-            if (textFieldError) {
-                Text(
-                    text = errorString,
-                    color = MaterialTheme.colorScheme.error, modifier = Modifier.fillMaxWidth()
-                )
-            }
-        },
+        readOnly = true,
+        singleLine = true,
         modifier = Modifier
             .clip(shape = RoundedCornerShape(size = 8.dp))
             .width(400.dp)
-            .height(80.dp)
+            .height(60.dp)
     )
-
-    DropdownMenu(expanded = expandDropDown, onDismissRequest = { dropDownDismissEvent() }) {
-        for (method in PreferredContactMethod.entries) {
-            DropdownMenuItem(text = { Text(text = method.name) }, onClick = {})
-        }
-    }
 }
 
 @Composable
 fun EmergencyContactField(
-    isExpanded: Boolean
+    isExpanded: Boolean,
+    expandableButtonClick: () -> Unit,
+    content: @Composable () -> Unit
 ) {
     val rotationState by animateFloatAsState(targetValue = if (isExpanded) 180f else 0f)
 
     Card(
         shape = RoundedCornerShape(size = 8.dp),
-        colors=CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        border= BorderStroke(width = 1.dp, color = if(isSystemInDarkTheme()) Color.White else Color.Black),
-        onClick = {},
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = BorderStroke(
+            width = 1.dp,
+            color = if (isSystemInDarkTheme()) Color.White else Color.Black
+        ),
+        onClick = { expandableButtonClick() },
         modifier = Modifier.width(400.dp)
     ) {
         Column(
@@ -198,7 +202,7 @@ fun EmergencyContactField(
                         .weight(weight = 9f)
                         .padding(15.dp)
                 )
-                IconButton(onClick = {}) {
+                IconButton(onClick = { expandableButtonClick() }) {
                     Icon(
                         imageVector = if (isExpanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
                         contentDescription = "",
@@ -212,22 +216,10 @@ fun EmergencyContactField(
             if (isExpanded) {
                 Column(
                     modifier = Modifier
-                        .padding(all = 20.dp).background(color = MaterialTheme.colorScheme.background)
+                        .padding(all = 20.dp)
+                        .background(color = MaterialTheme.colorScheme.background)
                 ) {
-                    TextInputField(
-                        currentValue = "",
-                        placeHolderText = stringResource(R.string.name),
-                        onValueChange = {},
-                        textFieldError = false,
-                        errorString = "",
-                        testingTag = TestTagNameField
-                    )
-
-                    TextInputField(
-                        currentValue = "",
-                        placeHolderText = stringResource(R.string.preferredName),
-                        onValueChange = {}
-                    )
+                    content()
                 }
             }
         }

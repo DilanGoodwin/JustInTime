@@ -13,7 +13,7 @@ class RegisterViewModel(private val useCases: UserUseCases) : ViewModel() {
     private val _state = MutableStateFlow(RegisterState())
     val state = _state.stateIn(
         viewModelScope,
-        SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
+        SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000L),
         RegisterState()
     )
 
