@@ -7,3 +7,6 @@ object LoginScreenRoute
 
 @Serializable
 object RegisterScreenRoute
+
+@Serializable
+object UserDetailsRoute

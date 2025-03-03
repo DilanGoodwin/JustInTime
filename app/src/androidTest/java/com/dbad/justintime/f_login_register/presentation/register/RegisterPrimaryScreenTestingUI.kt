@@ -116,7 +116,7 @@ class RegisterPrimaryScreenTestingUI {
     }
 
     @Test
-    fun checkRegisterButton() = runTest { //TODO not implemented
+    fun checkRegisterButton() = runTest {
         testRule.onNodeWithTag(testTag = TestTagEmailField)
             .performTextReplacement(text = validEmail)
         testRule.onNodeWithTag(testTag = TestTagPasswordField)
@@ -126,7 +126,7 @@ class RegisterPrimaryScreenTestingUI {
 
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
             .performClick()
-        testRule.onNodeWithText(text = testRule.activity.getString(R.string.next))
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.emergencyContact))
             .assertIsDisplayed()
     }
 
