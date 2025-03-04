@@ -4,5 +4,6 @@ data class UserUseCases(
     val getUser: GetUser,
     val upsertUser: UpsertUser,
     val validateEmail: ValidateEmail,
-    val validatePassword: ValidatePassword
+    val validatePassword: ValidatePassword,
+    val validatePhoneNumber: ValidatePhoneNumber
 )

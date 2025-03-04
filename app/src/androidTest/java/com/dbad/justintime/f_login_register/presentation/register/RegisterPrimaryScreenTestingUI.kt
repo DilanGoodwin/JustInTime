@@ -21,6 +21,7 @@ import com.dbad.justintime.f_login_register.domain.use_case.UpsertUser
 import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
 import com.dbad.justintime.f_login_register.domain.use_case.ValidateEmail
 import com.dbad.justintime.f_login_register.domain.use_case.ValidatePassword
+import com.dbad.justintime.f_login_register.domain.use_case.ValidatePhoneNumber
 import com.dbad.justintime.f_login_register.presentation.LoginTestingNavController
 import com.dbad.justintime.util.emailValidation
 import com.dbad.justintime.util.passwordMatchValidation
@@ -52,7 +53,8 @@ class RegisterPrimaryScreenTestingUI {
             getUser = GetUser(repository = userRepo),
             upsertUser = UpsertUser(repository = userRepo),
             validateEmail = ValidateEmail(),
-            validatePassword = ValidatePassword()
+            validatePassword = ValidatePassword(),
+            validatePhoneNumber = ValidatePhoneNumber()
         )
 
         testRule.setContent { LoginTestingNavController(useCases = useCases) }

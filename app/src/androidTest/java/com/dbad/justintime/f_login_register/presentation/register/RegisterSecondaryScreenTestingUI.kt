@@ -8,6 +8,7 @@ import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextReplacement
 import com.dbad.justintime.R
 import com.dbad.justintime.core.presentation.util.TestTagEmailField
@@ -25,6 +26,7 @@ import com.dbad.justintime.f_login_register.domain.use_case.UpsertUser
 import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
 import com.dbad.justintime.f_login_register.domain.use_case.ValidateEmail
 import com.dbad.justintime.f_login_register.domain.use_case.ValidatePassword
+import com.dbad.justintime.f_login_register.domain.use_case.ValidatePhoneNumber
 import com.dbad.justintime.f_login_register.presentation.LoginTestingNavController
 import com.dbad.justintime.util.EmergencyContactAreaTests
 import com.dbad.justintime.util.EmergencyContactAreaTests.Companion.fillInEmergencyContact
@@ -61,7 +63,8 @@ class RegisterSecondaryScreenTestingUI {
             getUser = GetUser(repository = userRepo),
             upsertUser = UpsertUser(repository = userRepo),
             validateEmail = ValidateEmail(),
-            validatePassword = ValidatePassword()
+            validatePassword = ValidatePassword(),
+            validatePhoneNumber = ValidatePhoneNumber()
         )
 
         testRule.setContent { LoginTestingNavController(useCases = useCases) }
@@ -105,6 +108,10 @@ class RegisterSecondaryScreenTestingUI {
             phone = validPhoneNumb,
             email = validEmail
         )
+
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.cancel))
+            .performScrollTo()
+
         phoneNumberValidation(
             testRule = testRule,
             phoneField = testRule.onAllNodesWithTag(testTag = TestTagPhoneNumberField).onFirst(),

@@ -107,7 +107,19 @@ class UserDetailsViewModel(private val useCases: UserUseCases) : ViewModel() {
         _state.update { it.copy(showEmergencyContactEmailError = error) }
     }
 
-    private fun showPhoneError() {}
+    private fun showPhoneError() {
+        var error = true
+        if (useCases.validatePhoneNumber(_state.value.phoneNumber)) error = false
+        _state.update { it.copy(showPhoneNumbFieldError = error) }
+    }
 
-    private fun showEmergencyPhoneError() {}
+    private fun showEmergencyPhoneError() {
+        var error = true
+        if (useCases.validatePhoneNumber(_state.value.emergencyContactPhone)) {
+            error = false
+        } else {
+            _state.update { it.copy(emergencyContactAreaExpanded = true) }
+        }
+        _state.update { it.copy(showEmergencyContactPhoneError = error) }
+    }
 }
