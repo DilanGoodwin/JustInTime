@@ -15,15 +15,6 @@ class UsersRepositoryImplementation(private val dao: UsersDao) : UserRepository 
         dao.upsertUser(user = user)
     }
 
-    override suspend fun getEmergencyContact(emergencyContact: EmergencyContact): EmergencyContact {
-        return dao.getEmergencyContact(
-            name = emergencyContact.name,
-            email = emergencyContact.email,
-            phone = emergencyContact.phone,
-            relation = emergencyContact.relation.name
-        )
-    }
-
     override suspend fun getEmergencyContactKey(emergencyContact: EmergencyContact): Int {
         return dao.getEmergencyContactKey(
             name = emergencyContact.name, email = emergencyContact.email,
@@ -34,10 +25,6 @@ class UsersRepositoryImplementation(private val dao: UsersDao) : UserRepository 
 
     override suspend fun upsertEmergencyContact(contact: EmergencyContact) {
         dao.upsertEmergencyContact(contact = contact)
-    }
-
-    override suspend fun getEmployee(employee: Employee): Employee {
-        return dao.getEmployee(name = employee.name, phone = employee.phone)
     }
 
     override suspend fun getEmployeeKey(employee: Employee): Int {

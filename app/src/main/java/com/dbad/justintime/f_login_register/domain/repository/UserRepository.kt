@@ -8,11 +8,9 @@ interface UserRepository {
     suspend fun getUser(user: User): User
     suspend fun upsertUser(user: User)
 
-    suspend fun getEmergencyContact(emergencyContact: EmergencyContact): EmergencyContact
     suspend fun getEmergencyContactKey(emergencyContact: EmergencyContact): Int
     suspend fun upsertEmergencyContact(contact: EmergencyContact)
-
-    suspend fun getEmployee(employee: Employee): Employee
+    
     suspend fun getEmployeeKey(employee: Employee): Int
     suspend fun upsertEmployee(employee: Employee)
 }
