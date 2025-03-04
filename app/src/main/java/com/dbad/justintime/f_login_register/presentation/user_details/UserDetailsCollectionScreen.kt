@@ -38,6 +38,8 @@ fun ExtraRegistrationDetails(
     viewModel: UserDetailsViewModel,
     onCancelUserDetails: () -> Unit,
     onRegister: () -> Unit,
+    email: String,
+    password: String,
     modifier: Modifier = Modifier
 ) {
     val state by viewModel.state.collectAsState()
@@ -45,6 +47,8 @@ fun ExtraRegistrationDetails(
     val event = viewModel::onEvent
     event(UserDetailsEvents.SetCancelEvent(onCancelUserDetails))
     event(UserDetailsEvents.SetRegisterEvent(onRegister))
+    event(UserDetailsEvents.SetEmail(email))
+    event(UserDetailsEvents.SetPassword(password))
 
     ExtraRegistrationDetails(state = state, onEvent = event, modifier = modifier)
 }

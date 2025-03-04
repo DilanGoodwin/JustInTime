@@ -12,6 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.dbad.justintime.f_login_register.presentation.login.LoginScreen
 import com.dbad.justintime.f_login_register.presentation.login.LoginViewModel
 import com.dbad.justintime.f_login_register.presentation.register.RegisterScreen
@@ -46,25 +47,35 @@ class MainActivity : ComponentActivity() {
 
                             navigation<RegistrationNav>(startDestination = RegisterScreen) {
                                 composable<RegisterScreen> {
+                                    val registrationViewModel =
+                                        RegisterViewModel(useCases = useCases)
                                     RegisterScreen(
-                                        viewModel = RegisterViewModel(useCases = useCases),
+                                        viewModel = registrationViewModel,
                                         onCancelRegistration = {
                                             navController.navigate(route = LoginScreen)
                                         },
                                         onRegistration = {
-                                            navController.navigate(route = UserDetailsInformation)
+                                            navController.navigate(
+                                                route = UserDetailsInformation(
+                                                    registrationViewModel.state.value.email,
+                                                    registrationViewModel.state.value.password
+                                                )
+                                            )
                                         },
                                         modifier = Modifier.padding(paddingValues = innerPadding)
                                     )
                                 }
 
                                 composable<UserDetailsInformation> {
+                                    val args = it.toRoute<UserDetailsInformation>()
                                     ExtraRegistrationDetails(
                                         viewModel = UserDetailsViewModel(useCases = useCases),
                                         onCancelUserDetails = {
                                             navController.navigate(route = LoginNav)
                                         },
                                         onRegister = {}, //TODO next navifation screen
+                                        email = args.email,
+                                        password = args.password,
                                         modifier = Modifier.padding(
                                             paddingValues = innerPadding
                                         )
@@ -94,4 +105,4 @@ object LoginScreen
 object RegisterScreen
 
 @Serializable
-object UserDetailsInformation
+data class UserDetailsInformation(val email: String, val password: String)

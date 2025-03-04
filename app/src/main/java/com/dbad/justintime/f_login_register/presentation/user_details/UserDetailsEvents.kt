@@ -30,4 +30,8 @@ sealed interface UserDetailsEvents {
     // Buttons Click Event
     data object CancelEvent : UserDetailsEvents
     data object RegisterEvent : UserDetailsEvents
+
+    // Saving Passed Data
+    data class SetEmail(val email: String) : UserDetailsEvents
+    data class SetPassword(val password: String) : UserDetailsEvents
 }

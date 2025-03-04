@@ -3,11 +3,16 @@ package com.dbad.justintime.f_login_register.presentation.user_details
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dbad.justintime.f_login_register.domain.model.EmergencyContact
+import com.dbad.justintime.f_login_register.domain.model.Employee
+import com.dbad.justintime.f_login_register.domain.model.User
+import com.dbad.justintime.f_login_register.domain.model.util.PreferredContactMethod
 import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.runBlocking
 
 class UserDetailsViewModel(private val useCases: UserUseCases) : ViewModel() {
     private val _state = MutableStateFlow(UserDetailsState())
@@ -63,7 +68,7 @@ class UserDetailsViewModel(private val useCases: UserUseCases) : ViewModel() {
                 _state.update {
                     it.copy(emergencyContactEmail = event.email)
                 }
-                showEmailError()
+                showEmergencyEmailError()
             }
 
             is UserDetailsEvents.SetEmergencyContactPrefContactMethod -> _state.update {
@@ -88,16 +93,32 @@ class UserDetailsViewModel(private val useCases: UserUseCases) : ViewModel() {
             UserDetailsEvents.RegisterEvent -> {
                 if (_state.value.name.isBlank()) _state.update { it.copy(showNameFieldError = true) }
                 if (_state.value.emergencyContactName.isBlank()) _state.update {
-                    it.copy(showEmergencyContactNameError = true)
+                    it.copy(showEmergencyContactNameFieldError = true)
                 }
                 showPhoneError()
-                showEmailError()
+                showEmergencyEmailError()
                 showEmergencyPhoneError()
+
+                if (!(_state.value.showNameFieldError ||
+                            _state.value.showEmergencyContactNameFieldError ||
+                            _state.value.showPhoneNumbFieldError ||
+                            _state.value.showEmergencyContactPhoneError ||
+                            _state.value.showEmergencyContactEmailError)
+                ) runBlocking { createUser() }
             }
+
+            is UserDetailsEvents.SetEmail -> _state.update { it.copy(email = event.email) }
+            is UserDetailsEvents.SetPassword -> _state.update { it.copy(password = event.password) }
         }
     }
 
-    private fun showEmailError() {
+    private fun showPhoneError() {
+        var error = true
+        if (useCases.validatePhoneNumber(_state.value.phoneNumber)) error = false
+        _state.update { it.copy(showPhoneNumbFieldError = error) }
+    }
+
+    private fun showEmergencyEmailError() {
         var error = true
         if (useCases.validateEmail(_state.value.emergencyContactEmail)) {
             error = false
@@ -105,12 +126,6 @@ class UserDetailsViewModel(private val useCases: UserUseCases) : ViewModel() {
             _state.update { it.copy(emergencyContactAreaExpanded = true) }
         }
         _state.update { it.copy(showEmergencyContactEmailError = error) }
-    }
-
-    private fun showPhoneError() {
-        var error = true
-        if (useCases.validatePhoneNumber(_state.value.phoneNumber)) error = false
-        _state.update { it.copy(showPhoneNumbFieldError = error) }
     }
 
     private fun showEmergencyPhoneError() {
@@ -121,5 +136,48 @@ class UserDetailsViewModel(private val useCases: UserUseCases) : ViewModel() {
             _state.update { it.copy(emergencyContactAreaExpanded = true) }
         }
         _state.update { it.copy(showEmergencyContactPhoneError = error) }
+    }
+
+    private suspend fun createUser(): Int {
+        // Create emergency contact
+        val emergencyContact = EmergencyContact(
+            name = _state.value.emergencyContactName,
+            preferredName = _state.value.emergencyContactPrefName,
+            email = _state.value.emergencyContactEmail,
+            phone = _state.value.emergencyContactPhone,
+            preferredContactMethod = if (_state.value.emergencyContactPrefContactMethod != PreferredContactMethod.NONE) {
+                _state.value.emergencyContactPrefContactMethod
+            } else {
+                PreferredContactMethod.PHONE
+            }
+            // relation
+        )
+
+        useCases.upsertEmergencyContact(emergencyContact = emergencyContact)
+
+        val employee = Employee(
+            name = _state.value.name,
+            preferredName = _state.value.preferredName,
+            phone = _state.value.phoneNumber,
+            preferredContactMethod = if (_state.value.prefContactMethod != PreferredContactMethod.NONE) {
+                _state.value.prefContactMethod
+            } else {
+                PreferredContactMethod.PHONE
+            },
+            // DOB
+            emergencyContact = useCases.getEmergencyContactKey(emergencyContact = emergencyContact)
+        )
+
+        useCases.upsertEmployee(employee = employee)
+        val employeeKey = useCases.getEmployeeKey(employee = employee)
+
+        val user = User(
+            email = _state.value.email,
+            password = _state.value.password,
+            employee = employeeKey
+        )
+
+        useCases.upsertUser(user = user)
+        return employeeKey
     }
 }

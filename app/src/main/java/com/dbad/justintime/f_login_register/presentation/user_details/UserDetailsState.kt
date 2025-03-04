@@ -25,15 +25,15 @@ data class UserDetailsState(
     val showPhoneNumbFieldError: Boolean = false,
 
     // Emergency Contact Error Values
-    val showEmergencyContactNameError: Boolean = false,
+    val showEmergencyContactNameFieldError: Boolean = false,
     val showEmergencyContactPhoneError: Boolean = false,
     val showEmergencyContactEmailError: Boolean = false,
-
-    val showEmergencyContactNameFieldError: Boolean = false,
 
     // Expandable Fields
     val prefContDropDownExpanded: Boolean = false,
     val emergencyContactAreaExpanded: Boolean = false,
+    val emergencyContactPrefContDropDownExpand: Boolean = false,
 
-    val emergencyContactPrefContDropDownExpand: Boolean = false
+    val email: String = "",
+    val password: String = ""
 )
