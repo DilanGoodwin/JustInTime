@@ -30,6 +30,10 @@ class RepositoryUseCaseTests {
         useCases = UserUseCases(
             getUser = GetUser(repository = userRepo),
             upsertUser = UpsertUser(repository = userRepo),
+            getEmployeeKey = GetEmployeeKey(repository = userRepo),
+            upsertEmployee = UpsertEmployee(repository = userRepo),
+            getEmergencyContactKey = GetEmergencyContactKey(repository = userRepo),
+            upsertEmergencyContact = UpsertEmergencyContact(repository = userRepo),
             validateEmail = ValidateEmail(),
             validatePassword = ValidatePassword(),
             validatePhoneNumber = ValidatePhoneNumber()
