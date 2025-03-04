@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -15,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.dbad.justintime.R
 import com.dbad.justintime.core.presentation.util.TestTagEmailField
@@ -63,6 +65,7 @@ fun RegisterScreen(
                     TextInputField(
                         currentValue = state.email,
                         placeHolderText = stringResource(R.string.email),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                         onValueChange = { onEvent(RegisterEvent.SetEmail(it)) },
                         textFieldError = state.showEmailError,
                         errorString = stringResource(R.string.invalidEmailError),
@@ -75,6 +78,7 @@ fun RegisterScreen(
                         currentValue = state.password,
                         placeHolderText = stringResource(R.string.password),
                         showPassword = state.showPassword,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                         onValueChange = { onEvent(RegisterEvent.SetPassword(it)) },
                         visiblePassword = { onEvent(RegisterEvent.ToggleViewPassword) },
                         textFieldError = state.showPasswordError,
@@ -88,6 +92,7 @@ fun RegisterScreen(
                         currentValue = state.passwordMatch,
                         placeHolderText = stringResource(R.string.rePassword),
                         showPassword = state.showPasswordMatch,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                         onValueChange = { onEvent(RegisterEvent.SetPasswordMatch(it)) },
                         visiblePassword = { onEvent(RegisterEvent.ToggleViewPasswordMatch) },
                         textFieldError = state.showMatchPasswordError,

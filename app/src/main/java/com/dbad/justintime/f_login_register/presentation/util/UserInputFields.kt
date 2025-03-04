@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
@@ -50,6 +51,7 @@ import com.dbad.justintime.f_login_register.domain.model.util.PreferredContactMe
 fun TextInputField(
     currentValue: String,
     placeHolderText: String,
+    keyboardOptions: KeyboardOptions = KeyboardOptions(),
     textFieldError: Boolean = false,
     errorString: String = "",
     onValueChange: (String) -> Unit,
@@ -69,6 +71,7 @@ fun TextInputField(
                 )
             }
         },
+        keyboardOptions = keyboardOptions,
         singleLine = true,
         modifier = Modifier
             .clip(shape = RoundedCornerShape(size = 8.dp))
@@ -83,6 +86,7 @@ fun PasswordField(
     currentValue: String,
     placeHolderText: String,
     showPassword: Boolean,
+    keyboardOptions: KeyboardOptions = KeyboardOptions(),
     textFieldError: Boolean,
     errorString: String,
     onValueChange: (String) -> Unit,
@@ -115,6 +119,7 @@ fun PasswordField(
         } else {
             PasswordVisualTransformation()
         },
+        keyboardOptions = keyboardOptions,
         isError = textFieldError,
         supportingText = {
             if (textFieldError) {

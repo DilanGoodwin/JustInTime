@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -15,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.dbad.justintime.R
 import com.dbad.justintime.core.presentation.util.TestTagEmailField
@@ -60,7 +63,12 @@ fun ExtraRegistrationDetails(
             }
 
             // User Text Input Area
-            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .imePadding()
+            ) {
                 Column(modifier = Modifier.padding(20.dp)) {
 
                     //Name Field
@@ -84,6 +92,7 @@ fun ExtraRegistrationDetails(
                     TextInputField(
                         currentValue = state.phoneNumber,
                         placeHolderText = stringResource(R.string.phoneNumb),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                         onValueChange = { onEvent(UserDetailsEvents.SetPhoneNumb(phone = it)) },
                         textFieldError = state.showPhoneNumbFieldError,
                         errorString = stringResource(R.string.invalidPhoneNumb),
@@ -154,6 +163,7 @@ fun EmergencyContactDetails(
         TextInputField(
             currentValue = state.emergencyContactPhone,
             placeHolderText = stringResource(R.string.phoneNumb),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
             textFieldError = state.showEmergencyContactPhoneError,
             errorString = stringResource(R.string.invalidPhoneNumb),
             onValueChange = {
@@ -166,6 +176,7 @@ fun EmergencyContactDetails(
         TextInputField(
             currentValue = state.emergencyContactEmail,
             placeHolderText = stringResource(R.string.email),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             textFieldError = state.showEmergencyContactEmailError,
             errorString = stringResource(R.string.invalidEmailError),
             onValueChange = {
