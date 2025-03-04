@@ -8,6 +8,7 @@
     <string name="name">Name</string>
     <string name="preferredName">Preferred Name</string>
     <string name="phoneNumb">Phone Number</string>
+    <string name="phone">Phone</string>
     <string name="prefContactMethod">Preferred Contact Method</string>
     <string name="emergencyContact">Emergency Contact</string>
 

@@ -3,12 +3,18 @@ package com.dbad.justintime.util
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.filterToOne
 import androidx.compose.ui.test.hasParent
 import androidx.compose.ui.test.hasTestTag
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
+import androidx.compose.ui.test.onAllNodesWithTag
+import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextReplacement
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import com.dbad.justintime.R
@@ -27,30 +33,30 @@ class EmergencyContactAreaTests(
 
     fun checkExpandedEmergencyContactValuesDisplayed() {
         testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).performClick()
-        testRule.onNodeWithText(text = testRule.activity.getString(R.string.name))
-            .assert(matcher = hasParent(matcher = hasTestTag(testTag = TestTagEmergencyContactExpandableField)))
+        testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).onChildren()
+            .filterToOne(matcher = hasText(text = testRule.activity.getString(R.string.name)))
             .assertIsDisplayed()
-        testRule.onNodeWithText(text = testRule.activity.getString(R.string.preferredName))
-            .assert(matcher = hasParent(matcher = hasTestTag(testTag = TestTagEmergencyContactExpandableField)))
+        testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).onChildren()
+            .filterToOne(matcher = hasText(text = testRule.activity.getString(R.string.preferredName)))
             .assertIsDisplayed()
-        testRule.onNodeWithText(text = testRule.activity.getString(R.string.phoneNumb))
-            .assert(matcher = hasParent(matcher = hasTestTag(testTag = TestTagEmergencyContactExpandableField)))
+        testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).onChildren()
+            .filterToOne(matcher = hasText(text = testRule.activity.getString(R.string.phoneNumb)))
             .assertIsDisplayed()
-        testRule.onNodeWithText(text = testRule.activity.getString(R.string.email))
-            .assert(matcher = hasParent(matcher = hasTestTag(testTag = TestTagEmergencyContactExpandableField)))
+        testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).onChildren()
+            .filterToOne(matcher = hasText(text = testRule.activity.getString(R.string.email)))
             .assertIsDisplayed()
-        testRule.onNodeWithTag(testTag = TestTagPreferredContactMethodField)
-            .assert(matcher = hasParent(matcher = hasTestTag(testTag = TestTagEmergencyContactExpandableField)))
+        testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).onChildren()
+            .filterToOne(matcher = hasText(text = testRule.activity.getString(R.string.prefContactMethod)))
             .assertIsDisplayed()
     }
 
-    fun checkEmergencyContactPhoneErrors() {
+    fun checkEmergencyContactPhoneErrors() {//TODO
         fillInEmergencyContact(testRule = testRule, name = name)
         phoneNumberValidation(
             testRule = testRule,
-            phoneField = testRule.onNodeWithTag(testTag = TestTagPhoneNumberField)
-                .assert(matcher = hasParent(matcher = hasTestTag(testTag = TestTagEmergencyContactExpandableField))),
-            buttonToPress = testRule.activity.getString(R.string.next)
+            phoneField = testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField)
+                .onChildren().filterToOne(matcher = hasTestTag(testTag = TestTagPhoneNumberField)),
+            buttonToPress = testRule.activity.getString(R.string.register)
         )
     }
 
@@ -61,7 +67,7 @@ class EmergencyContactAreaTests(
             emailField = testRule.onNodeWithTag(testTag = TestTagEmailField)
                 .assert(matcher = hasParent(matcher = hasTestTag(testTag = TestTagEmergencyContactExpandableField))),
             expectedError = testRule.activity.getString(R.string.invalidEmailError),
-            buttonToPress = testRule.activity.getString(R.string.next)
+            buttonToPress = testRule.activity.getString(R.string.register)
         )
     }
 
@@ -72,9 +78,17 @@ class EmergencyContactAreaTests(
             phone = validPhoneNumb,
             email = validEmail
         )
+
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.cancel))
+            .performScrollTo()
+
         contactMethodValidation(
             testRule = testRule,
-            parentNode = hasParent(matcher = hasTestTag(testTag = TestTagPreferredContactMethodField))
+            contactField = testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField)
+                .onChildren()
+                .filterToOne(matcher = hasText(text = testRule.activity.getString(R.string.prefContactMethod)))
+                .onChildren()
+                .filterToOne(matcher = hasTestTag(testTag = TestTagPreferredContactMethodField))
         )
     }
 
@@ -85,14 +99,15 @@ class EmergencyContactAreaTests(
             phone: String = "",
             email: String = ""
         ) {
-            testRule.onNodeWithText(text = testRule.activity.getString(R.string.name))
-                .assert(matcher = hasParent(matcher = hasTestTag(testTag = TestTagEmergencyContactExpandableField)))
+            testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).performClick()
+            testRule.onAllNodesWithText(text = testRule.activity.getString(R.string.name))
+                .filterToOne(matcher = hasParent(matcher = hasTestTag(testTag = TestTagEmergencyContactExpandableField)))
                 .performTextReplacement(text = name)
-            testRule.onNodeWithTag(testTag = TestTagPhoneNumberField)
-                .assert(matcher = hasParent(matcher = hasTestTag(testTag = TestTagEmergencyContactExpandableField)))
+            testRule.onAllNodesWithTag(testTag = TestTagPhoneNumberField)
+                .filterToOne(matcher = hasParent(matcher = hasTestTag(testTag = TestTagEmergencyContactExpandableField)))
                 .performTextReplacement(text = phone)
-            testRule.onNodeWithTag(testTag = TestTagEmailField)
-                .assert(matcher = hasParent(matcher = hasTestTag(testTag = TestTagEmergencyContactExpandableField)))
+            testRule.onAllNodesWithTag(testTag = TestTagEmailField)
+                .filterToOne(matcher = hasParent(matcher = hasTestTag(testTag = TestTagEmergencyContactExpandableField)))
                 .performTextReplacement(text = email)
         }
     }

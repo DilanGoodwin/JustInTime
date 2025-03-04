@@ -2,17 +2,30 @@ package com.dbad.justintime.f_login_register.presentation.register
 
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.hasParent
-import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
+import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextReplacement
 import com.dbad.justintime.R
+import com.dbad.justintime.core.presentation.util.TestTagEmailField
 import com.dbad.justintime.core.presentation.util.TestTagEmergencyContactExpandableField
 import com.dbad.justintime.core.presentation.util.TestTagNameField
+import com.dbad.justintime.core.presentation.util.TestTagPasswordField
+import com.dbad.justintime.core.presentation.util.TestTagPasswordMatchField
 import com.dbad.justintime.core.presentation.util.TestTagPhoneNumberField
 import com.dbad.justintime.core.presentation.util.TestTagPreferredContactMethodField
+import com.dbad.justintime.f_login_register.data.UsersRepositoryTestingImplementation
+import com.dbad.justintime.f_login_register.domain.model.User
+import com.dbad.justintime.f_login_register.domain.repository.UserRepository
+import com.dbad.justintime.f_login_register.domain.use_case.GetUser
+import com.dbad.justintime.f_login_register.domain.use_case.UpsertUser
+import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
+import com.dbad.justintime.f_login_register.domain.use_case.ValidateEmail
+import com.dbad.justintime.f_login_register.domain.use_case.ValidatePassword
+import com.dbad.justintime.f_login_register.presentation.LoginTestingNavController
 import com.dbad.justintime.util.EmergencyContactAreaTests
 import com.dbad.justintime.util.EmergencyContactAreaTests.Companion.fillInEmergencyContact
 import com.dbad.justintime.util.contactMethodValidation
@@ -29,13 +42,39 @@ class RegisterSecondaryScreenTestingUI {
 
     private val name: String = "Daniel"
     private val validEmail: String = "daniel@justintime.com"
+    private val validPassword: String = "MyP@ssw0rds"
     private val validPhoneNumb: String = "07665599200"
     private val emergencyContactTests: EmergencyContactAreaTests =
         EmergencyContactAreaTests(testRule = testRule)
 
+    private lateinit var useCases: UserUseCases
+    private val users: List<User> =
+        listOf(
+            User(uid = 0, email = validEmail, password = validPassword),
+            User(uid = 1, email = "test.test@test.com", password = validPassword)
+        )
+
     @Before
     fun reset() = runTest {
-        testRule.setContent {}
+        val userRepo: UserRepository = UsersRepositoryTestingImplementation(users = users)
+        useCases = UserUseCases(
+            getUser = GetUser(repository = userRepo),
+            upsertUser = UpsertUser(repository = userRepo),
+            validateEmail = ValidateEmail(),
+            validatePassword = ValidatePassword()
+        )
+
+        testRule.setContent { LoginTestingNavController(useCases = useCases) }
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
+            .performClick()
+        testRule.onNodeWithTag(testTag = TestTagEmailField)
+            .performTextReplacement(text = validEmail)
+        testRule.onNodeWithTag(testTag = TestTagPasswordField)
+            .performTextReplacement(text = validPassword)
+        testRule.onNodeWithTag(testTag = TestTagPasswordMatchField)
+            .performTextReplacement(text = validPassword)
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
+            .performClick()
     }
 
     @Test
@@ -46,16 +85,19 @@ class RegisterSecondaryScreenTestingUI {
             .assertIsDisplayed()
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.phoneNumb))
             .assertIsDisplayed()
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.prefContactMethod))
+            .assertIsDisplayed()
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.emergencyContact))
+            .assertIsDisplayed()
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.cancel))
             .assertIsDisplayed()
-        testRule.onNodeWithText(text = testRule.activity.getString(R.string.next))
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
             .assertIsDisplayed()
-        testRule.onNodeWithTag(testTag = TestTagPreferredContactMethodField).assertIsDisplayed()
         testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).assertIsDisplayed()
     }
 
     @Test
-    fun checkPhoneNumberErrors() = runTest {
+    fun checkPhoneNumberErrors() = runTest {//TODO phone number validation not completed
         testRule.onNodeWithTag(testTag = TestTagNameField).performTextReplacement(text = name)
         fillInEmergencyContact(
             testRule = testRule,
@@ -65,8 +107,8 @@ class RegisterSecondaryScreenTestingUI {
         )
         phoneNumberValidation(
             testRule = testRule,
-            phoneField = testRule.onNodeWithTag(testTag = TestTagPhoneNumberField),
-            buttonToPress = testRule.activity.getString(R.string.next)
+            phoneField = testRule.onAllNodesWithTag(testTag = TestTagPhoneNumberField).onFirst(),
+            buttonToPress = testRule.activity.getString(R.string.register)
         )
     }
 
@@ -77,7 +119,7 @@ class RegisterSecondaryScreenTestingUI {
             .performTextReplacement(text = validPhoneNumb)
         contactMethodValidation(
             testRule = testRule,
-            parentNode = hasParent(matcher = hasTestTag(testTag = TestTagPreferredContactMethodField))
+            contactField = testRule.onNodeWithTag(testTag = TestTagPreferredContactMethodField)
         )
     }
 
@@ -87,7 +129,7 @@ class RegisterSecondaryScreenTestingUI {
     }
 
     @Test
-    fun emergencyContactAreaPhoneErrors() = runTest {
+    fun emergencyContactAreaPhoneErrors() = runTest {//TODO phone number validation not completed
         emergencyContactTests.checkEmergencyContactPhoneErrors()
     }
 

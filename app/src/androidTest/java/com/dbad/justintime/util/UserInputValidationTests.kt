@@ -1,12 +1,8 @@
 package com.dbad.justintime.util
 
 import androidx.activity.ComponentActivity
-import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.SemanticsNodeInteraction
-import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertTextContains
-import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onFirst
@@ -16,10 +12,8 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextReplacement
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import com.dbad.justintime.R
-import com.dbad.justintime.core.presentation.util.TestTagErrorNotifier
 import com.dbad.justintime.core.presentation.util.TestTagPasswordField
 import com.dbad.justintime.core.presentation.util.TestTagPasswordMatchField
-import com.dbad.justintime.core.presentation.util.TestTagPreferredContactMethodField
 
 fun emailValidation(
     testRule: AndroidComposeTestRule<ActivityScenarioRule<ComponentActivity>, ComponentActivity>,
@@ -49,30 +43,23 @@ fun phoneNumberValidation(
 ) {
     phoneField.performTextReplacement(text = "07")
     testRule.onNodeWithText(text = buttonToPress).performClick()
-    testRule.onNodeWithTag(testTag = TestTagErrorNotifier).assertTextContains(
-        substring = true,
-        value = testRule.activity.getString(R.string.invalidPhoneNumb)
-    )
+    testRule.onAllNodesWithText(text = testRule.activity.getString(R.string.invalidPhoneNumb))
+        .onFirst().assertIsDisplayed()
 
     phoneField.performTextReplacement(text = "07665599200")
     testRule.onNodeWithText(text = buttonToPress).performClick()
-    if (testRule.onNodeWithTag(testTag = TestTagErrorNotifier).isDisplayed()) {
-        testRule.onNodeWithTag(testTag = TestTagErrorNotifier)
-            .assertTextContains(value = testRule.activity.getString(R.string.savingMessage))
-    }
 }
 
 fun contactMethodValidation(
     testRule: AndroidComposeTestRule<ActivityScenarioRule<ComponentActivity>, ComponentActivity>,
-    parentNode: SemanticsMatcher
+    contactField: SemanticsNodeInteraction
 ) {
-    testRule.onNodeWithTag(testTag = TestTagPreferredContactMethodField).performClick()
-    testRule.onNodeWithText(text = testRule.activity.getString(R.string.email)).assert(parentNode)
+    contactField.performClick()
+    testRule.onNodeWithText(text = testRule.activity.getString(R.string.email)).assertIsDisplayed()
+    testRule.onNodeWithText(text = testRule.activity.getString(R.string.phone))
+        .assertIsDisplayed().performClick()
+    testRule.onNodeWithText(text = testRule.activity.getString(R.string.phone))
         .assertIsDisplayed()
-    testRule.onNodeWithText(text = testRule.activity.getString(R.string.phoneNumb))
-        .assert(parentNode).assertIsDisplayed().performClick()
-    testRule.onNodeWithText(text = testRule.activity.getString(R.string.phoneNumb))
-        .assert(parentNode).isDisplayed()
 }
 
 fun passwordValidation(

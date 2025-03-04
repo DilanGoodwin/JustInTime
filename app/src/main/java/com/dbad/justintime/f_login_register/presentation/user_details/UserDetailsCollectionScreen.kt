@@ -95,7 +95,7 @@ fun ExtraRegistrationDetails(
                         currentValue = if (state.prefContactMethod == PreferredContactMethod.NONE) {
                             ""
                         } else {
-                            state.prefContactMethod.name
+                            stringResource(state.prefContactMethod.stringVal)
                         },
                         expandDropDown = state.prefContDropDownExpanded,
                         dropDownToggle = { onEvent(UserDetailsEvents.TogglePrefContactDropDown) },
@@ -179,7 +179,7 @@ fun EmergencyContactDetails(
             currentValue = if (state.emergencyContactPrefContactMethod == PreferredContactMethod.NONE) {
                 ""
             } else {
-                state.emergencyContactPrefContactMethod.name
+                stringResource(state.emergencyContactPrefContactMethod.stringVal)
             },
             expandDropDown = state.emergencyContactPrefContDropDownExpand,
             dropDownToggle = { onEvent(UserDetailsEvents.ToggleEmergencyContactPrefContactDropDown) },

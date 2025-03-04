@@ -42,6 +42,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.dbad.justintime.R
+import com.dbad.justintime.core.presentation.util.TestTagEmergencyContactExpandableField
+import com.dbad.justintime.core.presentation.util.TestTagPreferredContactMethodField
 import com.dbad.justintime.f_login_register.domain.model.util.PreferredContactMethod
 
 @Composable
@@ -144,16 +146,19 @@ fun PreferredContactField(
         onValueChange = {},
         placeholder = { Text(text = stringResource(R.string.prefContactMethod)) },
         trailingIcon = {
-            IconButton(onClick = { dropDownToggle() }) {
+            IconButton(
+                onClick = { dropDownToggle() },
+                modifier = Modifier.testTag(tag = TestTagPreferredContactMethodField)
+            ) {
                 Icon(
                     imageVector = if (expandDropDown) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-                    contentDescription = ""
+                    contentDescription = "", //TODO add content description to string xml
                 )
                 DropdownMenu(expanded = expandDropDown, onDismissRequest = { dropDownToggle() }) {
                     for (method in PreferredContactMethod.entries) {
                         if (method != PreferredContactMethod.NONE) {
                             DropdownMenuItem(
-                                text = { Text(text = method.name) },
+                                text = { Text(text = stringResource(method.stringVal)) },
                                 onClick = {
                                     selectContactMethod(method)
                                     dropDownToggle()
@@ -189,7 +194,9 @@ fun EmergencyContactField(
             color = if (isSystemInDarkTheme()) Color.White else Color.Black
         ),
         onClick = { expandableButtonClick() },
-        modifier = Modifier.width(400.dp)
+        modifier = Modifier
+            .width(400.dp)
+            .testTag(tag = TestTagEmergencyContactExpandableField)
     ) {
         Column(
             modifier = Modifier
@@ -205,7 +212,7 @@ fun EmergencyContactField(
                 IconButton(onClick = { expandableButtonClick() }) {
                     Icon(
                         imageVector = if (isExpanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-                        contentDescription = "",
+                        contentDescription = "", //TODO add content description to strings xml
                         modifier = Modifier
                             .weight(weight = 1f)
                             .rotate(rotationState)
