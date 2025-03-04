@@ -1,0 +1,46 @@
+package com.dbad.justintime.f_login_register.presentation
+
+import androidx.compose.runtime.Composable
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.dbad.justintime.f_login_register.core.LoginScreenRoute
+import com.dbad.justintime.f_login_register.core.RegisterScreenRoute
+import com.dbad.justintime.f_login_register.core.UserDetailsRoute
+import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
+import com.dbad.justintime.f_login_register.presentation.login.LoginScreen
+import com.dbad.justintime.f_login_register.presentation.login.LoginViewModel
+import com.dbad.justintime.f_login_register.presentation.register.RegisterScreen
+import com.dbad.justintime.f_login_register.presentation.register.RegisterViewModel
+import com.dbad.justintime.f_login_register.presentation.user_details.ExtraRegistrationDetails
+import com.dbad.justintime.f_login_register.presentation.user_details.UserDetailsViewModel
+
+@Composable
+fun LoginTestingNavController(useCases: UserUseCases) {
+    val navControl = rememberNavController()
+
+    NavHost(navController = navControl, startDestination = LoginScreenRoute) {
+        composable<LoginScreenRoute> {
+            LoginScreen(
+                viewModel = LoginViewModel(useCases = useCases),
+                onRegistration = {
+                    navControl.navigate(route = RegisterScreenRoute)
+                }
+            )
+        }
+        composable<RegisterScreenRoute> {
+            RegisterScreen(
+                viewModel = RegisterViewModel(useCases = useCases),
+                onCancelRegistration = { navControl.navigate(route = LoginScreenRoute) },
+                onRegistration = { navControl.navigate(route = UserDetailsRoute) }
+            )
+        }
+        composable<UserDetailsRoute> {
+            ExtraRegistrationDetails(
+                viewModel = UserDetailsViewModel(useCases = useCases),
+                onCancelUserDetails = { navControl.navigate(route = LoginScreenRoute) },
+                onRegister = {}
+            )
+        }
+    }
+}
