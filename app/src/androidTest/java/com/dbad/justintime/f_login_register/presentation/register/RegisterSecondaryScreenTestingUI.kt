@@ -21,7 +21,11 @@ import com.dbad.justintime.core.presentation.util.TestTagPreferredContactMethodF
 import com.dbad.justintime.f_login_register.data.UsersRepositoryTestingImplementation
 import com.dbad.justintime.f_login_register.domain.model.User
 import com.dbad.justintime.f_login_register.domain.repository.UserRepository
+import com.dbad.justintime.f_login_register.domain.use_case.GetEmergencyContactKey
+import com.dbad.justintime.f_login_register.domain.use_case.GetEmployeeKey
 import com.dbad.justintime.f_login_register.domain.use_case.GetUser
+import com.dbad.justintime.f_login_register.domain.use_case.UpsertEmergencyContact
+import com.dbad.justintime.f_login_register.domain.use_case.UpsertEmployee
 import com.dbad.justintime.f_login_register.domain.use_case.UpsertUser
 import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
 import com.dbad.justintime.f_login_register.domain.use_case.ValidateEmail
@@ -62,6 +66,10 @@ class RegisterSecondaryScreenTestingUI {
         useCases = UserUseCases(
             getUser = GetUser(repository = userRepo),
             upsertUser = UpsertUser(repository = userRepo),
+            getEmployeeKey = GetEmployeeKey(repository = userRepo),
+            upsertEmployee = UpsertEmployee(repository = userRepo),
+            getEmergencyContactKey = GetEmergencyContactKey(repository = userRepo),
+            upsertEmergencyContact = UpsertEmergencyContact(repository = userRepo),
             validateEmail = ValidateEmail(),
             validatePassword = ValidatePassword(),
             validatePhoneNumber = ValidatePhoneNumber()
@@ -101,7 +109,6 @@ class RegisterSecondaryScreenTestingUI {
 
     @Test
     fun checkPhoneNumberErrors() = runTest {//TODO phone number validation not completed
-        testRule.onNodeWithTag(testTag = TestTagNameField).performTextReplacement(text = name)
         fillInEmergencyContact(
             testRule = testRule,
             name = name,
