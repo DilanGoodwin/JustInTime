@@ -44,6 +44,12 @@ class UserDetailsViewModel(private val useCases: UserUseCases) : ViewModel() {
                 it.copy(prefContactMethod = event.contactMethod)
             }
 
+            is UserDetailsEvents.SetDateOfBirth -> {
+                _state.update { it.copy(userDateOfBirth = event.dateOfBirth) }
+                _state.update { it.copy(showDatePicker = !_state.value.showDatePicker) }
+                showDateBirthErrors()
+            }
+
             // Emergency Contact Area Setters
             is UserDetailsEvents.SetEmergencyContactName -> {
                 if (event.name.firstOrNull { it.isDigit() } == null) _state.update {
@@ -88,6 +94,10 @@ class UserDetailsViewModel(private val useCases: UserUseCases) : ViewModel() {
                 it.copy(emergencyContactPrefContDropDownExpand = !_state.value.emergencyContactPrefContDropDownExpand)
             }
 
+            UserDetailsEvents.ToggleDatePicker -> _state.update {
+                it.copy(showDatePicker = !_state.value.showDatePicker)
+            }
+
             // Buttons
             UserDetailsEvents.CancelEvent -> _state.value.cancelEvent()
             UserDetailsEvents.RegisterEvent -> {
@@ -111,6 +121,8 @@ class UserDetailsViewModel(private val useCases: UserUseCases) : ViewModel() {
             is UserDetailsEvents.SetPassword -> _state.update { it.copy(password = event.password) }
         }
     }
+
+    private fun showDateBirthErrors() {} //TODO
 
     private fun showPhoneError() {
         var error = true

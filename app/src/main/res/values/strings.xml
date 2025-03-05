@@ -11,6 +11,7 @@
     <string name="phone">Phone</string>
     <string name="prefContactMethod">Preferred Contact Method</string>
     <string name="emergencyContact">Emergency Contact</string>
+    <string name="dateOfBirth">Date of Birth</string>
 
     <!-- Buttons -->
     <string name="login">Login</string>
@@ -39,6 +40,9 @@
 
     <!-- Phone Number Errors -->
     <string name="invalidPhoneNumb">Please enter a valid phone number</string>
+
+    <!-- Date of Birth Errors -->
+    <string name="dobError">Please Enter a Valid Date</string>
 
     <!-- Messages -->
     <string name="savingMessage">Saving Changes</string>

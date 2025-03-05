@@ -25,6 +25,7 @@ import com.dbad.justintime.core.presentation.util.TestTagNameField
 import com.dbad.justintime.core.presentation.util.TestTagPhoneNumberField
 import com.dbad.justintime.core.presentation.util.ViewingSystemThemes
 import com.dbad.justintime.f_login_register.domain.model.util.PreferredContactMethod
+import com.dbad.justintime.f_login_register.presentation.util.DateSelectorField
 import com.dbad.justintime.f_login_register.presentation.util.DualButtonFields
 import com.dbad.justintime.f_login_register.presentation.util.EmergencyContactField
 import com.dbad.justintime.f_login_register.presentation.util.JustInTimeLogoDisplay
@@ -90,6 +91,16 @@ fun ExtraRegistrationDetails(
                         currentValue = state.preferredName,
                         placeHolderText = stringResource(R.string.preferredName),
                         onValueChange = { onEvent(UserDetailsEvents.SetPrefName(name = it)) }
+                    )
+
+                    // DOB Picker
+                    DateSelectorField(
+                        currentValue = state.userDateOfBirth,
+                        placeHolderText = stringResource(R.string.dateOfBirth),
+                        showDatePicker = state.showDatePicker,
+                        toggleDatePicker = { onEvent(UserDetailsEvents.ToggleDatePicker) },
+                        dateError = state.showDatePickerError,
+                        saveSelectedDate = { onEvent(UserDetailsEvents.SetDateOfBirth(it)) }
                     )
 
                     // Phone Number Field

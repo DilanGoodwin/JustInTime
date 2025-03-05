@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Visibility
@@ -23,13 +24,16 @@ import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -42,6 +46,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Popup
 import com.dbad.justintime.R
 import com.dbad.justintime.core.presentation.util.TestTagEmergencyContactExpandableField
 import com.dbad.justintime.core.presentation.util.TestTagPreferredContactMethodField
@@ -181,6 +186,74 @@ fun PreferredContactField(
             .width(400.dp)
             .height(60.dp)
     )
+}
+
+@Composable
+fun DateSelectorField(
+    currentValue: String,
+    placeHolderText: String,
+    showDatePicker: Boolean,
+    toggleDatePicker: () -> Unit,
+    dateError: Boolean,
+    saveSelectedDate: (String) -> Unit
+) {
+    TextField(
+        value = currentValue,
+        onValueChange = {},
+        placeholder = {
+            Box(modifier = Modifier.fillMaxSize()) {
+                Text(text = placeHolderText)
+            }
+        },
+        trailingIcon = {
+            IconButton(onClick = { toggleDatePicker() }) {
+                Icon(imageVector = Icons.Default.DateRange, contentDescription = "")
+                //TODO - provide content description
+                DateSelectorDropDown(
+                    showDatePicker = showDatePicker,
+                    saveSelectedDate = saveSelectedDate
+                )
+            }
+        },
+        isError = dateError,
+        supportingText = {
+            if (dateError) {
+                Text(
+                    text = stringResource(R.string.dobError),
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        },
+        readOnly = true,
+        singleLine = true,
+        modifier = Modifier
+            .clip(shape = RoundedCornerShape(size = 8.dp))
+            .width(400.dp)
+            .height(80.dp)
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DateSelectorDropDown(
+    showDatePicker: Boolean,
+    saveSelectedDate: (String) -> Unit
+) {
+    val dateState = rememberDatePickerState()
+    if (showDatePicker) {
+        Popup(
+            onDismissRequest = { saveSelectedDate(formatDate(dateState.selectedDateMillis)) },
+            alignment = Alignment.Center
+        ) {
+            Box {
+                DatePicker(
+                    state = dateState,
+                    showModeToggle = false
+                )
+            }
+        }
+    }
 }
 
 @Composable

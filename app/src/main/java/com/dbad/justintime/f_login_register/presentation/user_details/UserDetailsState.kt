@@ -12,6 +12,7 @@ data class UserDetailsState(
     val preferredName: String = "",
     val phoneNumber: String = "",
     val prefContactMethod: PreferredContactMethod = PreferredContactMethod.NONE,
+    val userDateOfBirth: String = "",
 
     // Emergency Contact Input Fields
     val emergencyContactName: String = "",
@@ -23,6 +24,7 @@ data class UserDetailsState(
     // Error Values
     val showNameFieldError: Boolean = false,
     val showPhoneNumbFieldError: Boolean = false,
+    val showDatePickerError: Boolean = false,
 
     // Emergency Contact Error Values
     val showEmergencyContactNameFieldError: Boolean = false,
@@ -30,6 +32,7 @@ data class UserDetailsState(
     val showEmergencyContactEmailError: Boolean = false,
 
     // Expandable Fields
+    val showDatePicker: Boolean = false,
     val prefContDropDownExpanded: Boolean = false,
     val emergencyContactAreaExpanded: Boolean = false,
     val emergencyContactPrefContDropDownExpand: Boolean = false,

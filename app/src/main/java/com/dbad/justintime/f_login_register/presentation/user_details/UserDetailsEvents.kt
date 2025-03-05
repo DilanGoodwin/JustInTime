@@ -12,6 +12,7 @@ sealed interface UserDetailsEvents {
     data class SetPrefName(val name: String) : UserDetailsEvents
     data class SetPhoneNumb(val phone: String) : UserDetailsEvents
     data class SetPrefContactMethod(val contactMethod: PreferredContactMethod) : UserDetailsEvents
+    data class SetDateOfBirth(val dateOfBirth: String) : UserDetailsEvents
 
     // Emergency Contact Events
     data class SetEmergencyContactName(val name: String) : UserDetailsEvents
@@ -23,8 +24,8 @@ sealed interface UserDetailsEvents {
 
     // Expanded Toggles Events
     data object TogglePrefContactDropDown : UserDetailsEvents
+    data object ToggleDatePicker : UserDetailsEvents
     data object ToggleEmergencyContactArea : UserDetailsEvents
-
     data object ToggleEmergencyContactPrefContactDropDown : UserDetailsEvents
 
     // Buttons Click Event
