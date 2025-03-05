@@ -243,7 +243,11 @@ fun DateSelectorDropDown(
     val dateState = rememberDatePickerState()
     if (showDatePicker) {
         Popup(
-            onDismissRequest = { saveSelectedDate(formatDate(dateState.selectedDateMillis)) },
+            onDismissRequest = {
+                val saveDate =
+                    if (dateState.selectedDateMillis == null) 0 else dateState.selectedDateMillis
+                saveSelectedDate(formatDateToString(saveDate!!))
+            },
             alignment = Alignment.Center
         ) {
             Box {

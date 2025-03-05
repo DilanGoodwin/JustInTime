@@ -36,7 +36,8 @@ class RepositoryUseCaseTests {
             upsertEmergencyContact = UpsertEmergencyContact(repository = userRepo),
             validateEmail = ValidateEmail(),
             validatePassword = ValidatePassword(),
-            validatePhoneNumber = ValidatePhoneNumber()
+            validatePhoneNumber = ValidatePhoneNumber(),
+            validateDate = ValidateDate()
         )
     }
 
@@ -163,5 +164,9 @@ class RepositoryUseCaseTests {
 
         phoneNumber = "+4407665599200"
         assertTrue("", useCases.validatePhoneNumber(phone = phoneNumber))
+    }
+
+    @Test
+    fun validatingDate() {
     }
 }

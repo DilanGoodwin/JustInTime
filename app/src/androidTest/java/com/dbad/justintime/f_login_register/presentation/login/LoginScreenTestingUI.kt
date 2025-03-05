@@ -24,6 +24,7 @@ import com.dbad.justintime.f_login_register.domain.use_case.UpsertEmergencyConta
 import com.dbad.justintime.f_login_register.domain.use_case.UpsertEmployee
 import com.dbad.justintime.f_login_register.domain.use_case.UpsertUser
 import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
+import com.dbad.justintime.f_login_register.domain.use_case.ValidateDate
 import com.dbad.justintime.f_login_register.domain.use_case.ValidateEmail
 import com.dbad.justintime.f_login_register.domain.use_case.ValidatePassword
 import com.dbad.justintime.f_login_register.domain.use_case.ValidatePhoneNumber
@@ -61,7 +62,8 @@ class LoginScreenTestingUI {
             upsertEmergencyContact = UpsertEmergencyContact(repository = userRepo),
             validateEmail = ValidateEmail(),
             validatePassword = ValidatePassword(),
-            validatePhoneNumber = ValidatePhoneNumber()
+            validatePhoneNumber = ValidatePhoneNumber(),
+            validateDate = ValidateDate()
         )
 
         testRule.setContent {

@@ -9,5 +9,6 @@ data class UserUseCases(
     val upsertEmergencyContact: UpsertEmergencyContact,
     val validateEmail: ValidateEmail,
     val validatePassword: ValidatePassword,
-    val validatePhoneNumber: ValidatePhoneNumber
+    val validatePhoneNumber: ValidatePhoneNumber,
+    val validateDate: ValidateDate
 )

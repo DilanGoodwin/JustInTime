@@ -8,11 +8,13 @@ import com.dbad.justintime.f_login_register.domain.model.Employee
 import com.dbad.justintime.f_login_register.domain.model.User
 import com.dbad.justintime.f_login_register.domain.model.util.PreferredContactMethod
 import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
+import com.dbad.justintime.f_login_register.presentation.util.DATE_FORMATTER
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.runBlocking
+import java.util.Date
 
 class UserDetailsViewModel(private val useCases: UserUseCases) : ViewModel() {
     private val _state = MutableStateFlow(UserDetailsState())
@@ -47,7 +49,7 @@ class UserDetailsViewModel(private val useCases: UserUseCases) : ViewModel() {
             is UserDetailsEvents.SetDateOfBirth -> {
                 _state.update { it.copy(userDateOfBirth = event.dateOfBirth) }
                 _state.update { it.copy(showDatePicker = !_state.value.showDatePicker) }
-                showDateBirthErrors()
+                showDateErrors()
             }
 
             // Emergency Contact Area Setters
@@ -106,10 +108,12 @@ class UserDetailsViewModel(private val useCases: UserUseCases) : ViewModel() {
                     it.copy(showEmergencyContactNameFieldError = true)
                 }
                 showPhoneError()
+                showDateErrors()
                 showEmergencyEmailError()
                 showEmergencyPhoneError()
 
                 if (!(_state.value.showNameFieldError ||
+                            _state.value.showDatePickerError ||
                             _state.value.showEmergencyContactNameFieldError ||
                             _state.value.showPhoneNumbFieldError ||
                             _state.value.showEmergencyContactPhoneError ||
@@ -122,7 +126,15 @@ class UserDetailsViewModel(private val useCases: UserUseCases) : ViewModel() {
         }
     }
 
-    private fun showDateBirthErrors() {} //TODO
+    private fun showDateErrors() {
+        var error = true
+        if (useCases.validateDate(
+                currentDate = DATE_FORMATTER.format(Date()),
+                dateToCheck = _state.value.userDateOfBirth
+            )
+        ) error = false
+        _state.update { it.copy(showDatePickerError = error) }
+    }
 
     private fun showPhoneError() {
         var error = true
@@ -176,7 +188,7 @@ class UserDetailsViewModel(private val useCases: UserUseCases) : ViewModel() {
             } else {
                 PreferredContactMethod.PHONE
             },
-            // DOB
+            dateOfBirth = _state.value.userDateOfBirth,
             emergencyContact = useCases.getEmergencyContactKey(emergencyContact = emergencyContact)
         )
 

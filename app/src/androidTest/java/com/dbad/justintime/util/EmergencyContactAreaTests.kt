@@ -33,6 +33,8 @@ class EmergencyContactAreaTests(
 
     fun checkExpandedEmergencyContactValuesDisplayed() {
         testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).performClick()
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.cancel))
+            .performScrollTo()
         testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).onChildren()
             .filterToOne(matcher = hasText(text = testRule.activity.getString(R.string.name)))
             .assertIsDisplayed()
@@ -50,7 +52,7 @@ class EmergencyContactAreaTests(
             .assertIsDisplayed()
     }
 
-    fun checkEmergencyContactPhoneErrors() {//TODO
+    fun checkEmergencyContactPhoneErrors() {
         fillInEmergencyContact(testRule = testRule, name = name)
         phoneNumberValidation(
             testRule = testRule,

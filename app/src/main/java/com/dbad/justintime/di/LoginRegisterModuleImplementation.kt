@@ -11,6 +11,7 @@ import com.dbad.justintime.f_login_register.domain.use_case.UpsertEmergencyConta
 import com.dbad.justintime.f_login_register.domain.use_case.UpsertEmployee
 import com.dbad.justintime.f_login_register.domain.use_case.UpsertUser
 import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
+import com.dbad.justintime.f_login_register.domain.use_case.ValidateDate
 import com.dbad.justintime.f_login_register.domain.use_case.ValidateEmail
 import com.dbad.justintime.f_login_register.domain.use_case.ValidatePassword
 import com.dbad.justintime.f_login_register.domain.use_case.ValidatePhoneNumber
@@ -28,7 +29,8 @@ class LoginRegisterModuleImplementation(context: Context) : LoginRegisterModule 
             upsertEmergencyContact = UpsertEmergencyContact(repository = usersRepository),
             validateEmail = ValidateEmail(),
             validatePassword = ValidatePassword(),
-            validatePhoneNumber = ValidatePhoneNumber()
+            validatePhoneNumber = ValidatePhoneNumber(),
+            validateDate = ValidateDate()
         )
     }
 }
