@@ -14,6 +14,7 @@ import org.junit.Test
 
 class RepositoryUseCaseTests {
 
+    private val currentDate = "05/03/2025"
     private val validEmail = "email@email.com"
     private val validPassword = "MyP@ssw0rds"
     private lateinit var useCases: UserUseCases
@@ -100,9 +101,7 @@ class RepositoryUseCaseTests {
     fun validatingPasswords() {
         var invalidPassword = ""
         assertEquals(
-            "",
-            PasswordErrors.PASSWORD_BLANK,
-            useCases.validatePassword(password = invalidPassword)
+            "", PasswordErrors.PASSWORD_BLANK, useCases.validatePassword(password = invalidPassword)
         )
 
         invalidPassword = "SOMETHING"
@@ -142,9 +141,7 @@ class RepositoryUseCaseTests {
 
         invalidPassword = "S0m%Th1ngAnotherThing"
         assertEquals(
-            "",
-            PasswordErrors.PASSWORD_NONE,
-            useCases.validatePassword(password = invalidPassword)
+            "", PasswordErrors.PASSWORD_NONE, useCases.validatePassword(password = invalidPassword)
         )
     }
 
@@ -167,6 +164,110 @@ class RepositoryUseCaseTests {
     }
 
     @Test
-    fun validatingDate() {
+    fun validatingDate_InvalidDateValues() {
+        var invalidDateString = ""
+        assertFalse(
+            useCases.validateDate(
+                currentDate = currentDate, dateToCheck = invalidDateString
+            )
+        )
+        assertFalse(
+            useCases.validateDate(
+                currentDate = invalidDateString, dateToCheck = currentDate
+            )
+        )
+
+        invalidDateString = "03/03"
+        assertFalse(
+            useCases.validateDate(
+                currentDate = currentDate, dateToCheck = invalidDateString
+            )
+        )
+        assertFalse(
+            useCases.validateDate(
+                currentDate = invalidDateString, dateToCheck = currentDate
+            )
+        )
+
+        invalidDateString = "00/03/2009"
+        assertFalse(
+            useCases.validateDate(
+                currentDate = currentDate, dateToCheck = invalidDateString
+            )
+        )
+        assertFalse(
+            useCases.validateDate(
+                currentDate = invalidDateString, dateToCheck = currentDate
+            )
+        )
+
+        invalidDateString = "01/00/2009"
+        assertFalse(
+            useCases.validateDate(
+                currentDate = currentDate, dateToCheck = invalidDateString
+            )
+        )
+        assertFalse(
+            useCases.validateDate(
+                currentDate = invalidDateString, dateToCheck = currentDate
+            )
+        )
+
+        invalidDateString = "01/01/0000"
+        assertFalse(
+            useCases.validateDate(
+                currentDate = currentDate, dateToCheck = invalidDateString
+            )
+        )
+        assertFalse(
+            useCases.validateDate(
+                currentDate = invalidDateString, dateToCheck = currentDate
+            )
+        )
+    }
+
+    @Test
+    fun validatingDate_InvalidDates() {
+        // Tests Invalid Dates
+        var invalidDateString = "03/03/2010"
+        assertFalse(
+            useCases.validateDate(
+                currentDate = currentDate, dateToCheck = invalidDateString
+            )
+        )
+        assertFalse(
+            useCases.validateDate(
+                currentDate = invalidDateString, dateToCheck = currentDate
+            )
+        )
+
+        invalidDateString = "12/12/2015"
+        assertFalse(
+            useCases.validateDate(
+                currentDate = currentDate, dateToCheck = invalidDateString
+            )
+        )
+        assertFalse(
+            useCases.validateDate(
+                currentDate = invalidDateString, dateToCheck = invalidDateString
+            )
+        )
+    }
+
+    @Test
+    fun validatingDate_ValidDates() {
+        var invalidDateString = "03/03/2009"
+        assertTrue(
+            useCases.validateDate(
+                currentDate = currentDate, dateToCheck = invalidDateString
+            )
+        )
+
+        invalidDateString = "20/05/2002"
+        assertTrue(
+            useCases.validateDate(
+                currentDate = currentDate, dateToCheck = invalidDateString
+            )
+        )
     }
 }
