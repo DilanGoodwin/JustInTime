@@ -7,6 +7,7 @@ import com.dbad.justintime.f_login_register.domain.model.EmergencyContact
 import com.dbad.justintime.f_login_register.domain.model.Employee
 import com.dbad.justintime.f_login_register.domain.model.User
 import com.dbad.justintime.f_login_register.domain.model.util.PreferredContactMethod
+import com.dbad.justintime.f_login_register.domain.model.util.Relation
 import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
 import com.dbad.justintime.f_login_register.presentation.util.DATE_FORMATTER
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,6 +28,8 @@ class UserDetailsViewModel(private val useCases: UserUseCases) : ViewModel() {
         when (event) {
             is UserDetailsEvents.SetRegisterEvent -> _state.update { it.copy(registerEvent = event.registerAction) }
             is UserDetailsEvents.SetCancelEvent -> _state.update { it.copy(cancelEvent = event.cancelAction) }
+            is UserDetailsEvents.SetEmail -> _state.update { it.copy(email = event.email) }
+            is UserDetailsEvents.SetPassword -> _state.update { it.copy(password = event.password) }
 
             // User Input Setters
             is UserDetailsEvents.SetName -> if (event.name.firstOrNull { it.isDigit() } == null) _state.update {
@@ -83,6 +86,10 @@ class UserDetailsViewModel(private val useCases: UserUseCases) : ViewModel() {
                 it.copy(emergencyContactPrefContactMethod = event.contactMethod)
             }
 
+            is UserDetailsEvents.SetEmergencyContactRelation -> _state.update {
+                it.copy(emergencyContactRelation = event.relation)
+            }
+
             // Toggles
             UserDetailsEvents.TogglePrefContactDropDown -> _state.update {
                 it.copy(prefContDropDownExpanded = !_state.value.prefContDropDownExpanded)
@@ -98,6 +105,10 @@ class UserDetailsViewModel(private val useCases: UserUseCases) : ViewModel() {
 
             UserDetailsEvents.ToggleDatePicker -> _state.update {
                 it.copy(showDatePicker = !_state.value.showDatePicker)
+            }
+
+            UserDetailsEvents.ToggleEmergencyContactRelationDropDown -> _state.update {
+                it.copy(emergencyContactRelationDropDownExpand = !_state.value.emergencyContactRelationDropDownExpand)
             }
 
             // Buttons
@@ -120,9 +131,6 @@ class UserDetailsViewModel(private val useCases: UserUseCases) : ViewModel() {
                             _state.value.showEmergencyContactEmailError)
                 ) runBlocking { createUser() }
             }
-
-            is UserDetailsEvents.SetEmail -> _state.update { it.copy(email = event.email) }
-            is UserDetailsEvents.SetPassword -> _state.update { it.copy(password = event.password) }
         }
     }
 
@@ -173,8 +181,12 @@ class UserDetailsViewModel(private val useCases: UserUseCases) : ViewModel() {
                 _state.value.emergencyContactPrefContactMethod
             } else {
                 PreferredContactMethod.PHONE
+            },
+            relation = if (_state.value.emergencyContactRelation == Relation.NONE) {
+                Relation.OTHER
+            } else {
+                _state.value.emergencyContactRelation
             }
-            // relation
         )
 
         useCases.upsertEmergencyContact(emergencyContact = emergencyContact)

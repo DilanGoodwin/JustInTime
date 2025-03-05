@@ -25,11 +25,13 @@ import com.dbad.justintime.core.presentation.util.TestTagNameField
 import com.dbad.justintime.core.presentation.util.TestTagPhoneNumberField
 import com.dbad.justintime.core.presentation.util.ViewingSystemThemes
 import com.dbad.justintime.f_login_register.domain.model.util.PreferredContactMethod
+import com.dbad.justintime.f_login_register.domain.model.util.Relation
 import com.dbad.justintime.f_login_register.presentation.util.DateSelectorField
 import com.dbad.justintime.f_login_register.presentation.util.DualButtonFields
 import com.dbad.justintime.f_login_register.presentation.util.EmergencyContactField
 import com.dbad.justintime.f_login_register.presentation.util.JustInTimeLogoDisplay
 import com.dbad.justintime.f_login_register.presentation.util.PreferredContactField
+import com.dbad.justintime.f_login_register.presentation.util.RelationField
 import com.dbad.justintime.f_login_register.presentation.util.TextInputField
 import com.dbad.justintime.ui.theme.JustInTimeTheme
 
@@ -210,8 +212,22 @@ fun EmergencyContactDetails(
             expandDropDown = state.emergencyContactPrefContDropDownExpand,
             dropDownToggle = { onEvent(UserDetailsEvents.ToggleEmergencyContactPrefContactDropDown) },
             selectContactMethod = {
-                onEvent(UserDetailsEvents.SetEmergencyContactPrefContactMethod(it))
+                onEvent(UserDetailsEvents.SetEmergencyContactPrefContactMethod(contactMethod = it))
             }
+        )
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        // Emergency Contact Relation Drop Down
+        RelationField(
+            currentValue = if (state.emergencyContactRelation == Relation.NONE) {
+                ""
+            } else {
+                stringResource(state.emergencyContactRelation.stringVal)
+            },
+            expandDropDown = state.emergencyContactRelationDropDownExpand,
+            dropDownToggle = { onEvent(UserDetailsEvents.ToggleEmergencyContactRelationDropDown) },
+            selectRelation = { onEvent(UserDetailsEvents.SetEmergencyContactRelation(relation = it)) }
         )
     }
 }

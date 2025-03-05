@@ -96,6 +96,8 @@ class RegisterSecondaryScreenTestingUI {
             .assertIsDisplayed()
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.preferredName))
             .assertIsDisplayed()
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.dateOfBirth))
+            .assertIsDisplayed()
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.phoneNumb))
             .assertIsDisplayed()
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.prefContactMethod))
@@ -159,5 +161,6 @@ class RegisterSecondaryScreenTestingUI {
         emergencyContactTests.checkEmergencyContactPreferredContactMethodOptions()
     }
 
-    //Complete details
+    @Test
+    fun validRegistrationAttempt() = runTest {}
 }

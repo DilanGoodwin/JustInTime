@@ -1,6 +1,7 @@
 package com.dbad.justintime.f_login_register.presentation.user_details
 
 import com.dbad.justintime.f_login_register.domain.model.util.PreferredContactMethod
+import com.dbad.justintime.f_login_register.domain.model.util.Relation
 
 data class UserDetailsState(
     // Nav Events
@@ -19,6 +20,7 @@ data class UserDetailsState(
     val emergencyContactPrefName: String = "",
     val emergencyContactPhone: String = "",
     val emergencyContactEmail: String = "",
+    val emergencyContactRelation: Relation = Relation.NONE,
     val emergencyContactPrefContactMethod: PreferredContactMethod = PreferredContactMethod.NONE,
 
     // Error Values
@@ -36,6 +38,7 @@ data class UserDetailsState(
     val prefContDropDownExpanded: Boolean = false,
     val emergencyContactAreaExpanded: Boolean = false,
     val emergencyContactPrefContDropDownExpand: Boolean = false,
+    val emergencyContactRelationDropDownExpand: Boolean = false,
 
     val email: String = "",
     val password: String = ""

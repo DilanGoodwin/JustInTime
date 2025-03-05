@@ -12,6 +12,7 @@
     <string name="prefContactMethod">Preferred Contact Method</string>
     <string name="emergencyContact">Emergency Contact</string>
     <string name="dateOfBirth">Date of Birth</string>
+    <string name="relation">Relation</string>
 
     <!-- Buttons -->
     <string name="login">Login</string>
@@ -43,6 +44,14 @@
 
     <!-- Date of Birth Errors -->
     <string name="dobError">Please Enter a Valid Date</string>
+
+    <!-- Relation Values -->
+    <string name="mother">Mother</string>
+    <string name="father">Father</string>
+    <string name="sibling">Sibling</string>
+    <string name="significationOther">Signification Other</string>
+    <string name="carer">Carer</string>
+    <string name="other">Other</string>
 
     <!-- Messages -->
     <string name="savingMessage">Saving Changes</string>

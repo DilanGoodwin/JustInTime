@@ -48,9 +48,12 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import com.dbad.justintime.R
+import com.dbad.justintime.core.presentation.util.TestTagDateOfBirthField
 import com.dbad.justintime.core.presentation.util.TestTagEmergencyContactExpandableField
+import com.dbad.justintime.core.presentation.util.TestTagEmergencyContactRelation
 import com.dbad.justintime.core.presentation.util.TestTagPreferredContactMethodField
 import com.dbad.justintime.f_login_register.domain.model.util.PreferredContactMethod
+import com.dbad.justintime.f_login_register.domain.model.util.Relation
 
 @Composable
 fun TextInputField(
@@ -189,6 +192,50 @@ fun PreferredContactField(
 }
 
 @Composable
+fun RelationField(
+    currentValue: String,
+    expandDropDown: Boolean,
+    dropDownToggle: () -> Unit,
+    selectRelation: (Relation) -> Unit
+) {
+    TextField(
+        value = currentValue,
+        onValueChange = {},
+        placeholder = { Text(text = stringResource(R.string.relation)) },
+        trailingIcon = {
+            IconButton(
+                onClick = { dropDownToggle() },
+                modifier = Modifier.testTag(tag = TestTagEmergencyContactRelation)
+            ) {
+                Icon(
+                    imageVector = if (expandDropDown) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
+                    contentDescription = "", //TODO add content description to string xml
+                )
+                DropdownMenu(expanded = expandDropDown, onDismissRequest = { dropDownToggle() }) {
+                    for (rel in Relation.entries) {
+                        if (rel != Relation.NONE) {
+                            DropdownMenuItem(
+                                text = { Text(text = stringResource(rel.stringVal)) },
+                                onClick = {
+                                    selectRelation(rel)
+                                    dropDownToggle()
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+        },
+        readOnly = true,
+        singleLine = true,
+        modifier = Modifier
+            .clip(shape = RoundedCornerShape(size = 8.dp))
+            .width(400.dp)
+            .height(60.dp)
+    )
+}
+
+@Composable
 fun DateSelectorField(
     currentValue: String,
     placeHolderText: String,
@@ -206,7 +253,10 @@ fun DateSelectorField(
             }
         },
         trailingIcon = {
-            IconButton(onClick = { toggleDatePicker() }) {
+            IconButton(
+                onClick = { toggleDatePicker() },
+                modifier = Modifier.testTag(tag = TestTagDateOfBirthField)
+            ) {
                 Icon(imageVector = Icons.Default.DateRange, contentDescription = "")
                 //TODO - provide content description
                 DateSelectorDropDown(
