@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -15,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.dbad.justintime.R
 import com.dbad.justintime.core.presentation.util.TestTagEmailField
@@ -22,10 +25,13 @@ import com.dbad.justintime.core.presentation.util.TestTagNameField
 import com.dbad.justintime.core.presentation.util.TestTagPhoneNumberField
 import com.dbad.justintime.core.presentation.util.ViewingSystemThemes
 import com.dbad.justintime.f_login_register.domain.model.util.PreferredContactMethod
+import com.dbad.justintime.f_login_register.domain.model.util.Relation
+import com.dbad.justintime.f_login_register.presentation.util.DateSelectorField
 import com.dbad.justintime.f_login_register.presentation.util.DualButtonFields
 import com.dbad.justintime.f_login_register.presentation.util.EmergencyContactField
 import com.dbad.justintime.f_login_register.presentation.util.JustInTimeLogoDisplay
 import com.dbad.justintime.f_login_register.presentation.util.PreferredContactField
+import com.dbad.justintime.f_login_register.presentation.util.RelationField
 import com.dbad.justintime.f_login_register.presentation.util.TextInputField
 import com.dbad.justintime.ui.theme.JustInTimeTheme
 
@@ -35,6 +41,8 @@ fun ExtraRegistrationDetails(
     viewModel: UserDetailsViewModel,
     onCancelUserDetails: () -> Unit,
     onRegister: () -> Unit,
+    email: String,
+    password: String,
     modifier: Modifier = Modifier
 ) {
     val state by viewModel.state.collectAsState()
@@ -42,6 +50,8 @@ fun ExtraRegistrationDetails(
     val event = viewModel::onEvent
     event(UserDetailsEvents.SetCancelEvent(onCancelUserDetails))
     event(UserDetailsEvents.SetRegisterEvent(onRegister))
+    event(UserDetailsEvents.SetEmail(email))
+    event(UserDetailsEvents.SetPassword(password))
 
     ExtraRegistrationDetails(state = state, onEvent = event, modifier = modifier)
 }
@@ -60,7 +70,12 @@ fun ExtraRegistrationDetails(
             }
 
             // User Text Input Area
-            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .imePadding()
+            ) {
                 Column(modifier = Modifier.padding(20.dp)) {
 
                     //Name Field
@@ -80,10 +95,21 @@ fun ExtraRegistrationDetails(
                         onValueChange = { onEvent(UserDetailsEvents.SetPrefName(name = it)) }
                     )
 
+                    // DOB Picker
+                    DateSelectorField(
+                        currentValue = state.userDateOfBirth,
+                        placeHolderText = stringResource(R.string.dateOfBirth),
+                        showDatePicker = state.showDatePicker,
+                        toggleDatePicker = { onEvent(UserDetailsEvents.ToggleDatePicker) },
+                        dateError = state.showDatePickerError,
+                        saveSelectedDate = { onEvent(UserDetailsEvents.SetDateOfBirth(it)) }
+                    )
+
                     // Phone Number Field
                     TextInputField(
                         currentValue = state.phoneNumber,
                         placeHolderText = stringResource(R.string.phoneNumb),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                         onValueChange = { onEvent(UserDetailsEvents.SetPhoneNumb(phone = it)) },
                         textFieldError = state.showPhoneNumbFieldError,
                         errorString = stringResource(R.string.invalidPhoneNumb),
@@ -154,6 +180,7 @@ fun EmergencyContactDetails(
         TextInputField(
             currentValue = state.emergencyContactPhone,
             placeHolderText = stringResource(R.string.phoneNumb),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
             textFieldError = state.showEmergencyContactPhoneError,
             errorString = stringResource(R.string.invalidPhoneNumb),
             onValueChange = {
@@ -166,6 +193,7 @@ fun EmergencyContactDetails(
         TextInputField(
             currentValue = state.emergencyContactEmail,
             placeHolderText = stringResource(R.string.email),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             textFieldError = state.showEmergencyContactEmailError,
             errorString = stringResource(R.string.invalidEmailError),
             onValueChange = {
@@ -184,8 +212,22 @@ fun EmergencyContactDetails(
             expandDropDown = state.emergencyContactPrefContDropDownExpand,
             dropDownToggle = { onEvent(UserDetailsEvents.ToggleEmergencyContactPrefContactDropDown) },
             selectContactMethod = {
-                onEvent(UserDetailsEvents.SetEmergencyContactPrefContactMethod(it))
+                onEvent(UserDetailsEvents.SetEmergencyContactPrefContactMethod(contactMethod = it))
             }
+        )
+
+        Spacer(modifier = Modifier.height(15.dp))
+
+        // Emergency Contact Relation Drop Down
+        RelationField(
+            currentValue = if (state.emergencyContactRelation == Relation.NONE) {
+                ""
+            } else {
+                stringResource(state.emergencyContactRelation.stringVal)
+            },
+            expandDropDown = state.emergencyContactRelationDropDownExpand,
+            dropDownToggle = { onEvent(UserDetailsEvents.ToggleEmergencyContactRelationDropDown) },
+            selectRelation = { onEvent(UserDetailsEvents.SetEmergencyContactRelation(relation = it)) }
         )
     }
 }

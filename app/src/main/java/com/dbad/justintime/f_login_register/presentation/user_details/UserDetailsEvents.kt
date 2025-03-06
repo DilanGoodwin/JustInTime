@@ -1,6 +1,7 @@
 package com.dbad.justintime.f_login_register.presentation.user_details
 
 import com.dbad.justintime.f_login_register.domain.model.util.PreferredContactMethod
+import com.dbad.justintime.f_login_register.domain.model.util.Relation
 
 sealed interface UserDetailsEvents {
     // Navigation Events
@@ -12,6 +13,7 @@ sealed interface UserDetailsEvents {
     data class SetPrefName(val name: String) : UserDetailsEvents
     data class SetPhoneNumb(val phone: String) : UserDetailsEvents
     data class SetPrefContactMethod(val contactMethod: PreferredContactMethod) : UserDetailsEvents
+    data class SetDateOfBirth(val dateOfBirth: String) : UserDetailsEvents
 
     // Emergency Contact Events
     data class SetEmergencyContactName(val name: String) : UserDetailsEvents
@@ -21,13 +23,20 @@ sealed interface UserDetailsEvents {
     data class SetEmergencyContactPrefContactMethod(val contactMethod: PreferredContactMethod) :
         UserDetailsEvents
 
+    data class SetEmergencyContactRelation(val relation: Relation) : UserDetailsEvents
+
     // Expanded Toggles Events
     data object TogglePrefContactDropDown : UserDetailsEvents
+    data object ToggleDatePicker : UserDetailsEvents
     data object ToggleEmergencyContactArea : UserDetailsEvents
-
     data object ToggleEmergencyContactPrefContactDropDown : UserDetailsEvents
+    data object ToggleEmergencyContactRelationDropDown : UserDetailsEvents
 
     // Buttons Click Event
     data object CancelEvent : UserDetailsEvents
     data object RegisterEvent : UserDetailsEvents
+
+    // Saving Passed Data
+    data class SetEmail(val email: String) : UserDetailsEvents
+    data class SetPassword(val password: String) : UserDetailsEvents
 }

@@ -14,7 +14,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Visibility
@@ -22,13 +24,16 @@ import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -41,15 +46,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Popup
 import com.dbad.justintime.R
+import com.dbad.justintime.core.presentation.util.TestTagDateOfBirthField
 import com.dbad.justintime.core.presentation.util.TestTagEmergencyContactExpandableField
+import com.dbad.justintime.core.presentation.util.TestTagEmergencyContactRelation
 import com.dbad.justintime.core.presentation.util.TestTagPreferredContactMethodField
 import com.dbad.justintime.f_login_register.domain.model.util.PreferredContactMethod
+import com.dbad.justintime.f_login_register.domain.model.util.Relation
 
 @Composable
 fun TextInputField(
     currentValue: String,
     placeHolderText: String,
+    keyboardOptions: KeyboardOptions = KeyboardOptions(),
     textFieldError: Boolean = false,
     errorString: String = "",
     onValueChange: (String) -> Unit,
@@ -69,6 +79,7 @@ fun TextInputField(
                 )
             }
         },
+        keyboardOptions = keyboardOptions,
         singleLine = true,
         modifier = Modifier
             .clip(shape = RoundedCornerShape(size = 8.dp))
@@ -83,6 +94,7 @@ fun PasswordField(
     currentValue: String,
     placeHolderText: String,
     showPassword: Boolean,
+    keyboardOptions: KeyboardOptions = KeyboardOptions(),
     textFieldError: Boolean,
     errorString: String,
     onValueChange: (String) -> Unit,
@@ -115,6 +127,7 @@ fun PasswordField(
         } else {
             PasswordVisualTransformation()
         },
+        keyboardOptions = keyboardOptions,
         isError = textFieldError,
         supportingText = {
             if (textFieldError) {
@@ -176,6 +189,125 @@ fun PreferredContactField(
             .width(400.dp)
             .height(60.dp)
     )
+}
+
+@Composable
+fun RelationField(
+    currentValue: String,
+    expandDropDown: Boolean,
+    dropDownToggle: () -> Unit,
+    selectRelation: (Relation) -> Unit
+) {
+    TextField(
+        value = currentValue,
+        onValueChange = {},
+        placeholder = { Text(text = stringResource(R.string.relation)) },
+        trailingIcon = {
+            IconButton(
+                onClick = { dropDownToggle() },
+                modifier = Modifier.testTag(tag = TestTagEmergencyContactRelation)
+            ) {
+                Icon(
+                    imageVector = if (expandDropDown) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
+                    contentDescription = "", //TODO add content description to string xml
+                )
+                DropdownMenu(expanded = expandDropDown, onDismissRequest = { dropDownToggle() }) {
+                    for (rel in Relation.entries) {
+                        if (rel != Relation.NONE) {
+                            DropdownMenuItem(
+                                text = { Text(text = stringResource(rel.stringVal)) },
+                                onClick = {
+                                    selectRelation(rel)
+                                    dropDownToggle()
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+        },
+        readOnly = true,
+        singleLine = true,
+        modifier = Modifier
+            .clip(shape = RoundedCornerShape(size = 8.dp))
+            .width(400.dp)
+            .height(60.dp)
+    )
+}
+
+@Composable
+fun DateSelectorField(
+    currentValue: String,
+    placeHolderText: String,
+    showDatePicker: Boolean,
+    toggleDatePicker: () -> Unit,
+    dateError: Boolean,
+    saveSelectedDate: (String) -> Unit
+) {
+    TextField(
+        value = currentValue,
+        onValueChange = {},
+        placeholder = {
+            Box(modifier = Modifier.fillMaxSize()) {
+                Text(text = placeHolderText)
+            }
+        },
+        trailingIcon = {
+            IconButton(
+                onClick = { toggleDatePicker() },
+                modifier = Modifier.testTag(tag = TestTagDateOfBirthField)
+            ) {
+                Icon(imageVector = Icons.Default.DateRange, contentDescription = "")
+                //TODO - provide content description
+                DateSelectorDropDown(
+                    showDatePicker = showDatePicker,
+                    saveSelectedDate = saveSelectedDate
+                )
+            }
+        },
+        isError = dateError,
+        supportingText = {
+            if (dateError) {
+                Text(
+                    text = stringResource(R.string.dobError),
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        },
+        readOnly = true,
+        singleLine = true,
+        modifier = Modifier
+            .clip(shape = RoundedCornerShape(size = 8.dp))
+            .width(400.dp)
+            .height(80.dp)
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DateSelectorDropDown(
+    showDatePicker: Boolean,
+    saveSelectedDate: (String) -> Unit
+) {
+    val dateState = rememberDatePickerState()
+    if (showDatePicker) {
+        Popup(
+            onDismissRequest = {
+                val saveDate =
+                    if (dateState.selectedDateMillis == null) 0 else dateState.selectedDateMillis
+                saveSelectedDate(formatDateToString(saveDate!!))
+            },
+            alignment = Alignment.Center
+        ) {
+            Box {
+                DatePicker(
+                    state = dateState,
+                    showModeToggle = false
+                )
+            }
+        }
+    }
 }
 
 @Composable

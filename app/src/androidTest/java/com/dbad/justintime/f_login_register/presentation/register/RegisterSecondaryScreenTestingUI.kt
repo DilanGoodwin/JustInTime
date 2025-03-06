@@ -21,9 +21,14 @@ import com.dbad.justintime.core.presentation.util.TestTagPreferredContactMethodF
 import com.dbad.justintime.f_login_register.data.UsersRepositoryTestingImplementation
 import com.dbad.justintime.f_login_register.domain.model.User
 import com.dbad.justintime.f_login_register.domain.repository.UserRepository
+import com.dbad.justintime.f_login_register.domain.use_case.GetEmergencyContactKey
+import com.dbad.justintime.f_login_register.domain.use_case.GetEmployeeKey
 import com.dbad.justintime.f_login_register.domain.use_case.GetUser
+import com.dbad.justintime.f_login_register.domain.use_case.UpsertEmergencyContact
+import com.dbad.justintime.f_login_register.domain.use_case.UpsertEmployee
 import com.dbad.justintime.f_login_register.domain.use_case.UpsertUser
 import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
+import com.dbad.justintime.f_login_register.domain.use_case.ValidateDate
 import com.dbad.justintime.f_login_register.domain.use_case.ValidateEmail
 import com.dbad.justintime.f_login_register.domain.use_case.ValidatePassword
 import com.dbad.justintime.f_login_register.domain.use_case.ValidatePhoneNumber
@@ -62,9 +67,14 @@ class RegisterSecondaryScreenTestingUI {
         useCases = UserUseCases(
             getUser = GetUser(repository = userRepo),
             upsertUser = UpsertUser(repository = userRepo),
+            getEmployeeKey = GetEmployeeKey(repository = userRepo),
+            upsertEmployee = UpsertEmployee(repository = userRepo),
+            getEmergencyContactKey = GetEmergencyContactKey(repository = userRepo),
+            upsertEmergencyContact = UpsertEmergencyContact(repository = userRepo),
             validateEmail = ValidateEmail(),
             validatePassword = ValidatePassword(),
-            validatePhoneNumber = ValidatePhoneNumber()
+            validatePhoneNumber = ValidatePhoneNumber(),
+            validateDate = ValidateDate()
         )
 
         testRule.setContent { LoginTestingNavController(useCases = useCases) }
@@ -86,6 +96,8 @@ class RegisterSecondaryScreenTestingUI {
             .assertIsDisplayed()
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.preferredName))
             .assertIsDisplayed()
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.dateOfBirth))
+            .assertIsDisplayed()
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.phoneNumb))
             .assertIsDisplayed()
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.prefContactMethod))
@@ -100,8 +112,7 @@ class RegisterSecondaryScreenTestingUI {
     }
 
     @Test
-    fun checkPhoneNumberErrors() = runTest {//TODO phone number validation not completed
-        testRule.onNodeWithTag(testTag = TestTagNameField).performTextReplacement(text = name)
+    fun checkPhoneNumberErrors() = runTest {
         fillInEmergencyContact(
             testRule = testRule,
             name = name,
@@ -136,7 +147,7 @@ class RegisterSecondaryScreenTestingUI {
     }
 
     @Test
-    fun emergencyContactAreaPhoneErrors() = runTest {//TODO phone number validation not completed
+    fun emergencyContactAreaPhoneErrors() = runTest {
         emergencyContactTests.checkEmergencyContactPhoneErrors()
     }
 
@@ -149,4 +160,12 @@ class RegisterSecondaryScreenTestingUI {
     fun emergencyContactAreaContactOptions() = runTest {
         emergencyContactTests.checkEmergencyContactPreferredContactMethodOptions()
     }
+
+    @Test
+    fun emergencyContactRelationOptions() = runTest {
+        emergencyContactTests.checkRelationOptions()
+    }
+
+    @Test
+    fun validRegistrationAttempt() = runTest {}
 }

@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.dbad.justintime.f_login_register.core.LoginScreenRoute
 import com.dbad.justintime.f_login_register.core.RegisterScreenRoute
 import com.dbad.justintime.f_login_register.core.UserDetailsRoute
@@ -29,17 +30,28 @@ fun LoginTestingNavController(useCases: UserUseCases) {
             )
         }
         composable<RegisterScreenRoute> {
+            val registerViewModel = RegisterViewModel(useCases = useCases)
             RegisterScreen(
-                viewModel = RegisterViewModel(useCases = useCases),
+                viewModel = registerViewModel,
                 onCancelRegistration = { navControl.navigate(route = LoginScreenRoute) },
-                onRegistration = { navControl.navigate(route = UserDetailsRoute) }
+                onRegistration = {
+                    navControl.navigate(
+                        route = UserDetailsRoute(
+                            email = registerViewModel.state.value.email,
+                            password = registerViewModel.state.value.password
+                        )
+                    )
+                }
             )
         }
         composable<UserDetailsRoute> {
+            val args = it.toRoute<UserDetailsRoute>()
             ExtraRegistrationDetails(
                 viewModel = UserDetailsViewModel(useCases = useCases),
                 onCancelUserDetails = { navControl.navigate(route = LoginScreenRoute) },
-                onRegister = {}
+                onRegister = {},
+                email = args.email,
+                password = args.password
             )
         }
     }

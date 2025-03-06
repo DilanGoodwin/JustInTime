@@ -6,7 +6,7 @@ import com.dbad.justintime.f_login_register.domain.model.User
 import com.dbad.justintime.f_login_register.domain.repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 
-class UsersRepositoryTestingImplementation(users: List<User>) : UserRepository {
+class UserRepositoryTestingImplementation(users: List<User>) : UserRepository {
     private val _usersList = MutableStateFlow(users)
     private val _emergencyContact = MutableStateFlow(listOf(EmergencyContact()))
     private val _employee = MutableStateFlow(listOf(Employee()))
