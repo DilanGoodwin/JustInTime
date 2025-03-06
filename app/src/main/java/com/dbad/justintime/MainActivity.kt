@@ -73,7 +73,7 @@ class MainActivity : ComponentActivity() {
                                         onCancelUserDetails = {
                                             navController.navigate(route = LoginNav)
                                         },
-                                        onRegister = {}, //TODO next navifation screen
+                                        onRegister = { navController.navigate(route = ProfileScreen) },
                                         email = args.email,
                                         password = args.password,
                                         modifier = Modifier.padding(
@@ -82,6 +82,8 @@ class MainActivity : ComponentActivity() {
                                     )
                                 }
                             }
+
+                            composable<ProfileScreen> {}
                         }
                     }
                 }
@@ -106,3 +108,6 @@ object RegisterScreen
 
 @Serializable
 data class UserDetailsInformation(val email: String, val password: String)
+
+@Serializable
+object ProfileScreen

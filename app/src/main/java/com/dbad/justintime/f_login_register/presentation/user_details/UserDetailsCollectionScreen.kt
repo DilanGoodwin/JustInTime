@@ -20,19 +20,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.dbad.justintime.R
+import com.dbad.justintime.core.presentation.util.DateSelectorField
+import com.dbad.justintime.core.presentation.util.DualButtonFields
+import com.dbad.justintime.core.presentation.util.EmergencyContactField
+import com.dbad.justintime.core.presentation.util.JustInTimeLogoDisplay
+import com.dbad.justintime.core.presentation.util.PreferredContactField
+import com.dbad.justintime.core.presentation.util.RelationField
 import com.dbad.justintime.core.presentation.util.TestTagEmailField
 import com.dbad.justintime.core.presentation.util.TestTagNameField
 import com.dbad.justintime.core.presentation.util.TestTagPhoneNumberField
+import com.dbad.justintime.core.presentation.util.TextInputField
 import com.dbad.justintime.core.presentation.util.ViewingSystemThemes
 import com.dbad.justintime.f_login_register.domain.model.util.PreferredContactMethod
 import com.dbad.justintime.f_login_register.domain.model.util.Relation
-import com.dbad.justintime.f_login_register.presentation.util.DateSelectorField
-import com.dbad.justintime.f_login_register.presentation.util.DualButtonFields
-import com.dbad.justintime.f_login_register.presentation.util.EmergencyContactField
-import com.dbad.justintime.f_login_register.presentation.util.JustInTimeLogoDisplay
-import com.dbad.justintime.f_login_register.presentation.util.PreferredContactField
-import com.dbad.justintime.f_login_register.presentation.util.RelationField
-import com.dbad.justintime.f_login_register.presentation.util.TextInputField
 import com.dbad.justintime.ui.theme.JustInTimeTheme
 
 //Stateful

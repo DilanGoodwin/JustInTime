@@ -1,4 +1,4 @@
-package com.dbad.justintime.f_login_register.presentation.util
+package com.dbad.justintime.core.presentation.util
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
@@ -48,10 +48,6 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import com.dbad.justintime.R
-import com.dbad.justintime.core.presentation.util.TestTagDateOfBirthField
-import com.dbad.justintime.core.presentation.util.TestTagEmergencyContactExpandableField
-import com.dbad.justintime.core.presentation.util.TestTagEmergencyContactRelation
-import com.dbad.justintime.core.presentation.util.TestTagPreferredContactMethodField
 import com.dbad.justintime.f_login_register.domain.model.util.PreferredContactMethod
 import com.dbad.justintime.f_login_register.domain.model.util.Relation
 
