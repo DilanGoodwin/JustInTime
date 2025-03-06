@@ -39,10 +39,7 @@ fun LoginTestingNavController(useCases: UserUseCases) {
                 onCancelRegistration = { navControl.navigate(route = LoginScreenRoute) },
                 onRegistration = {
                     navControl.navigate(
-                        route = UserDetailsRoute(
-                            email = registerViewModel.state.value.email,
-                            password = registerViewModel.state.value.password
-                        )
+                        route = UserDetailsRoute(it)
                     )
                 }
             )
@@ -53,8 +50,7 @@ fun LoginTestingNavController(useCases: UserUseCases) {
                 viewModel = UserDetailsViewModel(useCases = useCases),
                 onCancelUserDetails = { navControl.navigate(route = LoginScreenRoute) },
                 onRegister = { navControl.navigate(route = ProfileScreen) },
-                email = args.email,
-                password = args.password
+                userUid = args.userUid
             )
         }
 

@@ -34,7 +34,7 @@ import com.dbad.justintime.ui.theme.JustInTimeTheme
 fun RegisterScreen(
     viewModel: RegisterViewModel,
     onCancelRegistration: () -> Unit,
-    onRegistration: () -> Unit,
+    onRegistration: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val state by viewModel.state.collectAsState()

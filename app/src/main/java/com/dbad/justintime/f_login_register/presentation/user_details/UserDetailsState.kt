@@ -40,6 +40,5 @@ data class UserDetailsState(
     val emergencyContactPrefContDropDownExpand: Boolean = false,
     val emergencyContactRelationDropDownExpand: Boolean = false,
 
-    val email: String = "",
-    val password: String = ""
+    val userUid: Int? = null
 )

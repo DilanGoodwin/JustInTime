@@ -57,8 +57,9 @@ class RegisterSecondaryScreenTestingUI {
     private lateinit var useCases: UserUseCases
     private val users: List<User> =
         listOf(
-            User(uid = 0, email = validEmail, password = validPassword),
-            User(uid = 1, email = "test.test@test.com", password = validPassword)
+            User(uid = 0, email = "testing@testing.com", password = validPassword),
+            User(uid = 1, email = "test.test@test.com", password = validPassword),
+            User(uid = 2, email = validEmail)
         )
 
     @Before
@@ -170,6 +171,27 @@ class RegisterSecondaryScreenTestingUI {
     fun emergencyContactRelationOptions() = runTest {
         emergencyContactTests.checkRelationOptions()
     }
+
+    @Test
+    fun invalidRegistrationAttempt_NoName() = runTest {}//TODO
+
+    @Test
+    fun invalidRegistrationAttempt_NoPhone() = runTest {}//TODO
+
+    @Test
+    fun invalidRegistrationAttempt_NoDateOfBirth() = runTest {}//TODO
+
+    @Test
+    fun invalidRegistrationAttempt_NoPrefContact() = runTest {}//TODO
+
+    @Test
+    fun invalidRegistrationAttempt_PrefContact_NoName() = runTest {}//TODO
+
+    @Test
+    fun invalidRegistrationAttempt_PrefContact_NoEmail() = runTest {}//TODO
+
+    @Test
+    fun invalidRegistrationAttempt_PrefContact_NoPhone() = runTest {}//TODO
 
     @Test
     fun validRegistrationAttempt() = runTest {} //TODO

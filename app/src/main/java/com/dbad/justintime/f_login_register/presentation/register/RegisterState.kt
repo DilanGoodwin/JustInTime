@@ -11,5 +11,5 @@ data class RegisterState(
     val showPasswordMatch: Boolean = false,
     val showMatchPasswordError: Boolean = false,
     val onCancelRegistration: () -> Unit = {},
-    val onRegistration: () -> Unit = {}
+    val onRegistration: (Int) -> Unit = {}
 )

@@ -38,14 +38,15 @@ import org.junit.Test
 
 class RegisterPrimaryScreenTestingUI {
 
-    private val validEmail: String = "testing@testing.com"
+    private val validEmail: String = "test@test.com"
     private val validPassword: String = "MyP@ssw0rds"
 
     private lateinit var useCases: UserUseCases
     private val users: List<User> =
         listOf(
-            User(uid = 0, email = validEmail, password = validPassword),
-            User(uid = 1, email = "test.test@test.com", password = validPassword)
+            User(uid = 0, email = "testing@testing.com", password = validPassword),
+            User(uid = 1, email = "test.test@test.com", password = validPassword),
+            User(uid = 2, email = validEmail)
         )
 
     @get:Rule
@@ -184,6 +185,20 @@ class RegisterPrimaryScreenTestingUI {
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
             .performClick()
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.passwordDoNotMatch))
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun checkInvalidRegistrationAttempt_EmailAlreadyUsed() = runTest {
+        testRule.onNodeWithTag(testTag = TestTagEmailField)
+            .performTextReplacement(text = "testing@testing.com")
+        testRule.onNodeWithTag(testTag = TestTagPasswordField)
+            .performTextReplacement(text = validPassword)
+        testRule.onNodeWithTag(testTag = TestTagPasswordMatchField)
+            .performTextReplacement(text = validPassword)
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
+            .performClick()
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.invalidEmailError))
             .assertIsDisplayed()
     }
 }

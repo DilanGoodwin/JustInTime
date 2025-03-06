@@ -43,7 +43,8 @@ class LoginScreenTestingUI {
     private val users: List<User> =
         listOf(
             User(uid = 0, email = validEmail, password = validPassword),
-            User(uid = 1, email = "test.test@test.com", password = validPassword)
+            User(uid = 1, email = "test.test@test.com", password = validPassword),
+            User(uid = 2, email = "something@something.com")
         )
 
     @get:Rule
@@ -126,9 +127,21 @@ class LoginScreenTestingUI {
     }
 
     @Test
-    fun checkInvalidLoginAttempt() = runTest {
+    fun checkInvalidLoginAttempt_EmailNotExist() = runTest {
         testRule.onNodeWithTag(testTag = TestTagEmailField)
             .performTextReplacement(text = "test@test.com")
+        testRule.onNodeWithTag(testTag = TestTagPasswordField)
+            .performTextReplacement(text = "P4ssw0rd!")
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.login)).performClick()
+
+        testRule.onAllNodesWithText(text = testRule.activity.getString(R.string.emailOrPasswordError))
+            .onFirst().assertIsDisplayed()
+    }
+
+    @Test
+    fun checkInvalidLoginAttempt_UserNotRegistered() = runTest {
+        testRule.onNodeWithTag(testTag = TestTagEmailField)
+            .performTextReplacement(text = "something@something.com")
         testRule.onNodeWithTag(testTag = TestTagPasswordField)
             .performTextReplacement(text = "P4ssw0rd!")
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.login)).performClick()

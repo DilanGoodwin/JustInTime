@@ -58,10 +58,7 @@ class MainActivity : ComponentActivity() {
                                         },
                                         onRegistration = {
                                             navController.navigate(
-                                                route = UserDetailsInformation(
-                                                    registrationViewModel.state.value.email,
-                                                    registrationViewModel.state.value.password
-                                                )
+                                                route = UserDetailsInformation(it)
                                             )
                                         },
                                         modifier = Modifier.padding(paddingValues = innerPadding)
@@ -76,8 +73,7 @@ class MainActivity : ComponentActivity() {
                                             navController.navigate(route = LoginNav)
                                         },
                                         onRegister = { navController.navigate(route = ProfileScreen) },
-                                        email = args.email,
-                                        password = args.password,
+                                        userUid = args.userUid,
                                         modifier = Modifier.padding(
                                             paddingValues = innerPadding
                                         )
@@ -111,7 +107,7 @@ object LoginScreen
 object RegisterScreen
 
 @Serializable
-data class UserDetailsInformation(val email: String, val password: String)
+data class UserDetailsInformation(val userUid: Int)
 
 @Serializable
 object ProfileScreen

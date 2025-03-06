@@ -8,7 +8,7 @@ import com.dbad.justintime.f_login_register.domain.repository.UserRepository
 
 class UsersRepositoryImplementation(private val dao: UsersDao) : UserRepository {
     override suspend fun getUser(user: User): User {
-        return dao.getUser(email = user.email, password = user.password)
+        return dao.getUser(uid = user.uid, email = user.email, password = user.password)
     }
 
     override suspend fun upsertUser(user: User) {

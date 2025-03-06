@@ -28,8 +28,7 @@ class UserDetailsViewModel(private val useCases: UserUseCases) : ViewModel() {
         when (event) {
             is UserDetailsEvents.SetRegisterEvent -> _state.update { it.copy(registerEvent = event.registerAction) }
             is UserDetailsEvents.SetCancelEvent -> _state.update { it.copy(cancelEvent = event.cancelAction) }
-            is UserDetailsEvents.SetEmail -> _state.update { it.copy(email = event.email) }
-            is UserDetailsEvents.SetPassword -> _state.update { it.copy(password = event.password) }
+            is UserDetailsEvents.SetUserUid -> _state.update { it.copy(userUid = event.userUid) }
 
             // User Input Setters
             is UserDetailsEvents.SetName -> if (event.name.firstOrNull { it.isDigit() } == null) _state.update {
@@ -191,6 +190,7 @@ class UserDetailsViewModel(private val useCases: UserUseCases) : ViewModel() {
 
         useCases.upsertEmergencyContact(emergencyContact = emergencyContact)
 
+        // Create Employee Store
         val employee = Employee(
             name = _state.value.name,
             preferredName = _state.value.preferredName,
@@ -207,13 +207,19 @@ class UserDetailsViewModel(private val useCases: UserUseCases) : ViewModel() {
         useCases.upsertEmployee(employee = employee)
         val employeeKey = useCases.getEmployeeKey(employee = employee)
 
-        val user = User(
-            email = _state.value.email,
-            password = _state.value.password,
-            employee = employeeKey
+        // Grab User Information & Update
+        val user = useCases.getUser(User(uid = _state.value.userUid))
+
+        useCases.upsertUser(
+            User(
+                uid = _state.value.userUid,
+                email = user.email,
+                password = user.password,
+                employee = employeeKey
+            )
         )
 
-        useCases.upsertUser(user = user)
-        return employeeKey
+        // Return User Primary Key
+        return _state.value.userUid!!
     }
 }
