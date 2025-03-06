@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.dbad.justintime.f_login_register.core.LoginScreenRoute
+import com.dbad.justintime.f_login_register.core.ProfileScreen
 import com.dbad.justintime.f_login_register.core.RegisterScreenRoute
 import com.dbad.justintime.f_login_register.core.UserDetailsRoute
 import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
@@ -15,6 +16,7 @@ import com.dbad.justintime.f_login_register.presentation.register.RegisterScreen
 import com.dbad.justintime.f_login_register.presentation.register.RegisterViewModel
 import com.dbad.justintime.f_login_register.presentation.user_details.ExtraRegistrationDetails
 import com.dbad.justintime.f_login_register.presentation.user_details.UserDetailsViewModel
+import com.dbad.justintime.f_profile.presentation.profile.ProfileScreen
 
 @Composable
 fun LoginTestingNavController(useCases: UserUseCases) {
@@ -49,10 +51,14 @@ fun LoginTestingNavController(useCases: UserUseCases) {
             ExtraRegistrationDetails(
                 viewModel = UserDetailsViewModel(useCases = useCases),
                 onCancelUserDetails = { navControl.navigate(route = LoginScreenRoute) },
-                onRegister = {},
+                onRegister = { navControl.navigate(route = ProfileScreen) },
                 email = args.email,
                 password = args.password
             )
+        }
+
+        composable<ProfileScreen> {
+            ProfileScreen()
         }
     }
 }

@@ -8,7 +8,7 @@ import com.dbad.justintime.f_login_register.domain.repository.UserRepository
 
 class UsersRepositoryImplementation(private val dao: UsersDao) : UserRepository {
     override suspend fun getUser(user: User): User {
-        return dao.getUser(user.email, password = user.password)
+        return dao.getUser(email = user.email, password = user.password)
     }
 
     override suspend fun upsertUser(user: User) {
@@ -17,7 +17,8 @@ class UsersRepositoryImplementation(private val dao: UsersDao) : UserRepository 
 
     override suspend fun getEmergencyContactKey(emergencyContact: EmergencyContact): Int {
         return dao.getEmergencyContactKey(
-            name = emergencyContact.name, email = emergencyContact.email,
+            name = emergencyContact.name,
+            email = emergencyContact.email,
             phone = emergencyContact.phone,
             relation = emergencyContact.relation.name
         )

@@ -11,7 +11,6 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextReplacement
 import com.dbad.justintime.R
-import com.dbad.justintime.core.presentation.util.TestTagCalendarView
 import com.dbad.justintime.core.presentation.util.TestTagEmailField
 import com.dbad.justintime.core.presentation.util.TestTagPasswordField
 import com.dbad.justintime.f_login_register.data.UsersRepositoryTestingImplementation
@@ -123,7 +122,7 @@ class LoginScreenTestingUI {
             .performTextReplacement(text = validPassword)
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.login)).performClick()
 
-        testRule.onNodeWithTag(testTag = TestTagCalendarView).assertIsDisplayed()
+        testRule.onAllNodesWithText(text = "Profile").onFirst().assertIsDisplayed()
     }
 
     @Test
