@@ -59,4 +59,5 @@
     <!-- Logo Descriptions -->
     <string name="fieldVisibility">View Text in Field</string>
     <string name="fieldVisibilityOff">Hide Text in Field</string>
+    <string name="logoDescription">JustInTime Application Logo</string>
 </resources>

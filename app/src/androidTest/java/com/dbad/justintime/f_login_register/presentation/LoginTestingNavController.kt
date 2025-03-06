@@ -28,7 +28,8 @@ fun LoginTestingNavController(useCases: UserUseCases) {
                 viewModel = LoginViewModel(useCases = useCases),
                 onRegistration = {
                     navControl.navigate(route = RegisterScreenRoute)
-                }
+                },
+                onLogin = { navControl.navigate(route = ProfileScreen) }
             )
         }
         composable<RegisterScreenRoute> {

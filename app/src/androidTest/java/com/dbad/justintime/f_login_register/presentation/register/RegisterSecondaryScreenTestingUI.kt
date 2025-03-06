@@ -92,6 +92,7 @@ class RegisterSecondaryScreenTestingUI {
 
     @Test
     fun checkRegistrationSecondaryScreenValuesDisplayed() = runTest {
+
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.name))
             .assertIsDisplayed()
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.preferredName))
@@ -102,6 +103,10 @@ class RegisterSecondaryScreenTestingUI {
             .assertIsDisplayed()
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.prefContactMethod))
             .assertIsDisplayed()
+
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.cancel))
+            .performScrollTo()
+
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.emergencyContact))
             .assertIsDisplayed()
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.cancel))
@@ -167,5 +172,5 @@ class RegisterSecondaryScreenTestingUI {
     }
 
     @Test
-    fun validRegistrationAttempt() = runTest {}
+    fun validRegistrationAttempt() = runTest {} //TODO
 }

@@ -42,6 +42,7 @@ class MainActivity : ComponentActivity() {
                                     onRegistration = {
                                         navController.navigate(route = RegistrationNav)
                                     },
+                                    onLogin = { navController.navigate(route = ProfileScreen) },
                                     modifier = Modifier.padding(paddingValues = innerPadding)
                                 )
                             }
