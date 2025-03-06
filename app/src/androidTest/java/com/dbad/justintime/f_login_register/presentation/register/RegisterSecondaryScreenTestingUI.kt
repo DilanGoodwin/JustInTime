@@ -162,5 +162,10 @@ class RegisterSecondaryScreenTestingUI {
     }
 
     @Test
+    fun emergencyContactRelationOptions() = runTest {
+        emergencyContactTests.checkRelationOptions()
+    }
+
+    @Test
     fun validRegistrationAttempt() = runTest {}
 }

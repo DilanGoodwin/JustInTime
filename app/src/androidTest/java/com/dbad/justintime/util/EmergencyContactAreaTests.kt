@@ -20,8 +20,10 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule
 import com.dbad.justintime.R
 import com.dbad.justintime.core.presentation.util.TestTagEmailField
 import com.dbad.justintime.core.presentation.util.TestTagEmergencyContactExpandableField
+import com.dbad.justintime.core.presentation.util.TestTagEmergencyContactRelation
 import com.dbad.justintime.core.presentation.util.TestTagPhoneNumberField
 import com.dbad.justintime.core.presentation.util.TestTagPreferredContactMethodField
+import com.dbad.justintime.f_login_register.domain.model.util.Relation
 
 class EmergencyContactAreaTests(
     private val testRule: AndroidComposeTestRule<ActivityScenarioRule<ComponentActivity>, ComponentActivity>
@@ -64,6 +66,10 @@ class EmergencyContactAreaTests(
 
     fun checkEmergencyContactEmailErrors() {
         fillInEmergencyContact(testRule = testRule, name = name, phone = validPhoneNumb)
+
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.cancel))
+            .performScrollTo()
+
         emailValidation(
             testRule = testRule,
             emailField = testRule.onNodeWithTag(testTag = TestTagEmailField)
@@ -92,6 +98,34 @@ class EmergencyContactAreaTests(
                 .onChildren()
                 .filterToOne(matcher = hasTestTag(testTag = TestTagPreferredContactMethodField))
         )
+    }
+
+    fun checkRelationOptions() {
+        fillInEmergencyContact(
+            testRule = testRule,
+            name = name,
+            phone = validPhoneNumb,
+            email = validEmail
+        )
+
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.cancel))
+            .performScrollTo()
+
+        // Check all values displayed
+        testRule.onNodeWithTag(testTag = TestTagEmergencyContactRelation)
+            .performClick()
+
+        for (rel in Relation.entries) {
+            if (rel != Relation.NONE) {
+                testRule.onNodeWithText(text = testRule.activity.getString(rel.stringVal))
+                    .assertIsDisplayed()
+            }
+        }
+
+        // Select a relation and check it is displayed
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.mother)).performClick()
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.mother))
+            .assertIsDisplayed()
     }
 
     companion object {

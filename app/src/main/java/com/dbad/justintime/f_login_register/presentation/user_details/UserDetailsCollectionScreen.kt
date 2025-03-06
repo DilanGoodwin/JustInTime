@@ -216,7 +216,7 @@ fun EmergencyContactDetails(
             }
         )
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(15.dp))
 
         // Emergency Contact Relation Drop Down
         RelationField(
