@@ -75,7 +75,6 @@ fun LoginScreen(
                         currentValue = state.password,
                         placeHolderText = stringResource(R.string.password),
                         showPassword = state.showPassword,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                         onValueChange = { onEvent(LoginEvent.SetPassword(password = it)) },
                         visiblePassword = { onEvent(LoginEvent.ToggleViewPassword) },
                         textFieldError = state.showError,

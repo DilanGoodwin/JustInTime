@@ -43,6 +43,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
@@ -55,10 +56,10 @@ import com.dbad.justintime.f_login_register.domain.model.util.Relation
 fun TextInputField(
     currentValue: String,
     placeHolderText: String,
+    onValueChange: (String) -> Unit,
     keyboardOptions: KeyboardOptions = KeyboardOptions(),
     textFieldError: Boolean = false,
     errorString: String = "",
-    onValueChange: (String) -> Unit,
     testingTag: String = ""
 ) {
     TextField(
@@ -90,7 +91,6 @@ fun PasswordField(
     currentValue: String,
     placeHolderText: String,
     showPassword: Boolean,
-    keyboardOptions: KeyboardOptions = KeyboardOptions(),
     textFieldError: Boolean,
     errorString: String,
     onValueChange: (String) -> Unit,
@@ -123,7 +123,7 @@ fun PasswordField(
         } else {
             PasswordVisualTransformation()
         },
-        keyboardOptions = keyboardOptions,
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         isError = textFieldError,
         supportingText = {
             if (textFieldError) {
@@ -300,7 +300,7 @@ fun DateSelectorDropDown(
                 DatePicker(
                     state = dateState,
                     showModeToggle = false,
-                    modifier=Modifier.testTag(tag=TestTagDatePickerPopUp)
+                    modifier = Modifier.testTag(tag = TestTagDatePickerPopUp)
                 )
             }
         }
@@ -308,9 +308,11 @@ fun DateSelectorDropDown(
 }
 
 @Composable
-fun EmergencyContactField(
+fun ExpandableCardArea(
     isExpanded: Boolean,
     expandableButtonClick: () -> Unit,
+    cardTitle: String,
+    testTag: String,
     content: @Composable () -> Unit
 ) {
     val rotationState by animateFloatAsState(targetValue = if (isExpanded) 180f else 0f)
@@ -325,7 +327,7 @@ fun EmergencyContactField(
         onClick = { expandableButtonClick() },
         modifier = Modifier
             .width(400.dp)
-            .testTag(tag = TestTagEmergencyContactExpandableField)
+            .testTag(tag = testTag)
     ) {
         Column(
             modifier = Modifier
@@ -333,7 +335,7 @@ fun EmergencyContactField(
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = stringResource(R.string.emergencyContact),
+                    text = cardTitle,
                     modifier = Modifier
                         .weight(weight = 9f)
                         .padding(15.dp)

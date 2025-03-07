@@ -22,11 +22,12 @@ import androidx.compose.ui.unit.dp
 import com.dbad.justintime.R
 import com.dbad.justintime.core.presentation.util.DateSelectorField
 import com.dbad.justintime.core.presentation.util.DualButtonFields
-import com.dbad.justintime.core.presentation.util.EmergencyContactField
+import com.dbad.justintime.core.presentation.util.ExpandableCardArea
 import com.dbad.justintime.core.presentation.util.JustInTimeLogoDisplay
 import com.dbad.justintime.core.presentation.util.PreferredContactField
 import com.dbad.justintime.core.presentation.util.RelationField
 import com.dbad.justintime.core.presentation.util.TestTagEmailField
+import com.dbad.justintime.core.presentation.util.TestTagEmergencyContactExpandableField
 import com.dbad.justintime.core.presentation.util.TestTagNameField
 import com.dbad.justintime.core.presentation.util.TestTagPhoneNumberField
 import com.dbad.justintime.core.presentation.util.TextInputField
@@ -151,9 +152,11 @@ fun EmergencyContactDetails(
     state: UserDetailsState,
     onEvent: (UserDetailsEvents) -> Unit
 ) {
-    EmergencyContactField(
+    ExpandableCardArea(
         isExpanded = state.emergencyContactAreaExpanded,
-        expandableButtonClick = { onEvent(UserDetailsEvents.ToggleEmergencyContactArea) }
+        expandableButtonClick = { onEvent(UserDetailsEvents.ToggleEmergencyContactArea) },
+        cardTitle = stringResource(R.string.emergencyContact),
+        testTag = TestTagEmergencyContactExpandableField
     ) {
         // Emergency Contact Name Field
         TextInputField(
