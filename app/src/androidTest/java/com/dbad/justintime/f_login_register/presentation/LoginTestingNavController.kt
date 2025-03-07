@@ -15,11 +15,12 @@ import com.dbad.justintime.f_login_register.presentation.login.LoginViewModel
 import com.dbad.justintime.f_login_register.presentation.register.RegisterScreen
 import com.dbad.justintime.f_login_register.presentation.register.RegisterViewModel
 import com.dbad.justintime.f_login_register.presentation.user_details.ExtraRegistrationDetails
+import com.dbad.justintime.f_login_register.presentation.user_details.UserDetailsEvents
 import com.dbad.justintime.f_login_register.presentation.user_details.UserDetailsViewModel
 import com.dbad.justintime.f_profile.presentation.profile.ProfileScreen
 
 @Composable
-fun LoginTestingNavController(useCases: UserUseCases) {
+fun LoginTestingNavController(useCases: UserUseCases, dateOfBirth: String = "") {
     val navControl = rememberNavController()
 
     NavHost(navController = navControl, startDestination = LoginScreenRoute) {
@@ -46,8 +47,11 @@ fun LoginTestingNavController(useCases: UserUseCases) {
         }
         composable<UserDetailsRoute> {
             val args = it.toRoute<UserDetailsRoute>()
+            val viewModel = UserDetailsViewModel(useCases = useCases)
+            viewModel.onEvent(UserDetailsEvents.SetDateOfBirth(dateOfBirth = dateOfBirth))
+            viewModel.onEvent(UserDetailsEvents.ToggleDatePicker)
             ExtraRegistrationDetails(
-                viewModel = UserDetailsViewModel(useCases = useCases),
+                viewModel = viewModel,
                 onCancelUserDetails = { navControl.navigate(route = LoginScreenRoute) },
                 onRegister = { navControl.navigate(route = ProfileScreen) },
                 userUid = args.userUid

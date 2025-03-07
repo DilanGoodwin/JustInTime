@@ -18,20 +18,9 @@ import com.dbad.justintime.core.presentation.util.TestTagPasswordField
 import com.dbad.justintime.core.presentation.util.TestTagPasswordMatchField
 import com.dbad.justintime.core.presentation.util.TestTagPhoneNumberField
 import com.dbad.justintime.core.presentation.util.TestTagPreferredContactMethodField
-import com.dbad.justintime.f_login_register.data.UsersRepositoryTestingImplementation
+import com.dbad.justintime.f_login_register.data.generateUseCase
 import com.dbad.justintime.f_login_register.domain.model.User
-import com.dbad.justintime.f_login_register.domain.repository.UserRepository
-import com.dbad.justintime.f_login_register.domain.use_case.GetEmergencyContactKey
-import com.dbad.justintime.f_login_register.domain.use_case.GetEmployeeKey
-import com.dbad.justintime.f_login_register.domain.use_case.GetUser
-import com.dbad.justintime.f_login_register.domain.use_case.UpsertEmergencyContact
-import com.dbad.justintime.f_login_register.domain.use_case.UpsertEmployee
-import com.dbad.justintime.f_login_register.domain.use_case.UpsertUser
 import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
-import com.dbad.justintime.f_login_register.domain.use_case.ValidateDate
-import com.dbad.justintime.f_login_register.domain.use_case.ValidateEmail
-import com.dbad.justintime.f_login_register.domain.use_case.ValidatePassword
-import com.dbad.justintime.f_login_register.domain.use_case.ValidatePhoneNumber
 import com.dbad.justintime.f_login_register.presentation.LoginTestingNavController
 import com.dbad.justintime.util.EmergencyContactAreaTests
 import com.dbad.justintime.util.EmergencyContactAreaTests.Companion.fillInEmergencyContact
@@ -62,23 +51,7 @@ class RegisterSecondaryScreenTestingUI {
             User(uid = 2, email = validEmail)
         )
 
-    @Before
-    fun reset() = runTest {
-        val userRepo: UserRepository = UsersRepositoryTestingImplementation(users = users)
-        useCases = UserUseCases(
-            getUser = GetUser(repository = userRepo),
-            upsertUser = UpsertUser(repository = userRepo),
-            getEmployeeKey = GetEmployeeKey(repository = userRepo),
-            upsertEmployee = UpsertEmployee(repository = userRepo),
-            getEmergencyContactKey = GetEmergencyContactKey(repository = userRepo),
-            upsertEmergencyContact = UpsertEmergencyContact(repository = userRepo),
-            validateEmail = ValidateEmail(),
-            validatePassword = ValidatePassword(),
-            validatePhoneNumber = ValidatePhoneNumber(),
-            validateDate = ValidateDate()
-        )
-
-        testRule.setContent { LoginTestingNavController(useCases = useCases) }
+    private fun navigateToUserDetails() {
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
             .performClick()
         testRule.onNodeWithTag(testTag = TestTagEmailField)
@@ -89,6 +62,13 @@ class RegisterSecondaryScreenTestingUI {
             .performTextReplacement(text = validPassword)
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
             .performClick()
+    }
+
+    @Before
+    fun reset() = runTest {
+        useCases = generateUseCase(users = users)
+        testRule.setContent { LoginTestingNavController(useCases = useCases) }
+        navigateToUserDetails()
     }
 
     @Test
@@ -171,28 +151,4 @@ class RegisterSecondaryScreenTestingUI {
     fun emergencyContactRelationOptions() = runTest {
         emergencyContactTests.checkRelationOptions()
     }
-
-    @Test
-    fun invalidRegistrationAttempt_NoName() = runTest {}//TODO
-
-    @Test
-    fun invalidRegistrationAttempt_NoPhone() = runTest {}//TODO
-
-    @Test
-    fun invalidRegistrationAttempt_NoDateOfBirth() = runTest {}//TODO
-
-    @Test
-    fun invalidRegistrationAttempt_NoPrefContact() = runTest {}//TODO
-
-    @Test
-    fun invalidRegistrationAttempt_PrefContact_NoName() = runTest {}//TODO
-
-    @Test
-    fun invalidRegistrationAttempt_PrefContact_NoEmail() = runTest {}//TODO
-
-    @Test
-    fun invalidRegistrationAttempt_PrefContact_NoPhone() = runTest {}//TODO
-
-    @Test
-    fun validRegistrationAttempt() = runTest {} //TODO
 }

@@ -299,7 +299,8 @@ fun DateSelectorDropDown(
             Box {
                 DatePicker(
                     state = dateState,
-                    showModeToggle = false
+                    showModeToggle = false,
+                    modifier=Modifier.testTag(tag=TestTagDatePickerPopUp)
                 )
             }
         }

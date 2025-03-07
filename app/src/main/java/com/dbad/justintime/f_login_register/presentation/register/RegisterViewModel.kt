@@ -89,10 +89,16 @@ class RegisterViewModel(private val useCases: UserUseCases) : ViewModel() {
             User(email = _state.value.email)
         )
 
-        if (receivedUser.uid == null || receivedUser.password.isNotBlank()) {
+        try {
+            if (receivedUser.uid == null || receivedUser.password.isNotBlank()) {
+                _state.update { it.copy(showEmailError = true) }
+                return
+            }
+        } catch (e: NullPointerException) {
             _state.update { it.copy(showEmailError = true) }
             return
         }
+
 
         useCases.upsertUser(
             User(

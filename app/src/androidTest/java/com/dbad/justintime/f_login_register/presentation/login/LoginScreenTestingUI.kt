@@ -116,14 +116,15 @@ class LoginScreenTestingUI {
     }
 
     @Test
-    fun checkValidLoginAttempt() = runTest { //TODO not implemented
+    fun checkValidLoginAttempt() = runTest {
         testRule.onNodeWithTag(testTag = TestTagEmailField)
             .performTextReplacement(text = validEmail)
         testRule.onNodeWithTag(testTag = TestTagPasswordField)
             .performTextReplacement(text = validPassword)
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.login)).performClick()
 
-        testRule.onAllNodesWithText(text = "Profile").onFirst().assertIsDisplayed()
+        testRule.onAllNodesWithText(text = testRule.activity.getString(R.string.profile)).onFirst()
+            .assertIsDisplayed()
     }
 
     @Test

@@ -53,6 +53,9 @@
     <string name="carer">Carer</string>
     <string name="other">Other</string>
 
+    <!-- Titles -->
+    <string name="profile">Profile</string>
+
     <!-- Messages -->
     <string name="savingMessage">Saving Changes</string>
 
