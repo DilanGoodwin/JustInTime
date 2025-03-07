@@ -23,7 +23,7 @@ import com.dbad.justintime.R
 import com.dbad.justintime.core.presentation.util.DateSelectorField
 import com.dbad.justintime.core.presentation.util.DualButtonFields
 import com.dbad.justintime.core.presentation.util.ExpandableCardArea
-import com.dbad.justintime.core.presentation.util.JustInTimeLogoDisplay
+import com.dbad.justintime.f_login_register.presentation.util.JustInTimeLogoDisplay
 import com.dbad.justintime.core.presentation.util.PreferredContactField
 import com.dbad.justintime.core.presentation.util.RelationField
 import com.dbad.justintime.core.presentation.util.TestTagEmailField

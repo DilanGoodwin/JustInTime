@@ -1,4 +1,4 @@
-package com.dbad.justintime.core.presentation.util
+package com.dbad.justintime.f_login_register.presentation.util
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
