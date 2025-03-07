@@ -1,11 +1,11 @@
-package com.dbad.justintime.f_login_register.domain.model
+package com.dbad.justintime.core.domain.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-import com.dbad.justintime.f_login_register.domain.model.util.ContractType
-import com.dbad.justintime.f_login_register.domain.model.util.PreferredContactMethod
+import com.dbad.justintime.core.domain.model.util.ContractType
+import com.dbad.justintime.core.domain.model.util.PreferredContactMethod
 
 @Entity(
     tableName = "employee", foreignKeys = [ForeignKey(

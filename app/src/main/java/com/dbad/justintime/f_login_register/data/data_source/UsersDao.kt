@@ -3,9 +3,9 @@ package com.dbad.justintime.f_login_register.data.data_source
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
-import com.dbad.justintime.f_login_register.domain.model.EmergencyContact
-import com.dbad.justintime.f_login_register.domain.model.Employee
-import com.dbad.justintime.f_login_register.domain.model.User
+import com.dbad.justintime.core.domain.model.EmergencyContact
+import com.dbad.justintime.core.domain.model.Employee
+import com.dbad.justintime.core.domain.model.User
 
 @Dao
 interface UsersDao {

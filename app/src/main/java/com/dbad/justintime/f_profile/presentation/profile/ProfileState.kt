@@ -1,8 +1,8 @@
 package com.dbad.justintime.f_profile.presentation.profile
 
-import com.dbad.justintime.f_login_register.domain.model.EmergencyContact
-import com.dbad.justintime.f_login_register.domain.model.Employee
-import com.dbad.justintime.f_login_register.domain.model.User
+import com.dbad.justintime.core.domain.model.EmergencyContact
+import com.dbad.justintime.core.domain.model.Employee
+import com.dbad.justintime.core.domain.model.User
 import com.dbad.justintime.f_login_register.domain.util.PasswordErrors
 
 data class ProfileState(

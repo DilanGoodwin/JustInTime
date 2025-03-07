@@ -14,7 +14,7 @@ import com.dbad.justintime.R
 import com.dbad.justintime.core.presentation.util.TestTagEmailField
 import com.dbad.justintime.core.presentation.util.TestTagPasswordField
 import com.dbad.justintime.f_login_register.data.UsersRepositoryTestingImplementation
-import com.dbad.justintime.f_login_register.domain.model.User
+import com.dbad.justintime.core.domain.model.User
 import com.dbad.justintime.f_login_register.domain.repository.UserRepository
 import com.dbad.justintime.f_login_register.domain.use_case.GetEmergencyContactKey
 import com.dbad.justintime.f_login_register.domain.use_case.GetEmployeeKey

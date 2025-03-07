@@ -49,8 +49,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import com.dbad.justintime.R
-import com.dbad.justintime.f_login_register.domain.model.util.PreferredContactMethod
-import com.dbad.justintime.f_login_register.domain.model.util.Relation
+import com.dbad.justintime.core.domain.model.util.PreferredContactMethod
+import com.dbad.justintime.core.domain.model.util.Relation
 
 @Composable
 fun TextInputField(

@@ -13,7 +13,5 @@ class ProfileViewModel() : ViewModel() {
         ProfileState()
     )
 
-    fun startingData(userId: Int) {}
-
     fun onEvent() {}
 }

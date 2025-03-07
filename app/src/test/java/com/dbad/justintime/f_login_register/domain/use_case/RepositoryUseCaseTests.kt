@@ -1,7 +1,7 @@
 package com.dbad.justintime.f_login_register.domain.use_case
 
 import com.dbad.justintime.f_login_register.data.UserRepositoryTestingImplementation
-import com.dbad.justintime.f_login_register.domain.model.User
+import com.dbad.justintime.core.domain.model.User
 import com.dbad.justintime.f_login_register.domain.repository.UserRepository
 import com.dbad.justintime.f_login_register.domain.util.PasswordErrors
 import kotlinx.coroutines.test.runTest

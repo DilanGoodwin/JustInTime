@@ -1,9 +1,9 @@
 package com.dbad.justintime.f_login_register.data.repository
 
 import com.dbad.justintime.f_login_register.data.data_source.UsersDao
-import com.dbad.justintime.f_login_register.domain.model.EmergencyContact
-import com.dbad.justintime.f_login_register.domain.model.Employee
-import com.dbad.justintime.f_login_register.domain.model.User
+import com.dbad.justintime.core.domain.model.EmergencyContact
+import com.dbad.justintime.core.domain.model.Employee
+import com.dbad.justintime.core.domain.model.User
 import com.dbad.justintime.f_login_register.domain.repository.UserRepository
 
 class UsersRepositoryImplementation(private val dao: UsersDao) : UserRepository {

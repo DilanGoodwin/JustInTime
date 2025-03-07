@@ -1,4 +1,4 @@
-package com.dbad.justintime.f_login_register.domain.model
+package com.dbad.justintime.core.domain.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

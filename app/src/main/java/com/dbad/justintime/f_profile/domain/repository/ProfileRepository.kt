@@ -1,16 +1,16 @@
-package com.dbad.justintime.f_login_register.domain.repository
+package com.dbad.justintime.f_profile.domain.repository
 
 import com.dbad.justintime.core.domain.model.EmergencyContact
 import com.dbad.justintime.core.domain.model.Employee
 import com.dbad.justintime.core.domain.model.User
 
-interface UserRepository {
+interface ProfileRepository {
     suspend fun getUser(user: User): User
     suspend fun upsertUser(user: User)
 
-    suspend fun getEmergencyContactKey(emergencyContact: EmergencyContact): Int
+    suspend fun getEmergencyContact(contact: EmergencyContact): EmergencyContact
     suspend fun upsertEmergencyContact(contact: EmergencyContact)
 
-    suspend fun getEmployeeKey(employee: Employee): Int
+    suspend fun getEmployee(employee: Employee): Employee
     suspend fun upsertEmployee(employee: Employee)
 }
