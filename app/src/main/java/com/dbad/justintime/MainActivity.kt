@@ -20,6 +20,7 @@ import com.dbad.justintime.f_login_register.presentation.register.RegisterViewMo
 import com.dbad.justintime.f_login_register.presentation.user_details.ExtraRegistrationDetails
 import com.dbad.justintime.f_login_register.presentation.user_details.UserDetailsViewModel
 import com.dbad.justintime.f_profile.presentation.profile.ProfileScreen
+import com.dbad.justintime.f_profile.presentation.profile.ProfileViewModel
 import com.dbad.justintime.ui.theme.JustInTimeTheme
 import kotlinx.serialization.Serializable
 
@@ -82,7 +83,7 @@ class MainActivity : ComponentActivity() {
                             }
 
                             composable<ProfileScreen> {
-                                ProfileScreen()
+                                ProfileScreen(viewModel = ProfileViewModel())
                             }
                         }
                     }

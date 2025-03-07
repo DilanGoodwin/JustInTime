@@ -69,6 +69,11 @@
     <!-- Titles -->
     <string name="profile">Profile</string>
 
+    <!-- Contract Types -->
+    <string name="part_time">Part-Time</string>
+    <string name="salary">Salary</string>
+    <string name="contractor">Contractor</string>
+
     <!-- Messages -->
     <string name="savingMessage">Saving Changes</string>
 

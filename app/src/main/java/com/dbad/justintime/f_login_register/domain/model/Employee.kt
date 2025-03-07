@@ -33,6 +33,8 @@ data class Employee(
     val minimumHours: Int = 0,
     @ColumnInfo(name = "emergencyContact", index = true)
     val emergencyContact: Int? = null,
+    val isAdmin: Boolean = false,
+    val companyName: String = "",
     val contractType: ContractType = ContractType.OTHER,
     @ColumnInfo(name = "manager", index = true)
     val manager: Int? = null,
