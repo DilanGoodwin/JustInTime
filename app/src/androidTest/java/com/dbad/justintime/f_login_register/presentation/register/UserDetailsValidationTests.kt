@@ -233,5 +233,6 @@ class UserDetailsValidationTests {
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
             .performScrollTo().performClick()
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.profile))
+            .assertIsDisplayed()
     }
 }

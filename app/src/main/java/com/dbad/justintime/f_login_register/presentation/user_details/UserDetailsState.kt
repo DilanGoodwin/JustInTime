@@ -6,7 +6,7 @@ import com.dbad.justintime.f_login_register.domain.model.util.Relation
 data class UserDetailsState(
     // Nav Events
     val cancelEvent: () -> Unit = {},
-    val registerEvent: () -> Unit = {},
+    val registerEvent: (Int) -> Unit = {},
 
     // User Input Fields
     val name: String = "",

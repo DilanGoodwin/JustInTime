@@ -23,7 +23,6 @@ import com.dbad.justintime.R
 import com.dbad.justintime.core.presentation.util.DateSelectorField
 import com.dbad.justintime.core.presentation.util.DualButtonFields
 import com.dbad.justintime.core.presentation.util.ExpandableCardArea
-import com.dbad.justintime.f_login_register.presentation.util.JustInTimeLogoDisplay
 import com.dbad.justintime.core.presentation.util.PreferredContactField
 import com.dbad.justintime.core.presentation.util.RelationField
 import com.dbad.justintime.core.presentation.util.TestTagEmailField
@@ -34,6 +33,7 @@ import com.dbad.justintime.core.presentation.util.TextInputField
 import com.dbad.justintime.core.presentation.util.ViewingSystemThemes
 import com.dbad.justintime.f_login_register.domain.model.util.PreferredContactMethod
 import com.dbad.justintime.f_login_register.domain.model.util.Relation
+import com.dbad.justintime.f_login_register.presentation.util.JustInTimeLogoDisplay
 import com.dbad.justintime.ui.theme.JustInTimeTheme
 
 //Stateful
@@ -41,7 +41,7 @@ import com.dbad.justintime.ui.theme.JustInTimeTheme
 fun ExtraRegistrationDetails(
     viewModel: UserDetailsViewModel,
     onCancelUserDetails: () -> Unit,
-    onRegister: () -> Unit,
+    onRegister: (Int) -> Unit,
     userUid: Int,
     modifier: Modifier = Modifier
 ) {

@@ -18,6 +18,7 @@ import com.dbad.justintime.f_login_register.presentation.user_details.ExtraRegis
 import com.dbad.justintime.f_login_register.presentation.user_details.UserDetailsEvents
 import com.dbad.justintime.f_login_register.presentation.user_details.UserDetailsViewModel
 import com.dbad.justintime.f_profile.presentation.profile.ProfileScreen
+import com.dbad.justintime.f_profile.presentation.profile.ProfileViewModel
 
 @Composable
 fun LoginTestingNavController(useCases: UserUseCases, dateOfBirth: String = "") {
@@ -30,7 +31,7 @@ fun LoginTestingNavController(useCases: UserUseCases, dateOfBirth: String = "") 
                 onRegistration = {
                     navControl.navigate(route = RegisterScreenRoute)
                 },
-                onLogin = { navControl.navigate(route = ProfileScreen) }
+                onLogin = { navControl.navigate(route = ProfileScreen(it)) }
             )
         }
         composable<RegisterScreenRoute> {
@@ -39,27 +40,28 @@ fun LoginTestingNavController(useCases: UserUseCases, dateOfBirth: String = "") 
                 viewModel = registerViewModel,
                 onCancelRegistration = { navControl.navigate(route = LoginScreenRoute) },
                 onRegistration = {
-                    navControl.navigate(
-                        route = UserDetailsRoute(it)
-                    )
+                    navControl.navigate(route = UserDetailsRoute(it))
                 }
             )
         }
         composable<UserDetailsRoute> {
             val args = it.toRoute<UserDetailsRoute>()
             val viewModel = UserDetailsViewModel(useCases = useCases)
+
             viewModel.onEvent(UserDetailsEvents.SetDateOfBirth(dateOfBirth = dateOfBirth))
             viewModel.onEvent(UserDetailsEvents.ToggleDatePicker)
+
             ExtraRegistrationDetails(
                 viewModel = viewModel,
                 onCancelUserDetails = { navControl.navigate(route = LoginScreenRoute) },
-                onRegister = { navControl.navigate(route = ProfileScreen) },
+                onRegister = { navControl.navigate(route = ProfileScreen(it)) },
                 userUid = args.userUid
             )
         }
 
         composable<ProfileScreen> {
-            ProfileScreen()
+            val args = it.toRoute<ProfileScreen>()
+            ProfileScreen(viewModel = ProfileViewModel(), userId = args.userUid)
         }
     }
 }

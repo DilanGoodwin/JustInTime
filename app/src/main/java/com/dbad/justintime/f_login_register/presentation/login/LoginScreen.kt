@@ -20,12 +20,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.dbad.justintime.R
 import com.dbad.justintime.core.presentation.util.DualButtonFields
-import com.dbad.justintime.f_login_register.presentation.util.JustInTimeLogoDisplay
 import com.dbad.justintime.core.presentation.util.PasswordField
 import com.dbad.justintime.core.presentation.util.TestTagEmailField
 import com.dbad.justintime.core.presentation.util.TestTagPasswordField
 import com.dbad.justintime.core.presentation.util.TextInputField
 import com.dbad.justintime.core.presentation.util.ViewingSystemThemes
+import com.dbad.justintime.f_login_register.presentation.util.JustInTimeLogoDisplay
 import com.dbad.justintime.ui.theme.JustInTimeTheme
 
 // Stateful
@@ -33,7 +33,7 @@ import com.dbad.justintime.ui.theme.JustInTimeTheme
 fun LoginScreen(
     viewModel: LoginViewModel,
     onRegistration: () -> Unit,
-    onLogin: () -> Unit,
+    onLogin: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val state by viewModel.state.collectAsState()

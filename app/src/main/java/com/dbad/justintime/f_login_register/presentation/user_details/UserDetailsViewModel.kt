@@ -169,7 +169,7 @@ class UserDetailsViewModel(private val useCases: UserUseCases) : ViewModel() {
         _state.update { it.copy(showEmergencyContactPhoneError = error) }
     }
 
-    private suspend fun createUser(): Int {
+    private suspend fun createUser() {
         // Create emergency contact
         val emergencyContact = EmergencyContact(
             name = _state.value.emergencyContactName,
@@ -219,7 +219,7 @@ class UserDetailsViewModel(private val useCases: UserUseCases) : ViewModel() {
             )
         )
 
-        // Return User Primary Key
-        return _state.value.userUid!!
+        // Pass the user primary key to Profile Screen
+        _state.value.registerEvent(_state.value.userUid!!)
     }
 }

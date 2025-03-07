@@ -50,7 +50,10 @@ import com.dbad.justintime.f_login_register.domain.model.util.Relation
 import com.dbad.justintime.ui.theme.JustInTimeTheme
 
 @Composable
-fun ProfileScreen(viewModel: ProfileViewModel) {
+fun ProfileScreen(
+    viewModel: ProfileViewModel,
+    userId: Int
+) {
     val state by viewModel.state.collectAsState()
 
     ProfileScreen(state = state)

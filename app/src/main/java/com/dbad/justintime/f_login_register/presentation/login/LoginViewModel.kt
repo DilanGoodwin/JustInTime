@@ -54,7 +54,7 @@ class LoginViewModel(private val useCases: UserUseCases) : ViewModel() {
         if (receivedUser.uid == null) {
             _state.update { it.copy(showError = true) }
         } else {
-            _state.value.onLogin()
+            _state.value.onLogin(receivedUser.uid)
         }
     }
 }

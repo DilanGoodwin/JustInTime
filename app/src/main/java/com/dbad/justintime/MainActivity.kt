@@ -43,7 +43,7 @@ class MainActivity : ComponentActivity() {
                                     onRegistration = {
                                         navController.navigate(route = RegistrationNav)
                                     },
-                                    onLogin = { navController.navigate(route = ProfileScreen) },
+                                    onLogin = { navController.navigate(route = ProfileScreen(it)) },
                                     modifier = Modifier.padding(paddingValues = innerPadding)
                                 )
                             }
@@ -73,7 +73,9 @@ class MainActivity : ComponentActivity() {
                                         onCancelUserDetails = {
                                             navController.navigate(route = LoginNav)
                                         },
-                                        onRegister = { navController.navigate(route = ProfileScreen) },
+                                        onRegister = {
+                                            navController.navigate(route = ProfileScreen(it))
+                                        },
                                         userUid = args.userUid,
                                         modifier = Modifier.padding(
                                             paddingValues = innerPadding
@@ -83,7 +85,11 @@ class MainActivity : ComponentActivity() {
                             }
 
                             composable<ProfileScreen> {
-                                ProfileScreen(viewModel = ProfileViewModel())
+                                val args = it.toRoute<ProfileScreen>()
+                                ProfileScreen(
+                                    viewModel = ProfileViewModel(),
+                                    userId = args.userUid
+                                )
                             }
                         }
                     }
@@ -111,4 +117,4 @@ object RegisterScreen
 data class UserDetailsInformation(val userUid: Int)
 
 @Serializable
-object ProfileScreen
+data class ProfileScreen(val userUid: Int)
