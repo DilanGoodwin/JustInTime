@@ -20,6 +20,13 @@
     <string name="newPassword">Enter new Password</string>
     <string name="reEnterNewPassword">Enter new Password Again</string>
 
+    <!-- Company Information Area -->
+    <string name="companyInformation">Company Information</string>
+    <string name="companyName">Company Name</string>
+    <string name="directReport">Direct Report</string>
+    <string name="contractType">ContractType</string>
+    <string name="role">Role</string>
+
     <!-- Buttons -->
     <string name="login">Login</string>
     <string name="register">Register</string>

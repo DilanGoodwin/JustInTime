@@ -14,5 +14,6 @@ const val TestTagPreferredContactMethodField = "PreferredContactMethod"
 const val TestTagEmergencyContactRelation = "EmergencyContactRelationMethod"
 const val TestTagEmergencyContactExpandableField = "EmergencyContactExpandable"
 const val TestTagPasswordChangeExpandableField = "PasswordChangeArea"
+const val TestTagCompanyInformationExpandableField="CompanyInformationArea"
 
 const val TestTagCalendarView = "CalendarView"

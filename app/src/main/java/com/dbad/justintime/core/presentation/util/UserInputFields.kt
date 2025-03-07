@@ -87,6 +87,32 @@ fun TextInputField(
 }
 
 @Composable
+fun LabelledTextInputFields(
+    modifier: Modifier = Modifier,
+    currentValue: String,
+    placeHolderText: String,
+    onValueChange: (String) -> Unit,
+    readOnly: Boolean = false,
+    keyboardOptions: KeyboardOptions = KeyboardOptions(),
+    testingTag: String = ""
+) {
+    TextField(
+        value = currentValue,
+        onValueChange = { onValueChange(it) },
+        placeholder = { Text(text = placeHolderText) },
+        label = { Text(text = placeHolderText) },
+        readOnly = readOnly,
+        keyboardOptions = keyboardOptions,
+        singleLine = true,
+        modifier = modifier
+            .clip(shape = RoundedCornerShape(size = 8.dp))
+            .width(400.dp)
+            .height(60.dp)
+            .testTag(tag = testingTag)
+    )
+}
+
+@Composable
 fun PasswordField(
     currentValue: String,
     placeHolderText: String,
@@ -330,8 +356,7 @@ fun ExpandableCardArea(
             .testTag(tag = testTag)
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(

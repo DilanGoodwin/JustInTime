@@ -1,12 +1,15 @@
 package com.dbad.justintime.f_profile.presentation.profile
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -26,9 +29,11 @@ import androidx.compose.ui.unit.sp
 import com.dbad.justintime.R
 import com.dbad.justintime.core.presentation.util.DateSelectorField
 import com.dbad.justintime.core.presentation.util.ExpandableCardArea
+import com.dbad.justintime.core.presentation.util.LabelledTextInputFields
 import com.dbad.justintime.core.presentation.util.PasswordField
 import com.dbad.justintime.core.presentation.util.PreferredContactField
 import com.dbad.justintime.core.presentation.util.RelationField
+import com.dbad.justintime.core.presentation.util.TestTagCompanyInformationExpandableField
 import com.dbad.justintime.core.presentation.util.TestTagEmailField
 import com.dbad.justintime.core.presentation.util.TestTagEmergencyContactExpandableField
 import com.dbad.justintime.core.presentation.util.TestTagNameField
@@ -134,6 +139,8 @@ fun ProfileScreen() {
                 // Emergency Contact Area
                 EmergencyContactArea()
                 Spacer(modifier = Modifier.height(20.dp))
+
+                // Company Information
             }
         }
     }
@@ -156,6 +163,7 @@ fun PasswordUpdateFields() {
         cardTitle = stringResource(R.string.passwordChangeFields),
         testTag = TestTagPasswordChangeExpandableField
     ) {
+        // Old Password
         PasswordField(
             currentValue = "",
             placeHolderText = stringResource(R.string.oldPassword),
@@ -167,6 +175,7 @@ fun PasswordUpdateFields() {
             testingTag = TestTagPasswordField
         )
 
+        // New Password
         PasswordField(
             currentValue = "",
             placeHolderText = stringResource(R.string.newPassword),
@@ -178,6 +187,7 @@ fun PasswordUpdateFields() {
             testingTag = TestTagPasswordField
         )
 
+        // New Password Match
         PasswordField(
             currentValue = "",
             placeHolderText = stringResource(R.string.reEnterNewPassword),
@@ -258,10 +268,67 @@ fun EmergencyContactArea() {
     }
 }
 
+@Composable
+fun CompanyInformationArea() {
+    ExpandableCardArea(
+        isExpanded = true,
+        expandableButtonClick = {},
+        cardTitle = stringResource(R.string.companyInformation),
+        testTag = TestTagCompanyInformationExpandableField
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
+            LabelledTextInputFields(
+                currentValue = "",
+                placeHolderText = stringResource(R.string.companyName),
+                onValueChange = {},
+                readOnly = true,
+                testingTag = ""
+            )
+
+            LabelledTextInputFields(
+                currentValue = "",
+                placeHolderText = stringResource(R.string.directReport),
+                onValueChange = {},
+                readOnly = true,
+                testingTag = ""
+            )
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
+                LabelledTextInputFields(
+                    currentValue = "",
+                    placeHolderText = stringResource(R.string.contractType),
+                    onValueChange = {},
+                    readOnly = true,
+                    modifier = Modifier.width(180.dp),
+                    testingTag = ""
+                )
+
+                LabelledTextInputFields(
+                    currentValue = "",
+                    placeHolderText = stringResource(R.string.role),
+                    onValueChange = {},
+                    readOnly = true,
+                    modifier = Modifier.width(190.dp),
+                    testingTag = ""
+                )
+            }
+        }
+    }
+}
+
 @ViewingSystemThemes
 @Composable
 fun ProfileScreenPreview() {
     JustInTimeTheme { ProfileScreen() }
+}
+
+@ViewingSystemThemes
+@Composable //TODO Expand Password Area
+fun ProfileScreenPasswordChangePreview() {
+    JustInTimeTheme { PasswordUpdateFields() }
 }
 
 @ViewingSystemThemes
@@ -271,7 +338,7 @@ fun ProfileScreenEmergencyContactPreview() {
 }
 
 @ViewingSystemThemes
-@Composable //TODO Expand Password Area
-fun ProfileScreenPasswordChangePreview() {
-    JustInTimeTheme { PasswordUpdateFields() }
+@Composable
+fun ProfileScreenCompanyInformationPreview() {
+    JustInTimeTheme { CompanyInformationArea() }
 }
