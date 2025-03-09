@@ -1,0 +1,61 @@
+package com.dbad.justintime.core.data.data_source
+
+import com.dbad.justintime.core.domain.model.User
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+
+class RemoteDatabaseConnection {
+
+    private val dataStore = Firebase.firestore
+    private val userCollection = "user"
+
+    fun upsertUser(user: User): Flow<Boolean> {
+        return callbackFlow {
+            dataStore.collection(userCollection).document(user.uid).set(user.toHashMap())
+                .addOnFailureListener { error ->
+                    trySend(false)
+                }.addOnSuccessListener {
+                    trySend(true)
+                }
+            awaitClose()
+        }
+    }
+
+    fun getUser(user: User): Flow<User> {
+        return callbackFlow {
+            dataStore.collection(userCollection).document(user.uid).get()
+                .addOnSuccessListener { document ->
+                    if (document != null) {
+                        val sendUser = document.data!!.toUser()
+                        trySend(sendUser)
+                    } else {
+                        trySend(User())
+                    }
+                }.addOnFailureListener { error ->
+                    trySend(User())
+                }
+            awaitClose()
+        }
+    }
+
+    private fun User.toHashMap(): Map<String, Any> {
+        return hashMapOf(
+            "uid" to uid,
+            "email" to email,
+            "password" to password,
+            "employee" to employee
+        )
+    }
+
+    private fun Map<String, Any>.toUser(): User {
+        return User(
+            uid = this["uid"] as String,
+            email = this["email"] as String,
+            password = this["password"] as String,
+            employee = (this["employee"] as Long).toInt()
+        )
+    }
+}

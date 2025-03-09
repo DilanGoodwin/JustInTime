@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     id("com.google.devtools.ksp")
     kotlin("plugin.serialization") version "1.9.23"
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -82,4 +83,9 @@ dependencies {
 
     // Serializable
     implementation(libs.kotlinx.serialization.json)
+
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.firestore)
+    implementation(libs.google.firebase.auth)
 }
