@@ -7,6 +7,7 @@ import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
 import com.dbad.justintime.f_login_register.domain.util.PasswordErrors
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.runBlocking
@@ -87,10 +88,10 @@ class RegisterViewModel(private val useCases: UserUseCases) : ViewModel() {
     private suspend fun verifyUser() {
         val receivedUser = useCases.getUser(
             User(email = _state.value.email)
-        )
+        ).first()
 
         try {
-            if (receivedUser.uid == null || receivedUser.password.isNotBlank()) {
+            if (receivedUser.uid.isBlank() || receivedUser.password.isNotBlank()) {
                 _state.update { it.copy(showEmailError = true) }
                 return
             }

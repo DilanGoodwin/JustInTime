@@ -10,7 +10,7 @@ import com.dbad.justintime.core.domain.model.User
 @Dao
 interface UsersDao {
     @Query("SELECT * FROM users WHERE (email is :email and password is :password) or (uid is :uid)")
-    suspend fun getUser(uid: Int? = null, email: String = "", password: String = ""): User
+    suspend fun getUser(uid: String = "", email: String = "", password: String = ""): User
 
     @Upsert
     suspend fun upsertUser(user: User)

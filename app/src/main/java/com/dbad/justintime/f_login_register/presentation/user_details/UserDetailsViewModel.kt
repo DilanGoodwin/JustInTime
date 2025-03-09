@@ -3,15 +3,16 @@ package com.dbad.justintime.f_login_register.presentation.user_details
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dbad.justintime.core.presentation.util.DATE_FORMATTER
 import com.dbad.justintime.core.domain.model.EmergencyContact
 import com.dbad.justintime.core.domain.model.Employee
 import com.dbad.justintime.core.domain.model.User
 import com.dbad.justintime.core.domain.model.util.PreferredContactMethod
 import com.dbad.justintime.core.domain.model.util.Relation
+import com.dbad.justintime.core.presentation.util.DATE_FORMATTER
 import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.runBlocking
@@ -208,7 +209,7 @@ class UserDetailsViewModel(private val useCases: UserUseCases) : ViewModel() {
         val employeeKey = useCases.getEmployeeKey(employee = employee)
 
         // Grab User Information & Update
-        val user = useCases.getUser(User(uid = _state.value.userUid))
+        val user = useCases.getUser(User(uid = _state.value.userUid)).first()
 
         useCases.upsertUser(
             User(
