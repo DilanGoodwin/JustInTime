@@ -6,7 +6,7 @@ import com.dbad.justintime.core.domain.model.util.Relation
 sealed interface UserDetailsEvents {
     // Navigation Events
     data class SetCancelEvent(val cancelAction: () -> Unit) : UserDetailsEvents
-    data class SetRegisterEvent(val registerAction: (Int) -> Unit) : UserDetailsEvents
+    data class SetRegisterEvent(val registerAction: (String) -> Unit) : UserDetailsEvents
 
     // User Input Events
     data class SetName(val name: String) : UserDetailsEvents
@@ -37,5 +37,5 @@ sealed interface UserDetailsEvents {
     data object RegisterEvent : UserDetailsEvents
 
     // Saving Passed Data
-    data class SetUserUid(val userUid: Int) : UserDetailsEvents
+    data class SetUserUid(val userUid: String) : UserDetailsEvents
 }

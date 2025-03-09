@@ -33,7 +33,7 @@ import com.dbad.justintime.ui.theme.JustInTimeTheme
 fun LoginScreen(
     viewModel: LoginViewModel,
     onRegistration: () -> Unit,
-    onLogin: (Int) -> Unit,
+    onLogin: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val state by viewModel.state.collectAsState()

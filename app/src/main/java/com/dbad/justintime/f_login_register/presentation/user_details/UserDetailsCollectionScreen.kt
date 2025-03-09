@@ -20,6 +20,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.dbad.justintime.R
+import com.dbad.justintime.core.domain.model.util.PreferredContactMethod
+import com.dbad.justintime.core.domain.model.util.Relation
 import com.dbad.justintime.core.presentation.util.DateSelectorField
 import com.dbad.justintime.core.presentation.util.DualButtonFields
 import com.dbad.justintime.core.presentation.util.ExpandableCardArea
@@ -31,8 +33,6 @@ import com.dbad.justintime.core.presentation.util.TestTagNameField
 import com.dbad.justintime.core.presentation.util.TestTagPhoneNumberField
 import com.dbad.justintime.core.presentation.util.TextInputField
 import com.dbad.justintime.core.presentation.util.ViewingSystemThemes
-import com.dbad.justintime.core.domain.model.util.PreferredContactMethod
-import com.dbad.justintime.core.domain.model.util.Relation
 import com.dbad.justintime.f_login_register.presentation.util.JustInTimeLogoDisplay
 import com.dbad.justintime.ui.theme.JustInTimeTheme
 
@@ -41,8 +41,8 @@ import com.dbad.justintime.ui.theme.JustInTimeTheme
 fun ExtraRegistrationDetails(
     viewModel: UserDetailsViewModel,
     onCancelUserDetails: () -> Unit,
-    onRegister: (Int) -> Unit,
-    userUid: Int,
+    onRegister: (String) -> Unit,
+    userUid: String,
     modifier: Modifier = Modifier
 ) {
     val state by viewModel.state.collectAsState()

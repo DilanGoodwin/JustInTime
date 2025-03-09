@@ -114,7 +114,7 @@ object LoginScreen
 object RegisterScreen
 
 @Serializable
-data class UserDetailsInformation(val userUid: Int)
+data class UserDetailsInformation(val userUid: String)
 
 @Serializable
-data class ProfileScreen(val userUid: Int)
+data class ProfileScreen(val userUid: String)
