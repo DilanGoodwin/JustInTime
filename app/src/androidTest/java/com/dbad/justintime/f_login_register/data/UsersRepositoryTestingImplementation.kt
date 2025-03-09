@@ -4,32 +4,39 @@ import com.dbad.justintime.core.domain.model.EmergencyContact
 import com.dbad.justintime.core.domain.model.Employee
 import com.dbad.justintime.core.domain.model.User
 import com.dbad.justintime.f_login_register.domain.repository.UserRepository
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flowOf
 
 class UsersRepositoryTestingImplementation(users: List<User>) : UserRepository {
     private val _usersList = MutableStateFlow(users)
     private val _emergencyContact = MutableStateFlow(listOf(EmergencyContact()))
     private val _employee = MutableStateFlow(listOf(Employee()))
 
-    override suspend fun getUser(user: User): User {
+    override fun getUser(user: User): Flow<User> {
         for (existingUser in _usersList.value) {
-            if ((existingUser.email == user.email) && (existingUser.password == user.password)) return existingUser
+            if ((existingUser.email == user.email) && (existingUser.password == user.password)) {
+                return flowOf(existingUser)
+            }
         }
-        return User()
+        return flowOf(User())
     }
 
     override suspend fun upsertUser(user: User) {
-        if (user.uid == null) {
-            val currentUsers = _usersList.value.toMutableList()
-            currentUsers.add(
-                User(
-                    uid = currentUsers.size,
-                    email = user.email,
-                    password = user.password
-                )
-            )
-            _usersList.value = currentUsers.toList()
+        for (currentUser in _usersList.value) {
+            if (currentUser.uid == user.uid) {
+                return
+            }
         }
+        val currentUsers = _usersList.value.toMutableList()
+        currentUsers.add(
+            User(
+                uid = user.uid,
+                email = user.email,
+                password = user.password
+            )
+        )
+        _usersList.value = currentUsers.toList()
     }
 
     override suspend fun getEmergencyContactKey(emergencyContact: EmergencyContact): Int {

@@ -11,10 +11,10 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextReplacement
 import com.dbad.justintime.R
+import com.dbad.justintime.core.domain.model.User
 import com.dbad.justintime.core.presentation.util.TestTagEmailField
 import com.dbad.justintime.core.presentation.util.TestTagPasswordField
 import com.dbad.justintime.f_login_register.data.UsersRepositoryTestingImplementation
-import com.dbad.justintime.core.domain.model.User
 import com.dbad.justintime.f_login_register.domain.repository.UserRepository
 import com.dbad.justintime.f_login_register.domain.use_case.GetEmergencyContactKey
 import com.dbad.justintime.f_login_register.domain.use_case.GetEmployeeKey
@@ -40,12 +40,22 @@ class LoginScreenTestingUI {
     private val validPassword: String = "MyP@ssw0rds"
 
     private lateinit var useCases: UserUseCases
-    private val users: List<User> =
-        listOf(
-            User(uid = 0, email = validEmail, password = validPassword),
-            User(uid = 1, email = "test.test@test.com", password = validPassword),
-            User(uid = 2, email = "something@something.com")
+    private val users: List<User> = listOf(
+        User(
+            uid = User.generateUid(email = validEmail),
+            email = validEmail,
+            password = User.hashPassword(validPassword)
+        ),
+        User(
+            uid = User.generateUid(email = "test.test@test.com"),
+            email = "test.test@test.com",
+            password = User.hashPassword(validPassword)
+        ),
+        User(
+            uid = User.generateUid(email = "something@something.com"),
+            email = "something@something.com"
         )
+    )
 
     @get:Rule
     val testRule = createAndroidComposeRule<ComponentActivity>()

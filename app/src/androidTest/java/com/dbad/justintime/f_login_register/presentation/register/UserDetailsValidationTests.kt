@@ -9,13 +9,13 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextReplacement
 import com.dbad.justintime.R
+import com.dbad.justintime.core.domain.model.User
 import com.dbad.justintime.core.presentation.util.TestTagEmailField
 import com.dbad.justintime.core.presentation.util.TestTagNameField
 import com.dbad.justintime.core.presentation.util.TestTagPasswordField
 import com.dbad.justintime.core.presentation.util.TestTagPasswordMatchField
 import com.dbad.justintime.core.presentation.util.TestTagPhoneNumberField
 import com.dbad.justintime.f_login_register.data.generateUseCase
-import com.dbad.justintime.core.domain.model.User
 import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
 import com.dbad.justintime.f_login_register.presentation.LoginTestingNavController
 import com.dbad.justintime.util.EmergencyContactAreaTests
@@ -32,12 +32,19 @@ class UserDetailsValidationTests {
     private val validPassword: String = "MyP@ssw0rds"
     private val validPhoneNumb: String = "07665599200"
 
-    private val users: List<User> =
-        listOf(
-            User(uid = 0, email = "testing@testing.com", password = validPassword),
-            User(uid = 1, email = "test.test@test.com", password = validPassword),
-            User(uid = 2, email = validEmail)
-        )
+    private val users: List<User> = listOf(
+        User(
+            uid = User.generateUid(email = "testing@testing.com"),
+            email = "testing@testing.com",
+            password = User.hashPassword(validPassword)
+        ),
+        User(
+            uid = User.generateUid(email = "test.test@test.com"),
+            email = "test.test@test.com",
+            password = User.hashPassword(validPassword)
+        ),
+        User(uid = User.generateUid(email = validEmail), email = validEmail)
+    )
     private var useCases: UserUseCases = generateUseCase(users = users)
 
     private fun fillInDetails(
