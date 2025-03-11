@@ -2,15 +2,20 @@ package com.dbad.justintime.core.data.data_source
 
 import com.dbad.justintime.core.domain.model.User
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
-class RemoteDatabaseConnection {
+class RemoteDatabaseConnection(testingMode: Boolean = false) {
 
-    private val dataStore = Firebase.firestore
+    private var dataStore: FirebaseFirestore = Firebase.firestore
     private val userCollection = "user"
+
+    init {
+        if (testingMode) dataStore.useEmulator("10.0.2.2", 8080)
+    }
 
     fun upsertUser(user: User): Flow<Boolean> {
         return callbackFlow {
@@ -28,7 +33,7 @@ class RemoteDatabaseConnection {
         return callbackFlow {
             dataStore.collection(userCollection).document(user.uid).get()
                 .addOnSuccessListener { document ->
-                    if (document != null) {
+                    if (document.exists()) {
                         val sendUser = document.data!!.toUser()
                         trySend(sendUser)
                     } else {

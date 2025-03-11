@@ -1,6 +1,7 @@
 package com.dbad.justintime.di
 
 import android.content.Context
+import com.dbad.justintime.core.data.data_source.RemoteDatabaseConnection
 import com.dbad.justintime.f_login_register.data.data_source.UsersDB
 import com.dbad.justintime.f_login_register.data.repository.UsersRepositoryImplementation
 import com.dbad.justintime.f_login_register.domain.repository.UserRepository
@@ -16,9 +17,16 @@ import com.dbad.justintime.f_login_register.domain.use_case.ValidateEmail
 import com.dbad.justintime.f_login_register.domain.use_case.ValidatePassword
 import com.dbad.justintime.f_login_register.domain.use_case.ValidatePhoneNumber
 
-class LoginRegisterModuleImplementation(context: Context) : LoginRegisterModule {
+class LoginRegisterModuleImplementation(context: Context, testingMode: Boolean = false) :
+    LoginRegisterModule {
+    override val dataStore: RemoteDatabaseConnection = RemoteDatabaseConnection(testingMode)
     override val usersDB: UsersDB = UsersDB.getInstance(context = context)
-    override val usersRepository: UserRepository by lazy { UsersRepositoryImplementation(usersDB.dao) }
+    override val usersRepository: UserRepository by lazy {
+        UsersRepositoryImplementation(
+            dao = usersDB.dao,
+            dataStore = dataStore
+        )
+    }
     override val useCases: UserUseCases by lazy {
         UserUseCases(
             getUser = GetUser(repository = usersRepository),

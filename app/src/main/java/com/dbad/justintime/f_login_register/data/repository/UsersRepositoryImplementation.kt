@@ -8,11 +8,13 @@ import com.dbad.justintime.f_login_register.data.data_source.UsersDao
 import com.dbad.justintime.f_login_register.domain.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
 
-class UsersRepositoryImplementation(private val dao: UsersDao) : UserRepository {
-    private val databaseStore = RemoteDatabaseConnection()
+class UsersRepositoryImplementation(
+    private val dao: UsersDao,
+    private val dataStore: RemoteDatabaseConnection
+) : UserRepository {
 
     override fun getUser(user: User): Flow<User> {
-        return databaseStore.getUser(user = user)
+        return dataStore.getUser(user = user)
     }
 
     override suspend fun upsertUser(user: User) {
