@@ -1,4 +1,4 @@
-package com.dbad.justintime.core.data.data_source
+package com.dbad.justintime.f_login_register.data.data_source
 
 import com.dbad.justintime.core.domain.model.User
 import com.google.firebase.Firebase
@@ -8,25 +8,13 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
-class RemoteDatabaseConnection(testingMode: Boolean = false) {
+class UserDatabaseRegisterLogin(testingMode: Boolean = false) {
 
     private var dataStore: FirebaseFirestore = Firebase.firestore
     private val userCollection = "user"
 
     init {
         if (testingMode) dataStore.useEmulator("10.0.2.2", 8080)
-    }
-
-    fun upsertUser(user: User): Flow<Boolean> {
-        return callbackFlow {
-            dataStore.collection(userCollection).document(user.uid).set(user.toHashMap())
-                .addOnFailureListener { error ->
-                    trySend(false)
-                }.addOnSuccessListener {
-                    trySend(true)
-                }
-            awaitClose()
-        }
     }
 
     fun getUser(user: User): Flow<User> {
@@ -46,21 +34,37 @@ class RemoteDatabaseConnection(testingMode: Boolean = false) {
         }
     }
 
-    private fun User.toHashMap(): Map<String, Any> {
-        return hashMapOf(
-            "uid" to uid,
-            "email" to email,
-            "password" to password,
-            "employee" to employee
-        )
-    }
+    //TODO upsert user
+    //TODO upsert EmergencyContact
+    //TODO upsert employee
+
+//    fun upsertUser(user: User): Flow<Boolean> {
+//        return callbackFlow {
+//            dataStore.collection(userCollection).document(user.uid).set(user.toHashMap())
+//                .addOnFailureListener { error ->
+//                    trySend(false)
+//                }.addOnSuccessListener {
+//                    trySend(true)
+//                }
+//            awaitClose()
+//        }
+//    }
+
+//    private fun User.toHashMap(): Map<String, Any> {
+//        return hashMapOf(
+//            "uid" to uid,
+//            "email" to email,
+//            "password" to password,
+//            "employee" to employee
+//        )
+//    }
 
     private fun Map<String, Any>.toUser(): User {
         return User(
             uid = this["uid"] as String,
             email = this["email"] as String,
             password = this["password"] as String,
-            employee = (this["employee"] as Long).toInt()
+            employee = this["employee"] as String
         )
     }
 }

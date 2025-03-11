@@ -39,9 +39,7 @@ class RepositoryUseCaseTests {
         useCases = UserUseCases(
             getUser = GetUser(repository = userRepo),
             upsertUser = UpsertUser(repository = userRepo),
-            getEmployeeKey = GetEmployeeKey(repository = userRepo),
             upsertEmployee = UpsertEmployee(repository = userRepo),
-            getEmergencyContactKey = GetEmergencyContactKey(repository = userRepo),
             upsertEmergencyContact = UpsertEmergencyContact(repository = userRepo),
             validateEmail = ValidateEmail(),
             validatePassword = ValidatePassword(),
@@ -65,7 +63,7 @@ class RepositoryUseCaseTests {
         assertEquals("Received user did not match the expected user", userReceived, User())
 
         userReceived =
-            useCases.getUser(user = User(email = validEmail, password = validPassword)).first()
+            useCases.getUser(user = User(uid = User.generateUid(email = validEmail))).first()
         assertEquals(
             "Received user did not match the expected user",
             User(

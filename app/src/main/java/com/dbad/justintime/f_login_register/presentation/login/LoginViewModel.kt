@@ -56,6 +56,7 @@ class LoginViewModel(private val useCases: UserUseCases) : ViewModel() {
                 if (receivedUser.uid.isBlank()) {
                     _state.update { it.copy(showError = true) }
                 } else {
+                    useCases.upsertUser(user = receivedUser)
                     _state.value.onLogin(receivedUser.uid)
                 }
             }

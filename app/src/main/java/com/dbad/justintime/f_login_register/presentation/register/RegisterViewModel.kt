@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
 
 class RegisterViewModel(private val useCases: UserUseCases) : ViewModel() {
     private val _state = MutableStateFlow(RegisterState())
@@ -31,7 +31,7 @@ class RegisterViewModel(private val useCases: UserUseCases) : ViewModel() {
                 if (!(_state.value.showEmailError ||
                             _state.value.showPasswordError ||
                             _state.value.showMatchPasswordError)
-                ) runBlocking { verifyUser() }
+                ) viewModelScope.launch { verifyUser() }
 
             }
 
@@ -87,19 +87,13 @@ class RegisterViewModel(private val useCases: UserUseCases) : ViewModel() {
 
     private suspend fun verifyUser() {
         val receivedUser = useCases.getUser(
-            User(email = _state.value.email)
+            User(uid = User.generateUid(_state.value.email))
         ).first()
 
-        try {
-            if (receivedUser.uid.isBlank() || receivedUser.password.isNotBlank()) {
-                _state.update { it.copy(showEmailError = true) }
-                return
-            }
-        } catch (e: NullPointerException) {
+        if (receivedUser.uid.isBlank() || receivedUser.password.isNotBlank()) {
             _state.update { it.copy(showEmailError = true) }
             return
         }
-
 
         useCases.upsertUser(
             User(

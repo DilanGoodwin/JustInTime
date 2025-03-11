@@ -15,7 +15,7 @@ class UserRepositoryTestingImplementation(users: List<User>) : UserRepository {
 
     override fun getUser(user: User): Flow<User> {
         for (existingUser in _usersList.value) {
-            if ((existingUser.email == user.email) && (existingUser.password == user.password)) {
+            if (existingUser.uid == user.uid) {
                 return flowOf(existingUser)
             }
         }
@@ -28,7 +28,6 @@ class UserRepositoryTestingImplementation(users: List<User>) : UserRepository {
                 return
             }
         }
-        
         val currentUsers = _usersList.value.toMutableList()
         currentUsers.add(
             User(
@@ -40,69 +39,49 @@ class UserRepositoryTestingImplementation(users: List<User>) : UserRepository {
         _usersList.value = currentUsers.toList()
     }
 
-    override suspend fun getEmergencyContactKey(emergencyContact: EmergencyContact): Int {
-        for (contact in _emergencyContact.value) {
-            if ((contact.name == emergencyContact.name) &&
-                (contact.email == emergencyContact.email) &&
-                (contact.phone == emergencyContact.phone) &&
-                (contact.relation == emergencyContact.relation)
-            ) {
-                return contact.uid!!
-            }
-        }
-        return 0
-    }
-
     override suspend fun upsertEmergencyContact(contact: EmergencyContact) {
-        if (contact.uid == null) {
-            val currentEmergencyContacts = _emergencyContact.value.toMutableList()
-            currentEmergencyContacts.add(
-                EmergencyContact(
-                    uid = currentEmergencyContacts.size,
-                    name = contact.name,
-                    preferredName = contact.name,
-                    email = contact.email,
-                    phone = contact.phone,
-                    preferredContactMethod = contact.preferredContactMethod,
-                    relation = contact.relation
-                )
-            )
-        }
-    }
-
-    override suspend fun getEmployeeKey(employee: Employee): Int {
-        for (employ in _employee.value) {
-            if ((employee.name == employ.name) &&
-                (employee.phone == employ.phone) &&
-                (employee.dateOfBirth == employ.dateOfBirth) &&
-                (employee.emergencyContact == employ.emergencyContact) &&
-                (employee.contractType == employ.contractType) &&
-                (employee.manager == employ.manager)
-            ) {
-                return employ.uid!!
+        for (existingEmergencyContact in _emergencyContact.value) {
+            if ((existingEmergencyContact.uid == contact.uid) && (existingEmergencyContact.email == contact.email)) {
+                return
             }
         }
-        return 0
+
+        val currentEmergencyContacts = _emergencyContact.value.toMutableList()
+        currentEmergencyContacts.add(
+            EmergencyContact(
+                uid = contact.uid,
+                name = contact.name,
+                preferredName = contact.name,
+                email = contact.email,
+                phone = contact.phone,
+                preferredContactMethod = contact.preferredContactMethod,
+                relation = contact.relation
+            )
+        )
     }
 
     override suspend fun upsertEmployee(employee: Employee) {
-        if (employee.uid == null) {
-            val currentEmployees = _employee.value.toMutableList()
-            currentEmployees.add(
-                Employee(
-                    uid = currentEmployees.size,
-                    name = employee.name,
-                    preferredName = employee.preferredName,
-                    phone = employee.phone,
-                    preferredContactMethod = employee.preferredContactMethod,
-                    dateOfBirth = employee.dateOfBirth, //TODO
-                    minimumHours = employee.minimumHours,
-                    emergencyContact = employee.emergencyContact,
-                    contractType = employee.contractType,
-                    manager = employee.manager,
-                    role = employee.role
-                )
-            )
+        for (existingEmployee in _employee.value) {
+            if ((existingEmployee.uid == employee.uid) && (existingEmployee.name == employee.name)) {
+                return
+            }
         }
+
+        val currentEmployees = _employee.value.toMutableList()
+        currentEmployees.add(
+            Employee(
+                uid = employee.uid,
+                name = employee.name,
+                preferredName = employee.preferredName,
+                phone = employee.phone,
+                preferredContactMethod = employee.preferredContactMethod,
+                dateOfBirth = employee.dateOfBirth,
+                minimumHours = employee.minimumHours,
+                emergencyContact = employee.emergencyContact,
+                contractType = employee.contractType,
+                manager = employee.manager,
+                role = employee.role
+            )
+        )
     }
 }

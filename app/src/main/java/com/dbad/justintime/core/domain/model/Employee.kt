@@ -1,42 +1,30 @@
 package com.dbad.justintime.core.domain.model
 
-import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import com.dbad.justintime.core.domain.model.util.ContractType
 import com.dbad.justintime.core.domain.model.util.PreferredContactMethod
+import com.dbad.justintime.core.domain.model.util.generateIdentifier
 
-@Entity(
-    tableName = "employee", foreignKeys = [ForeignKey(
-        entity = EmergencyContact::class,
-        parentColumns = ["uid"],
-        childColumns = ["emergencyContact"],
-        onDelete = ForeignKey.SET_NULL,
-        onUpdate = ForeignKey.CASCADE
-    ), ForeignKey(
-        entity = Employee::class,
-        parentColumns = ["uid"],
-        childColumns = ["manager"],
-        onDelete = ForeignKey.SET_NULL,
-        onUpdate = ForeignKey.CASCADE
-    )]
-)
+@Entity(tableName = "employee")
 data class Employee(
-    @ColumnInfo(name = "uid", index = true)
-    @PrimaryKey(autoGenerate = true) val uid: Int? = null,
+    @PrimaryKey(autoGenerate = false) val uid: String = "",
     val name: String = "",
     val preferredName: String = "",
     val phone: String = "",
     val preferredContactMethod: PreferredContactMethod = PreferredContactMethod.PHONE,
     val dateOfBirth: String = "",
     val minimumHours: Int = 0,
-    @ColumnInfo(name = "emergencyContact", index = true)
-    val emergencyContact: Int? = null,
+    val emergencyContact: String = "",
     val isAdmin: Boolean = false,
     val companyName: String = "",
     val contractType: ContractType = ContractType.OTHER,
-    @ColumnInfo(name = "manager", index = true)
-    val manager: Int? = null,
+    val manager: String = "",
     val role: String = ""
-)
+) {
+    companion object {
+        fun generateUid(name: String, phone: String): String {
+            return generateIdentifier(identifier = (name + phone))
+        }
+    }
+}

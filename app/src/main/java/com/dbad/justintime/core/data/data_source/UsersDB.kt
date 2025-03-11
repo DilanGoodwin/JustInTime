@@ -1,4 +1,4 @@
-package com.dbad.justintime.f_login_register.data.data_source
+package com.dbad.justintime.core.data.data_source
 
 import android.content.Context
 import androidx.room.Database

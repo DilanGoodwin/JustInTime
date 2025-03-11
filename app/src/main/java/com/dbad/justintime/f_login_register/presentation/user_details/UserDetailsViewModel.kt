@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
 import java.util.Date
 
 class UserDetailsViewModel(private val useCases: UserUseCases) : ViewModel() {
@@ -129,7 +129,7 @@ class UserDetailsViewModel(private val useCases: UserUseCases) : ViewModel() {
                             _state.value.showPhoneNumbFieldError ||
                             _state.value.showEmergencyContactPhoneError ||
                             _state.value.showEmergencyContactEmailError)
-                ) runBlocking { createUser() }
+                ) viewModelScope.launch { createUser() }
             }
         }
     }
@@ -172,6 +172,9 @@ class UserDetailsViewModel(private val useCases: UserUseCases) : ViewModel() {
 
     private suspend fun createUser() {
         // Create emergency contact
+        val emergencyContactKey = EmergencyContact.generateUid(
+            email = _state.value.emergencyContactEmail
+        )
         val emergencyContact = EmergencyContact(
             name = _state.value.emergencyContactName,
             preferredName = _state.value.emergencyContactPrefName,
@@ -188,11 +191,15 @@ class UserDetailsViewModel(private val useCases: UserUseCases) : ViewModel() {
                 _state.value.emergencyContactRelation
             }
         )
-
         useCases.upsertEmergencyContact(emergencyContact = emergencyContact)
 
         // Create Employee Store
+        val employeeKey = Employee.generateUid(
+            name = _state.value.name,
+            phone = _state.value.phoneNumber
+        )
         val employee = Employee(
+            uid = employeeKey,
             name = _state.value.name,
             preferredName = _state.value.preferredName,
             phone = _state.value.phoneNumber,
@@ -202,15 +209,12 @@ class UserDetailsViewModel(private val useCases: UserUseCases) : ViewModel() {
                 PreferredContactMethod.PHONE
             },
             dateOfBirth = _state.value.userDateOfBirth,
-            emergencyContact = useCases.getEmergencyContactKey(emergencyContact = emergencyContact)
+            emergencyContact = emergencyContactKey
         )
-
         useCases.upsertEmployee(employee = employee)
-        val employeeKey = useCases.getEmployeeKey(employee = employee)
 
         // Grab User Information & Update
         val user = useCases.getUser(User(uid = _state.value.userUid)).first()
-
         useCases.upsertUser(
             User(
                 uid = _state.value.userUid,
@@ -221,6 +225,6 @@ class UserDetailsViewModel(private val useCases: UserUseCases) : ViewModel() {
         )
 
         // Pass the user primary key to Profile Screen
-        _state.value.registerEvent(_state.value.userUid!!)
+        _state.value.registerEvent(_state.value.userUid)
     }
 }
