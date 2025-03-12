@@ -34,5 +34,23 @@ data class User(
             val hashKey = SecretKeySpec(generateSpecification.encoded, "AES")
             return Base64.getEncoder().encodeToString(hashKey.encoded).replace("/", "")
         }
+
+        fun User.toHashMap(): Map<String, Any> {
+            return hashMapOf(
+                "uid" to uid,
+                "email" to email,
+                "password" to password,
+                "employee" to employee
+            )
+        }
+
+        fun Map<String, Any>.toUser(): User {
+            return User(
+                uid = this["uid"] as String,
+                email = this["email"] as String,
+                password = this["password"] as String,
+                employee = this["employee"] as String
+            )
+        }
     }
 }

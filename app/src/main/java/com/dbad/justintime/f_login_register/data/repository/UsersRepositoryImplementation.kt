@@ -18,14 +18,17 @@ class UsersRepositoryImplementation(
     }
 
     override suspend fun upsertUser(user: User) {
+        dataStore.upsertUser(user = user)
         dao.upsertUser(user = user)
     }
 
     override suspend fun upsertEmergencyContact(contact: EmergencyContact) {
+        dataStore.upsertEmergencyContact(emergencyContact = contact)
         dao.upsertEmergencyContact(contact = contact)
     }
 
     override suspend fun upsertEmployee(employee: Employee) {
+        dataStore.upsertEmployee(employee = employee)
         dao.upsertEmployee(employee = employee)
     }
 }

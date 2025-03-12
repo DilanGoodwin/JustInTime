@@ -26,5 +26,23 @@ data class Employee(
         fun generateUid(name: String, phone: String): String {
             return generateIdentifier(identifier = (name + phone))
         }
+
+        fun Employee.toHashMap(): Map<String, Any> {
+            return hashMapOf(
+                "uid" to uid,
+                "name" to name,
+                "preferredName" to preferredName,
+                "phone" to phone
+            )
+        }
+
+        fun Map<String, Any>.toEmployee(): Employee {
+            return Employee(
+                uid = this["uid"] as String,
+                name = this["name"] as String,
+                preferredName = this["preferredName"] as String,
+                phone = this["phone"] as String
+            )
+        }
     }
 }

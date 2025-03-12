@@ -20,5 +20,29 @@ data class EmergencyContact(
         fun generateUid(email: String): String {
             return generateIdentifier(identifier = email)
         }
+
+        fun EmergencyContact.toHashMap(): Map<String, Any> {
+            return hashMapOf(
+                "uid" to uid,
+                "name" to name,
+                "preferredName" to preferredName,
+                "email" to email,
+                "phone" to phone,
+                "preferredContactMethod" to preferredContactMethod,
+                "relation" to relation
+            )
+        }
+
+        fun Map<String, Any>.toEmergencyContact(): EmergencyContact {
+            return EmergencyContact(
+                uid = this["uid"] as String,
+                name = this["name"] as String,
+                preferredName = this["preferredName"] as String,
+                email = this["email"] as String,
+                phone = this["phone"] as String,
+                preferredContactMethod = this["preferredContactMethod"] as PreferredContactMethod,
+                relation = this["relation"] as Relation
+            )
+        }
     }
 }
