@@ -9,6 +9,7 @@ import com.dbad.justintime.core.domain.model.User
 import com.dbad.justintime.core.domain.model.util.PreferredContactMethod
 import com.dbad.justintime.core.domain.model.util.Relation
 import com.dbad.justintime.core.presentation.util.DATE_FORMATTER
+import com.dbad.justintime.f_local_datastore.domain.repository.UserPreferencesRepository
 import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -18,7 +19,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Date
 
-class UserDetailsViewModel(private val useCases: UserUseCases) : ViewModel() {
+class UserDetailsViewModel(
+    private val useCases: UserUseCases,
+    private val preferencesDataStore: UserPreferencesRepository
+) : ViewModel() {
     private val _state = MutableStateFlow(UserDetailsState())
     val state = _state.stateIn(
         viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000L),
@@ -225,6 +229,6 @@ class UserDetailsViewModel(private val useCases: UserUseCases) : ViewModel() {
         )
 
         // Pass the user primary key to Profile Screen
-        _state.value.registerEvent(_state.value.userUid)
+        _state.value.registerEvent() //TODO save uid to dataStore to skip login process next time
     }
 }

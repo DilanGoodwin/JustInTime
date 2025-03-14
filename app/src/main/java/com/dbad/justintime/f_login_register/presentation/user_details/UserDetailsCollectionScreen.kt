@@ -41,7 +41,7 @@ import com.dbad.justintime.ui.theme.JustInTimeTheme
 fun ExtraRegistrationDetails(
     viewModel: UserDetailsViewModel,
     onCancelUserDetails: () -> Unit,
-    onRegister: (String) -> Unit,
+    onRegister: () -> Unit,
     userUid: String,
     modifier: Modifier = Modifier
 ) {
