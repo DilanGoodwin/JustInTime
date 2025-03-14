@@ -41,7 +41,11 @@ import com.dbad.justintime.core.presentation.util.LabelledTextInputFields
 import com.dbad.justintime.core.presentation.util.PasswordField
 import com.dbad.justintime.core.presentation.util.PreferredContactField
 import com.dbad.justintime.core.presentation.util.RelationField
+import com.dbad.justintime.core.presentation.util.TestTagCompanyInformationCompanyNameField
+import com.dbad.justintime.core.presentation.util.TestTagCompanyInformationContractType
 import com.dbad.justintime.core.presentation.util.TestTagCompanyInformationExpandableField
+import com.dbad.justintime.core.presentation.util.TestTagCompanyInformationManagerNameField
+import com.dbad.justintime.core.presentation.util.TestTagCompanyInformationRole
 import com.dbad.justintime.core.presentation.util.TestTagEmailField
 import com.dbad.justintime.core.presentation.util.TestTagEmergencyContactExpandableField
 import com.dbad.justintime.core.presentation.util.TestTagNameField
@@ -319,7 +323,7 @@ fun CompanyInformationArea(state: ProfileState) {
                 placeHolderText = stringResource(R.string.companyName),
                 onValueChange = {},
                 readOnly = !state.employee.isAdmin,
-                testingTag = ""
+                testingTag = TestTagCompanyInformationCompanyNameField
             )
 
             LabelledTextInputFields(
@@ -327,7 +331,7 @@ fun CompanyInformationArea(state: ProfileState) {
                 placeHolderText = stringResource(R.string.directReport),
                 onValueChange = {},
                 readOnly = !state.employee.isAdmin,
-                testingTag = ""
+                testingTag = TestTagCompanyInformationManagerNameField
             )
 
             Row(
@@ -337,7 +341,7 @@ fun CompanyInformationArea(state: ProfileState) {
                 LabelledTextDropDownFields(
                     currentValue = stringResource(state.employee.contractType.stringVal),
                     placeHolderText = stringResource(R.string.contractType),
-                    testTag = "",
+                    testTag = TestTagCompanyInformationContractType,
                     readOnly = !state.employee.isAdmin,
                     expandedDropDown = state.companyInformationExpandedContractType,
                     dropDownToggle = {},
@@ -358,7 +362,7 @@ fun CompanyInformationArea(state: ProfileState) {
                 LabelledTextInputFields(
                     currentValue = state.employee.role,
                     placeHolderText = stringResource(R.string.role),
-                    testingTag = "",
+                    testingTag = TestTagCompanyInformationRole,
                     readOnly = !state.employee.isAdmin,
                     onValueChange = {},
                     modifier = Modifier.width(190.dp)
@@ -387,7 +391,7 @@ fun ProfileScreenPasswordChangePreview() {
 }
 
 @ViewingSystemThemes
-@Composable //TODO Expand emergency contact area
+@Composable
 fun ProfileScreenEmergencyContactPreview() {
     JustInTimeTheme { EmergencyContactArea(state = ProfileState(expandEmergencyContactArea = true)) }
 }
