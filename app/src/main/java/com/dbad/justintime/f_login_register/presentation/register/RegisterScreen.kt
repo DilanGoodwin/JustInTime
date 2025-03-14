@@ -19,14 +19,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.dbad.justintime.R
+import com.dbad.justintime.core.presentation.util.DualButtonFields
+import com.dbad.justintime.core.presentation.util.PasswordField
 import com.dbad.justintime.core.presentation.util.TestTagEmailField
 import com.dbad.justintime.core.presentation.util.TestTagPasswordField
 import com.dbad.justintime.core.presentation.util.TestTagPasswordMatchField
+import com.dbad.justintime.core.presentation.util.TextInputField
 import com.dbad.justintime.core.presentation.util.ViewingSystemThemes
-import com.dbad.justintime.f_login_register.presentation.util.DualButtonFields
 import com.dbad.justintime.f_login_register.presentation.util.JustInTimeLogoDisplay
-import com.dbad.justintime.f_login_register.presentation.util.PasswordField
-import com.dbad.justintime.f_login_register.presentation.util.TextInputField
 import com.dbad.justintime.ui.theme.JustInTimeTheme
 
 // Stateful
@@ -34,7 +34,7 @@ import com.dbad.justintime.ui.theme.JustInTimeTheme
 fun RegisterScreen(
     viewModel: RegisterViewModel,
     onCancelRegistration: () -> Unit,
-    onRegistration: () -> Unit,
+    onRegistration: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val state by viewModel.state.collectAsState()
@@ -78,7 +78,6 @@ fun RegisterScreen(
                         currentValue = state.password,
                         placeHolderText = stringResource(R.string.password),
                         showPassword = state.showPassword,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                         onValueChange = { onEvent(RegisterEvent.SetPassword(it)) },
                         visiblePassword = { onEvent(RegisterEvent.ToggleViewPassword) },
                         textFieldError = state.showPasswordError,
@@ -92,7 +91,6 @@ fun RegisterScreen(
                         currentValue = state.passwordMatch,
                         placeHolderText = stringResource(R.string.rePassword),
                         showPassword = state.showPasswordMatch,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                         onValueChange = { onEvent(RegisterEvent.SetPasswordMatch(it)) },
                         visiblePassword = { onEvent(RegisterEvent.ToggleViewPasswordMatch) },
                         textFieldError = state.showMatchPasswordError,

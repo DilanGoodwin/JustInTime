@@ -9,4 +9,7 @@ object LoginScreenRoute
 object RegisterScreenRoute
 
 @Serializable
-data class UserDetailsRoute(val email: String, val password: String)
+data class UserDetailsRoute(val userUid: String)
+
+@Serializable
+object ProfileScreen

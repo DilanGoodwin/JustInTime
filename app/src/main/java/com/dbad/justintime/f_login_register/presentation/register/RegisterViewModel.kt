@@ -2,12 +2,15 @@ package com.dbad.justintime.f_login_register.presentation.register
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dbad.justintime.core.domain.model.User
 import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
 import com.dbad.justintime.f_login_register.domain.util.PasswordErrors
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class RegisterViewModel(private val useCases: UserUseCases) : ViewModel() {
     private val _state = MutableStateFlow(RegisterState())
@@ -25,9 +28,11 @@ class RegisterViewModel(private val useCases: UserUseCases) : ViewModel() {
                 showPasswordError(password = _state.value.password)
                 showMatchPasswordError(password = _state.value.passwordMatch)
 
-                if (!(_state.value.showEmailError || _state.value.showPasswordError || _state.value.showMatchPasswordError)) {
-                    _state.value.onRegistration()
-                }
+                if (!(_state.value.showEmailError ||
+                            _state.value.showPasswordError ||
+                            _state.value.showMatchPasswordError)
+                ) viewModelScope.launch { verifyUser() }
+
             }
 
             is RegisterEvent.SetEmail -> {
@@ -78,5 +83,26 @@ class RegisterViewModel(private val useCases: UserUseCases) : ViewModel() {
         var passwordError = true
         if (password == _state.value.password) passwordError = false
         _state.update { it.copy(showMatchPasswordError = passwordError) }
+    }
+
+    private suspend fun verifyUser() {
+        val receivedUser = useCases.getUser(
+            User(uid = User.generateUid(_state.value.email))
+        ).first()
+
+        if (receivedUser.uid.isBlank() || receivedUser.password.isNotBlank()) {
+            _state.update { it.copy(showEmailError = true) }
+            return
+        }
+
+        useCases.upsertUser(
+            User(
+                uid = receivedUser.uid,
+                email = _state.value.email,
+                password = _state.value.password
+            )
+        )
+
+        _state.value.onRegistration(receivedUser.uid)
     }
 }

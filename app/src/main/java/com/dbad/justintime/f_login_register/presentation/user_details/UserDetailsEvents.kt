@@ -1,7 +1,7 @@
 package com.dbad.justintime.f_login_register.presentation.user_details
 
-import com.dbad.justintime.f_login_register.domain.model.util.PreferredContactMethod
-import com.dbad.justintime.f_login_register.domain.model.util.Relation
+import com.dbad.justintime.core.domain.model.util.PreferredContactMethod
+import com.dbad.justintime.core.domain.model.util.Relation
 
 sealed interface UserDetailsEvents {
     // Navigation Events
@@ -37,6 +37,5 @@ sealed interface UserDetailsEvents {
     data object RegisterEvent : UserDetailsEvents
 
     // Saving Passed Data
-    data class SetEmail(val email: String) : UserDetailsEvents
-    data class SetPassword(val password: String) : UserDetailsEvents
+    data class SetUserUid(val userUid: String) : UserDetailsEvents
 }

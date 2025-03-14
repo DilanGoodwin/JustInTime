@@ -1,12 +1,12 @@
-package com.dbad.justintime.f_login_register.data.data_source
+package com.dbad.justintime.core.data.data_source
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.dbad.justintime.f_login_register.domain.model.EmergencyContact
-import com.dbad.justintime.f_login_register.domain.model.Employee
-import com.dbad.justintime.f_login_register.domain.model.User
+import com.dbad.justintime.core.domain.model.EmergencyContact
+import com.dbad.justintime.core.domain.model.Employee
+import com.dbad.justintime.core.domain.model.User
 
 @Database(entities = [User::class, Employee::class, EmergencyContact::class], version = 1)
 abstract class UsersDB : RoomDatabase() {

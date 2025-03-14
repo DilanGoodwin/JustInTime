@@ -14,6 +14,19 @@
     <string name="dateOfBirth">Date of Birth</string>
     <string name="relation">Relation</string>
 
+    <!-- Update Password Area -->
+    <string name="passwordChangeFields">Change Password</string>
+    <string name="oldPassword">Enter old Password</string>
+    <string name="newPassword">Enter new Password</string>
+    <string name="reEnterNewPassword">Enter new Password Again</string>
+
+    <!-- Company Information Area -->
+    <string name="companyInformation">Company Information</string>
+    <string name="companyName">Company Name</string>
+    <string name="directReport">Direct Report</string>
+    <string name="contractType">ContractType</string>
+    <string name="role">Role</string>
+
     <!-- Buttons -->
     <string name="login">Login</string>
     <string name="register">Register</string>
@@ -53,10 +66,19 @@
     <string name="carer">Carer</string>
     <string name="other">Other</string>
 
+    <!-- Titles -->
+    <string name="profile">Profile</string>
+
+    <!-- Contract Types -->
+    <string name="part_time">Part-Time</string>
+    <string name="salary">Salary</string>
+    <string name="contractor">Contractor</string>
+
     <!-- Messages -->
     <string name="savingMessage">Saving Changes</string>
 
     <!-- Logo Descriptions -->
     <string name="fieldVisibility">View Text in Field</string>
     <string name="fieldVisibilityOff">Hide Text in Field</string>
+    <string name="logoDescription">JustInTime Application Logo</string>
 </resources>

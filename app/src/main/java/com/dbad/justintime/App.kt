@@ -14,6 +14,6 @@ class App : Application() {
      */
     override fun onCreate() {
         super.onCreate()
-        loginRegister = LoginRegisterModuleImplementation(this)
+        loginRegister = LoginRegisterModuleImplementation(context = this)
     }
 }

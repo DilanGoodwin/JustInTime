@@ -19,13 +19,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.dbad.justintime.R
+import com.dbad.justintime.core.presentation.util.DualButtonFields
+import com.dbad.justintime.core.presentation.util.PasswordField
 import com.dbad.justintime.core.presentation.util.TestTagEmailField
 import com.dbad.justintime.core.presentation.util.TestTagPasswordField
+import com.dbad.justintime.core.presentation.util.TextInputField
 import com.dbad.justintime.core.presentation.util.ViewingSystemThemes
-import com.dbad.justintime.f_login_register.presentation.util.DualButtonFields
 import com.dbad.justintime.f_login_register.presentation.util.JustInTimeLogoDisplay
-import com.dbad.justintime.f_login_register.presentation.util.PasswordField
-import com.dbad.justintime.f_login_register.presentation.util.TextInputField
 import com.dbad.justintime.ui.theme.JustInTimeTheme
 
 // Stateful
@@ -33,12 +33,14 @@ import com.dbad.justintime.ui.theme.JustInTimeTheme
 fun LoginScreen(
     viewModel: LoginViewModel,
     onRegistration: () -> Unit,
+    onLogin: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val state by viewModel.state.collectAsState()
 
     val event = viewModel::onEvent
     event(LoginEvent.SetRegistrationAction(onRegistration))
+    event(LoginEvent.SetLoginAction(onLogin))
 
     LoginScreen(state = state, onEvent = event, modifier = modifier)
 }
@@ -73,7 +75,6 @@ fun LoginScreen(
                         currentValue = state.password,
                         placeHolderText = stringResource(R.string.password),
                         showPassword = state.showPassword,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                         onValueChange = { onEvent(LoginEvent.SetPassword(password = it)) },
                         visiblePassword = { onEvent(LoginEvent.ToggleViewPassword) },
                         textFieldError = state.showError,

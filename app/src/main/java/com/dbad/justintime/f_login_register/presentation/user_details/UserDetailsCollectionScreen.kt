@@ -20,19 +20,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.dbad.justintime.R
+import com.dbad.justintime.core.domain.model.util.PreferredContactMethod
+import com.dbad.justintime.core.domain.model.util.Relation
+import com.dbad.justintime.core.presentation.util.DateSelectorField
+import com.dbad.justintime.core.presentation.util.DualButtonFields
+import com.dbad.justintime.core.presentation.util.ExpandableCardArea
+import com.dbad.justintime.core.presentation.util.PreferredContactField
+import com.dbad.justintime.core.presentation.util.RelationField
 import com.dbad.justintime.core.presentation.util.TestTagEmailField
+import com.dbad.justintime.core.presentation.util.TestTagEmergencyContactExpandableField
 import com.dbad.justintime.core.presentation.util.TestTagNameField
 import com.dbad.justintime.core.presentation.util.TestTagPhoneNumberField
+import com.dbad.justintime.core.presentation.util.TextInputField
 import com.dbad.justintime.core.presentation.util.ViewingSystemThemes
-import com.dbad.justintime.f_login_register.domain.model.util.PreferredContactMethod
-import com.dbad.justintime.f_login_register.domain.model.util.Relation
-import com.dbad.justintime.f_login_register.presentation.util.DateSelectorField
-import com.dbad.justintime.f_login_register.presentation.util.DualButtonFields
-import com.dbad.justintime.f_login_register.presentation.util.EmergencyContactField
 import com.dbad.justintime.f_login_register.presentation.util.JustInTimeLogoDisplay
-import com.dbad.justintime.f_login_register.presentation.util.PreferredContactField
-import com.dbad.justintime.f_login_register.presentation.util.RelationField
-import com.dbad.justintime.f_login_register.presentation.util.TextInputField
 import com.dbad.justintime.ui.theme.JustInTimeTheme
 
 //Stateful
@@ -41,8 +42,7 @@ fun ExtraRegistrationDetails(
     viewModel: UserDetailsViewModel,
     onCancelUserDetails: () -> Unit,
     onRegister: () -> Unit,
-    email: String,
-    password: String,
+    userUid: String,
     modifier: Modifier = Modifier
 ) {
     val state by viewModel.state.collectAsState()
@@ -50,8 +50,7 @@ fun ExtraRegistrationDetails(
     val event = viewModel::onEvent
     event(UserDetailsEvents.SetCancelEvent(onCancelUserDetails))
     event(UserDetailsEvents.SetRegisterEvent(onRegister))
-    event(UserDetailsEvents.SetEmail(email))
-    event(UserDetailsEvents.SetPassword(password))
+    event(UserDetailsEvents.SetUserUid(userUid))
 
     ExtraRegistrationDetails(state = state, onEvent = event, modifier = modifier)
 }
@@ -153,9 +152,11 @@ fun EmergencyContactDetails(
     state: UserDetailsState,
     onEvent: (UserDetailsEvents) -> Unit
 ) {
-    EmergencyContactField(
+    ExpandableCardArea(
         isExpanded = state.emergencyContactAreaExpanded,
-        expandableButtonClick = { onEvent(UserDetailsEvents.ToggleEmergencyContactArea) }
+        expandableButtonClick = { onEvent(UserDetailsEvents.ToggleEmergencyContactArea) },
+        cardTitle = stringResource(R.string.emergencyContact),
+        testTag = TestTagEmergencyContactExpandableField
     ) {
         // Emergency Contact Name Field
         TextInputField(

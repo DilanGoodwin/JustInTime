@@ -11,6 +11,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextReplacement
 import com.dbad.justintime.R
+import com.dbad.justintime.core.domain.model.User
 import com.dbad.justintime.core.presentation.util.TestTagEmailField
 import com.dbad.justintime.core.presentation.util.TestTagEmergencyContactExpandableField
 import com.dbad.justintime.core.presentation.util.TestTagNameField
@@ -18,20 +19,8 @@ import com.dbad.justintime.core.presentation.util.TestTagPasswordField
 import com.dbad.justintime.core.presentation.util.TestTagPasswordMatchField
 import com.dbad.justintime.core.presentation.util.TestTagPhoneNumberField
 import com.dbad.justintime.core.presentation.util.TestTagPreferredContactMethodField
-import com.dbad.justintime.f_login_register.data.UsersRepositoryTestingImplementation
-import com.dbad.justintime.f_login_register.domain.model.User
-import com.dbad.justintime.f_login_register.domain.repository.UserRepository
-import com.dbad.justintime.f_login_register.domain.use_case.GetEmergencyContactKey
-import com.dbad.justintime.f_login_register.domain.use_case.GetEmployeeKey
-import com.dbad.justintime.f_login_register.domain.use_case.GetUser
-import com.dbad.justintime.f_login_register.domain.use_case.UpsertEmergencyContact
-import com.dbad.justintime.f_login_register.domain.use_case.UpsertEmployee
-import com.dbad.justintime.f_login_register.domain.use_case.UpsertUser
+import com.dbad.justintime.f_login_register.data.generateUseCase
 import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
-import com.dbad.justintime.f_login_register.domain.use_case.ValidateDate
-import com.dbad.justintime.f_login_register.domain.use_case.ValidateEmail
-import com.dbad.justintime.f_login_register.domain.use_case.ValidatePassword
-import com.dbad.justintime.f_login_register.domain.use_case.ValidatePhoneNumber
 import com.dbad.justintime.f_login_register.presentation.LoginTestingNavController
 import com.dbad.justintime.util.EmergencyContactAreaTests
 import com.dbad.justintime.util.EmergencyContactAreaTests.Companion.fillInEmergencyContact
@@ -55,29 +44,21 @@ class RegisterSecondaryScreenTestingUI {
         EmergencyContactAreaTests(testRule = testRule)
 
     private lateinit var useCases: UserUseCases
-    private val users: List<User> =
-        listOf(
-            User(uid = 0, email = validEmail, password = validPassword),
-            User(uid = 1, email = "test.test@test.com", password = validPassword)
-        )
+    private val users: List<User> = listOf(
+        User(
+            uid = User.generateUid(email = "testing@testing.com"),
+            email = "testing@testing.com",
+            password = User.hashPassword(validPassword)
+        ),
+        User(
+            uid = User.generateUid(email = "test.test@test.com"),
+            email = "test.test@test.com",
+            password = User.hashPassword(validPassword)
+        ),
+        User(uid = User.generateUid(email = validEmail), email = validEmail)
+    )
 
-    @Before
-    fun reset() = runTest {
-        val userRepo: UserRepository = UsersRepositoryTestingImplementation(users = users)
-        useCases = UserUseCases(
-            getUser = GetUser(repository = userRepo),
-            upsertUser = UpsertUser(repository = userRepo),
-            getEmployeeKey = GetEmployeeKey(repository = userRepo),
-            upsertEmployee = UpsertEmployee(repository = userRepo),
-            getEmergencyContactKey = GetEmergencyContactKey(repository = userRepo),
-            upsertEmergencyContact = UpsertEmergencyContact(repository = userRepo),
-            validateEmail = ValidateEmail(),
-            validatePassword = ValidatePassword(),
-            validatePhoneNumber = ValidatePhoneNumber(),
-            validateDate = ValidateDate()
-        )
-
-        testRule.setContent { LoginTestingNavController(useCases = useCases) }
+    private fun navigateToUserDetails() {
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
             .performClick()
         testRule.onNodeWithTag(testTag = TestTagEmailField)
@@ -90,8 +71,16 @@ class RegisterSecondaryScreenTestingUI {
             .performClick()
     }
 
+    @Before
+    fun reset() = runTest {
+        useCases = generateUseCase(users = users)
+        testRule.setContent { LoginTestingNavController(useCases = useCases) }
+        navigateToUserDetails()
+    }
+
     @Test
     fun checkRegistrationSecondaryScreenValuesDisplayed() = runTest {
+
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.name))
             .assertIsDisplayed()
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.preferredName))
@@ -102,6 +91,10 @@ class RegisterSecondaryScreenTestingUI {
             .assertIsDisplayed()
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.prefContactMethod))
             .assertIsDisplayed()
+
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.cancel))
+            .performScrollTo()
+
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.emergencyContact))
             .assertIsDisplayed()
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.cancel))
@@ -165,7 +158,4 @@ class RegisterSecondaryScreenTestingUI {
     fun emergencyContactRelationOptions() = runTest {
         emergencyContactTests.checkRelationOptions()
     }
-
-    @Test
-    fun validRegistrationAttempt() = runTest {}
 }

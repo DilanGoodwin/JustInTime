@@ -1,4 +1,4 @@
-package com.dbad.justintime.f_login_register.presentation.util
+package com.dbad.justintime.core.presentation.util
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
@@ -43,26 +43,23 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import com.dbad.justintime.R
-import com.dbad.justintime.core.presentation.util.TestTagDateOfBirthField
-import com.dbad.justintime.core.presentation.util.TestTagEmergencyContactExpandableField
-import com.dbad.justintime.core.presentation.util.TestTagEmergencyContactRelation
-import com.dbad.justintime.core.presentation.util.TestTagPreferredContactMethodField
-import com.dbad.justintime.f_login_register.domain.model.util.PreferredContactMethod
-import com.dbad.justintime.f_login_register.domain.model.util.Relation
+import com.dbad.justintime.core.domain.model.util.PreferredContactMethod
+import com.dbad.justintime.core.domain.model.util.Relation
 
 @Composable
 fun TextInputField(
     currentValue: String,
     placeHolderText: String,
+    onValueChange: (String) -> Unit,
     keyboardOptions: KeyboardOptions = KeyboardOptions(),
     textFieldError: Boolean = false,
     errorString: String = "",
-    onValueChange: (String) -> Unit,
     testingTag: String = ""
 ) {
     TextField(
@@ -90,11 +87,36 @@ fun TextInputField(
 }
 
 @Composable
+fun LabelledTextInputFields(
+    modifier: Modifier = Modifier,
+    currentValue: String,
+    placeHolderText: String,
+    onValueChange: (String) -> Unit,
+    readOnly: Boolean = false,
+    keyboardOptions: KeyboardOptions = KeyboardOptions(),
+    testingTag: String = ""
+) {
+    TextField(
+        value = currentValue,
+        onValueChange = { onValueChange(it) },
+        placeholder = { Text(text = placeHolderText) },
+        label = { Text(text = placeHolderText) },
+        readOnly = readOnly,
+        keyboardOptions = keyboardOptions,
+        singleLine = true,
+        modifier = modifier
+            .clip(shape = RoundedCornerShape(size = 8.dp))
+            .width(400.dp)
+            .height(60.dp)
+            .testTag(tag = testingTag)
+    )
+}
+
+@Composable
 fun PasswordField(
     currentValue: String,
     placeHolderText: String,
     showPassword: Boolean,
-    keyboardOptions: KeyboardOptions = KeyboardOptions(),
     textFieldError: Boolean,
     errorString: String,
     onValueChange: (String) -> Unit,
@@ -127,7 +149,7 @@ fun PasswordField(
         } else {
             PasswordVisualTransformation()
         },
-        keyboardOptions = keyboardOptions,
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         isError = textFieldError,
         supportingText = {
             if (textFieldError) {
@@ -303,7 +325,8 @@ fun DateSelectorDropDown(
             Box {
                 DatePicker(
                     state = dateState,
-                    showModeToggle = false
+                    showModeToggle = false,
+                    modifier = Modifier.testTag(tag = TestTagDatePickerPopUp)
                 )
             }
         }
@@ -311,9 +334,11 @@ fun DateSelectorDropDown(
 }
 
 @Composable
-fun EmergencyContactField(
+fun ExpandableCardArea(
     isExpanded: Boolean,
     expandableButtonClick: () -> Unit,
+    cardTitle: String,
+    testTag: String,
     content: @Composable () -> Unit
 ) {
     val rotationState by animateFloatAsState(targetValue = if (isExpanded) 180f else 0f)
@@ -328,15 +353,14 @@ fun EmergencyContactField(
         onClick = { expandableButtonClick() },
         modifier = Modifier
             .width(400.dp)
-            .testTag(tag = TestTagEmergencyContactExpandableField)
+            .testTag(tag = testTag)
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = stringResource(R.string.emergencyContact),
+                    text = cardTitle,
                     modifier = Modifier
                         .weight(weight = 9f)
                         .padding(15.dp)

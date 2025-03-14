@@ -1,4 +1,4 @@
-package com.dbad.justintime.f_login_register.domain.model.util
+package com.dbad.justintime.core.domain.model.util
 
 import androidx.annotation.StringRes
 import com.dbad.justintime.R

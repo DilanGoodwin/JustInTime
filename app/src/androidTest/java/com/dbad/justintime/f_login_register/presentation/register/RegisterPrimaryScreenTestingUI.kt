@@ -9,15 +9,13 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextReplacement
 import com.dbad.justintime.R
+import com.dbad.justintime.core.domain.model.User
 import com.dbad.justintime.core.presentation.util.TestTagEmailField
 import com.dbad.justintime.core.presentation.util.TestTagErrorNotifier
 import com.dbad.justintime.core.presentation.util.TestTagPasswordField
 import com.dbad.justintime.core.presentation.util.TestTagPasswordMatchField
 import com.dbad.justintime.f_login_register.data.UsersRepositoryTestingImplementation
-import com.dbad.justintime.f_login_register.domain.model.User
 import com.dbad.justintime.f_login_register.domain.repository.UserRepository
-import com.dbad.justintime.f_login_register.domain.use_case.GetEmergencyContactKey
-import com.dbad.justintime.f_login_register.domain.use_case.GetEmployeeKey
 import com.dbad.justintime.f_login_register.domain.use_case.GetUser
 import com.dbad.justintime.f_login_register.domain.use_case.UpsertEmergencyContact
 import com.dbad.justintime.f_login_register.domain.use_case.UpsertEmployee
@@ -38,15 +36,23 @@ import org.junit.Test
 
 class RegisterPrimaryScreenTestingUI {
 
-    private val validEmail: String = "testing@testing.com"
+    private val validEmail: String = "test@test.com"
     private val validPassword: String = "MyP@ssw0rds"
 
     private lateinit var useCases: UserUseCases
-    private val users: List<User> =
-        listOf(
-            User(uid = 0, email = validEmail, password = validPassword),
-            User(uid = 1, email = "test.test@test.com", password = validPassword)
-        )
+    private val users: List<User> = listOf(
+        User(
+            uid = User.generateUid(email = "testing@testing.com"),
+            email = "testing@testing.com",
+            password = User.hashPassword(validPassword)
+        ),
+        User(
+            uid = User.generateUid(email = "test.test@test.com"),
+            email = "test.test@test.com",
+            password = User.hashPassword(validPassword)
+        ),
+        User(uid = User.generateUid(email = validEmail), email = validEmail)
+    )
 
     @get:Rule
     val testRule = createAndroidComposeRule<ComponentActivity>()
@@ -57,9 +63,7 @@ class RegisterPrimaryScreenTestingUI {
         useCases = UserUseCases(
             getUser = GetUser(repository = userRepo),
             upsertUser = UpsertUser(repository = userRepo),
-            getEmployeeKey = GetEmployeeKey(repository = userRepo),
             upsertEmployee = UpsertEmployee(repository = userRepo),
-            getEmergencyContactKey = GetEmergencyContactKey(repository = userRepo),
             upsertEmergencyContact = UpsertEmergencyContact(repository = userRepo),
             validateEmail = ValidateEmail(),
             validatePassword = ValidatePassword(),
@@ -184,6 +188,20 @@ class RegisterPrimaryScreenTestingUI {
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
             .performClick()
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.passwordDoNotMatch))
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun checkInvalidRegistrationAttempt_EmailAlreadyUsed() = runTest {
+        testRule.onNodeWithTag(testTag = TestTagEmailField)
+            .performTextReplacement(text = "testing@testing.com")
+        testRule.onNodeWithTag(testTag = TestTagPasswordField)
+            .performTextReplacement(text = validPassword)
+        testRule.onNodeWithTag(testTag = TestTagPasswordMatchField)
+            .performTextReplacement(text = validPassword)
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
+            .performClick()
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.invalidEmailError))
             .assertIsDisplayed()
     }
 }

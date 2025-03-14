@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+    id("com.google.gms.google-services")
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("com.google.devtools.ksp")
@@ -82,4 +83,13 @@ dependencies {
 
     // Serializable
     implementation(libs.kotlinx.serialization.json)
+
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.firestore)
+    implementation(libs.google.firebase.auth)
+
+    // DataStore
+    implementation(libs.androidx.datastore.preferences.v100)
+    implementation(libs.androidx.datastore.preferences.core)
 }

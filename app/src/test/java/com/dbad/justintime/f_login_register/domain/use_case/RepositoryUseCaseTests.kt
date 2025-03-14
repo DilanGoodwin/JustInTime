@@ -1,13 +1,13 @@
 package com.dbad.justintime.f_login_register.domain.use_case
 
+import com.dbad.justintime.core.domain.model.User
 import com.dbad.justintime.f_login_register.data.UserRepositoryTestingImplementation
-import com.dbad.justintime.f_login_register.domain.model.User
 import com.dbad.justintime.f_login_register.domain.repository.UserRepository
 import com.dbad.justintime.f_login_register.domain.util.PasswordErrors
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -20,8 +20,16 @@ class RepositoryUseCaseTests {
     private lateinit var useCases: UserUseCases
 
     private val users: List<User> = listOf(
-        User(uid = 0, email = "email@email.com", password = "MyP@ssw0rds"),
-        User(uid = 1, email = "justintime@justintime.com", password = "Th!sSh0uldB3Secure")
+        User(
+            uid = User.generateUid(email = validEmail),
+            email = validEmail,
+            password = validPassword
+        ),
+        User(
+            uid = User.generateUid(email = "justintime@justintime.com"),
+            email = "justintime@justintime.com",
+            password = "Th!sSh0uldB3Secure"
+        )
     )
 
 
@@ -31,9 +39,7 @@ class RepositoryUseCaseTests {
         useCases = UserUseCases(
             getUser = GetUser(repository = userRepo),
             upsertUser = UpsertUser(repository = userRepo),
-            getEmployeeKey = GetEmployeeKey(repository = userRepo),
             upsertEmployee = UpsertEmployee(repository = userRepo),
-            getEmergencyContactKey = GetEmergencyContactKey(repository = userRepo),
             upsertEmergencyContact = UpsertEmergencyContact(repository = userRepo),
             validateEmail = ValidateEmail(),
             validatePassword = ValidatePassword(),
@@ -44,35 +50,42 @@ class RepositoryUseCaseTests {
 
     @Test
     fun gettingUser() = runTest {
-        var userReceived: User = useCases.getUser(user = User())
+        var userReceived: User = useCases.getUser(user = User()).first()
         assertEquals("Received user did not match the expected user", User(), userReceived)
 
-        userReceived = useCases.getUser(user = User(email = validEmail))
+        userReceived = useCases.getUser(user = User(email = validEmail)).first()
         assertEquals("Received user did not match the expected user", User(), userReceived)
 
-        userReceived = useCases.getUser(user = User(password = validPassword))
+        userReceived = useCases.getUser(user = User(password = validPassword)).first()
         assertEquals("Received user did not match the expected user", User(), userReceived)
 
-        userReceived = useCases.getUser(user = User(email = validEmail))
+        userReceived = useCases.getUser(user = User(email = validEmail)).first()
         assertEquals("Received user did not match the expected user", userReceived, User())
 
-        userReceived = useCases.getUser(user = User(email = validEmail, password = validPassword))
+        userReceived =
+            useCases.getUser(user = User(uid = User.generateUid(email = validEmail))).first()
         assertEquals(
             "Received user did not match the expected user",
-            User(uid = 0, email = validEmail, password = validPassword),
+            User(
+                uid = User.generateUid(email = validEmail),
+                email = validEmail,
+                password = validPassword
+            ),
             userReceived
         )
     }
 
     @Test
     fun addingUser() = runTest {
-        val listCurrentSize = users.size
-        val newUser = User(email = "something@something.com", password = "S0mething!G0esHere")
+        val newUser = User(
+            uid = User.generateUid(email = "something@something.com"),
+            email = "something@something.com",
+            password = "S0mething!G0esHere"
+        )
         useCases.upsertUser(user = newUser)
 
-        val receivedUser = useCases.getUser(user = newUser)
-        assertNotEquals("Received user matches user when it should not", newUser, receivedUser)
-        assertEquals("uid number has not been incremented", listCurrentSize, receivedUser.uid)
+        val receivedUser: User = useCases.getUser(user = newUser).first()
+//        assertEquals("Received user matches user when it should not", newUser, receivedUser)
         assertEquals("email does not match", newUser.email, receivedUser.email)
         assertEquals("password does not match", newUser.password, receivedUser.password)
     }
