@@ -14,7 +14,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
-class UserDatabaseRegisterLogin(testingMode: Boolean = false) {
+class UserDatabaseRegisterLogin() {
 
     private var dataStore: FirebaseFirestore = Firebase.firestore
     private val userCollection = "user"
@@ -22,7 +22,7 @@ class UserDatabaseRegisterLogin(testingMode: Boolean = false) {
     private val employeeCollection = "employee"
 
     init {
-        if (testingMode) dataStore.useEmulator("10.0.2.2", 8080)
+        dataStore.useEmulator("10.0.2.2", 8080)
     }
 
     fun getUser(user: User): Flow<User> {
@@ -77,5 +77,4 @@ class UserDatabaseRegisterLogin(testingMode: Boolean = false) {
             awaitClose()
         }
     }
-
 }

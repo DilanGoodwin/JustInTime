@@ -1,10 +1,10 @@
 plugins {
     alias(libs.plugins.android.application)
+    id("com.google.gms.google-services")
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("com.google.devtools.ksp")
     kotlin("plugin.serialization") version "1.9.23"
-    id("com.google.gms.google-services")
 }
 
 android {
@@ -88,4 +88,8 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.firestore)
     implementation(libs.google.firebase.auth)
+
+    // DataStore
+    implementation(libs.androidx.datastore.preferences.v100)
+    implementation(libs.androidx.datastore.preferences.core)
 }
