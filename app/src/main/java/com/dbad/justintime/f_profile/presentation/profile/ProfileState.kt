@@ -9,6 +9,7 @@ data class ProfileState(
     val changeMade: Boolean = false,
 
     // User Name States
+    val expandUserInformationArea: Boolean = true,
     val user: User = User(),
     val employee: Employee = Employee(),
     val userNameError: Boolean = false,

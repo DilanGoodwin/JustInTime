@@ -103,10 +103,7 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable<ProfileScreen> { //TODO move to separate nav window
-                            ProfileScreen(
-                                viewModel = ProfileViewModel(),
-                                userId = ""
-                            )
+                            ProfileScreen(viewModel = ProfileViewModel())
                         }
 
                     }

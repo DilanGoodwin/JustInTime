@@ -68,6 +68,7 @@
 
     <!-- Titles -->
     <string name="profile">Profile</string>
+    <string name="user_information">User Information</string>
 
     <!-- Contract Types -->
     <string name="part_time">Part-Time</string>

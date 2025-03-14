@@ -45,15 +45,13 @@ import com.dbad.justintime.core.presentation.util.TestTagPasswordChangeExpandabl
 import com.dbad.justintime.core.presentation.util.TestTagPasswordField
 import com.dbad.justintime.core.presentation.util.TestTagPasswordMatchField
 import com.dbad.justintime.core.presentation.util.TestTagPhoneNumberField
+import com.dbad.justintime.core.presentation.util.TestTagUserInformationExpandableField
 import com.dbad.justintime.core.presentation.util.TextInputField
 import com.dbad.justintime.core.presentation.util.ViewingSystemThemes
 import com.dbad.justintime.ui.theme.JustInTimeTheme
 
 @Composable
-fun ProfileScreen(
-    viewModel: ProfileViewModel,
-    userId: String
-) {
+fun ProfileScreen(viewModel: ProfileViewModel) {
     val state by viewModel.state.collectAsState()
 
     ProfileScreen(state = state)
@@ -88,67 +86,7 @@ fun ProfileScreen(state: ProfileState) {
                     .verticalScroll(rememberScrollState())
                     .padding(20.dp)
             ) {
-
-                // Name Field
-                TextInputField(
-                    currentValue = state.employee.name,
-                    placeHolderText = stringResource(R.string.name),
-                    textFieldError = state.userNameError,
-                    errorString = stringResource(R.string.noNameProvided),
-                    onValueChange = {},
-                    testingTag = TestTagNameField
-                )
-
-                // Pref Name Field
-                TextInputField(
-                    currentValue = state.employee.preferredName,
-                    placeHolderText = stringResource(R.string.preferredName),
-                    onValueChange = {}
-                )
-
-                // Email Field
-                TextInputField(
-                    currentValue = state.user.email,
-                    placeHolderText = stringResource(R.string.email),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                    onValueChange = {},
-                    textFieldError = state.userEmailError,
-                    errorString = stringResource(R.string.invalidEmailError),
-                    testingTag = TestTagEmailField
-                )
-
-                // DOB Picker
-                DateSelectorField(
-                    currentValue = state.employee.dateOfBirth,
-                    placeHolderText = stringResource(R.string.dateOfBirth),
-                    showDatePicker = state.showDateOfBirthPicker,
-                    toggleDatePicker = {},
-                    dateError = state.dateOfBirthError,
-                    saveSelectedDate = {}
-                )
-
-                // Phone Number Field
-                TextInputField(
-                    currentValue = state.employee.dateOfBirth,
-                    placeHolderText = stringResource(R.string.phoneNumb),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                    onValueChange = {},
-                    textFieldError = state.userPhoneError,
-                    errorString = stringResource(R.string.invalidPhoneNumb),
-                    testingTag = TestTagPhoneNumberField
-                )
-
-                // Pref Contact Method Drop Down
-                PreferredContactField(
-                    currentValue = if (state.employee.preferredContactMethod == PreferredContactMethod.NONE) {
-                        ""
-                    } else {
-                        stringResource(state.employee.preferredContactMethod.stringVal)
-                    },
-                    expandDropDown = state.expandPrefContactMethod,
-                    dropDownToggle = {},
-                    selectContactMethod = {}
-                )
+                UserUpdateFields(state = state)
                 Spacer(modifier = Modifier.height(20.dp))
 
                 // Emergency Contact Area
@@ -173,6 +111,73 @@ fun ProfileTopBar() {
         title = { Text(text = stringResource(R.string.profile)) },
         modifier = Modifier.fillMaxWidth()
     )
+}
+
+@Composable
+fun UserUpdateFields(state: ProfileState) {
+    ExpandableCardArea(
+        isExpanded = state.expandUserInformationArea,
+        expandableButtonClick = {},
+        cardTitle = stringResource(R.string.user_information),
+        testTag = TestTagUserInformationExpandableField
+    ) {
+        // Name Field
+        TextInputField(
+            currentValue = state.employee.name,
+            placeHolderText = stringResource(R.string.name),
+            textFieldError = state.userNameError,
+            errorString = stringResource(R.string.noNameProvided),
+            onValueChange = {},
+            testingTag = TestTagNameField
+        )
+
+        // Pref Name Field
+        TextInputField(
+            currentValue = state.employee.preferredName,
+            placeHolderText = stringResource(R.string.preferredName),
+            onValueChange = {}
+        )
+
+        // Email Field
+        TextInputField(
+            currentValue = state.user.email,
+            placeHolderText = stringResource(R.string.email),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            onValueChange = {},
+            textFieldError = state.userEmailError,
+            errorString = stringResource(R.string.invalidEmailError),
+            testingTag = TestTagEmailField
+        )
+
+        // DOB Picker
+        DateSelectorField(
+            currentValue = state.employee.dateOfBirth,
+            placeHolderText = stringResource(R.string.dateOfBirth),
+            showDatePicker = state.showDateOfBirthPicker,
+            toggleDatePicker = {},
+            dateError = state.dateOfBirthError,
+            saveSelectedDate = {}
+        )
+
+        // Phone Number Field
+        TextInputField(
+            currentValue = state.employee.dateOfBirth,
+            placeHolderText = stringResource(R.string.phoneNumb),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+            onValueChange = {},
+            textFieldError = state.userPhoneError,
+            errorString = stringResource(R.string.invalidPhoneNumb),
+            testingTag = TestTagPhoneNumberField
+        )
+
+        // Pref Contact Method Drop Down
+        PreferredContactField(
+            currentValue = stringResource(state.employee.preferredContactMethod.stringVal),
+            expandDropDown = state.expandPrefContactMethod,
+            dropDownToggle = {},
+            selectContactMethod = {}
+        )
+    }
 }
 
 @Composable
@@ -351,6 +356,12 @@ fun CompanyInformationArea(state: ProfileState) {
 @Composable
 fun ProfileScreenPreview() {
     JustInTimeTheme { ProfileScreen(state = ProfileState()) }
+}
+
+@ViewingSystemThemes
+@Composable
+fun ProfileScreenUserInformationPreview() {
+    JustInTimeTheme { UserUpdateFields(state = ProfileState()) }
 }
 
 @ViewingSystemThemes
