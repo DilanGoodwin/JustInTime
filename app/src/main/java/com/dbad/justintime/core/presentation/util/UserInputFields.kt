@@ -113,6 +113,47 @@ fun LabelledTextInputFields(
 }
 
 @Composable
+fun LabelledTextDropDownFields(
+    modifier: Modifier = Modifier,
+    currentValue: String,
+    placeHolderText: String,
+    testTag: String,
+    readOnly: Boolean,
+    expandedDropDown: Boolean,
+    dropDownToggle: () -> Unit,
+    menu: @Composable () -> Unit
+) {
+    TextField(
+        value = currentValue,
+        onValueChange = {},
+        placeholder = { Text(text = placeHolderText) },
+        label = { Text(text = placeHolderText) },
+        trailingIcon = {
+            if (!readOnly) {
+                IconButton(
+                    onClick = { dropDownToggle() },
+                    modifier = Modifier.testTag(tag = testTag)
+                ) {
+                    Icon(
+                        imageVector = if (expandedDropDown) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
+                        contentDescription = "", //TODO add content description to string xml
+                    )
+
+                    // Display specific menu dropdown content
+                    menu()
+                }
+            }
+        },
+        readOnly = true,
+        singleLine = true,
+        modifier = modifier
+            .clip(shape = RoundedCornerShape(size = 8.dp))
+            .width(400.dp)
+            .height(60.dp)
+    )
+}
+
+@Composable
 fun PasswordField(
     currentValue: String,
     placeHolderText: String,
@@ -176,41 +217,30 @@ fun PreferredContactField(
     dropDownToggle: () -> Unit,
     selectContactMethod: (PreferredContactMethod) -> Unit
 ) {
-    TextField(
-        value = currentValue,
-        onValueChange = {},
-        placeholder = { Text(text = stringResource(R.string.prefContactMethod)) },
-        trailingIcon = {
-            IconButton(
-                onClick = { dropDownToggle() },
-                modifier = Modifier.testTag(tag = TestTagPreferredContactMethodField)
-            ) {
-                Icon(
-                    imageVector = if (expandDropDown) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-                    contentDescription = "", //TODO add content description to string xml
-                )
-                DropdownMenu(expanded = expandDropDown, onDismissRequest = { dropDownToggle() }) {
-                    for (method in PreferredContactMethod.entries) {
-                        if (method != PreferredContactMethod.NONE) {
-                            DropdownMenuItem(
-                                text = { Text(text = stringResource(method.stringVal)) },
-                                onClick = {
-                                    selectContactMethod(method)
-                                    dropDownToggle()
-                                }
-                            )
+    DropDownField(
+        currentValue = currentValue,
+        placeHolderText = stringResource(R.string.prefContactMethod),
+        testingTag = TestTagPreferredContactMethodField,
+        expandedDropDown = expandDropDown,
+        dropDownToggle = dropDownToggle,
+        modifier = Modifier
+            .width(width = 400.dp)
+            .height(height = 60.dp)
+    ) {
+        DropdownMenu(expanded = expandDropDown, onDismissRequest = { dropDownToggle() }) {
+            for (method in PreferredContactMethod.entries) {
+                if (method != PreferredContactMethod.NONE) {
+                    DropdownMenuItem(
+                        text = { Text(text = stringResource(method.stringVal)) },
+                        onClick = {
+                            selectContactMethod(method)
+                            dropDownToggle()
                         }
-                    }
+                    )
                 }
             }
-        },
-        readOnly = true,
-        singleLine = true,
-        modifier = Modifier
-            .clip(shape = RoundedCornerShape(size = 8.dp))
-            .width(400.dp)
-            .height(60.dp)
-    )
+        }
+    }
 }
 
 @Composable
@@ -220,40 +250,63 @@ fun RelationField(
     dropDownToggle: () -> Unit,
     selectRelation: (Relation) -> Unit
 ) {
+    DropDownField(
+        currentValue = currentValue,
+        placeHolderText = stringResource(R.string.relation),
+        testingTag = TestTagEmergencyContactRelation,
+        expandedDropDown = expandDropDown,
+        dropDownToggle = dropDownToggle,
+        modifier = Modifier
+            .width(width = 400.dp)
+            .height(height = 60.dp)
+    ) {
+        DropdownMenu(expanded = expandDropDown, onDismissRequest = { dropDownToggle() }) {
+            for (rel in Relation.entries) {
+                if (rel != Relation.NONE) {
+                    DropdownMenuItem(
+                        text = { Text(text = stringResource(rel.stringVal)) },
+                        onClick = {
+                            selectRelation(rel)
+                            dropDownToggle()
+                        }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun DropDownField(
+    modifier: Modifier = Modifier,
+    currentValue: String,
+    placeHolderText: String,
+    testingTag: String,
+    expandedDropDown: Boolean,
+    dropDownToggle: () -> Unit,
+    menu: @Composable () -> Unit
+) {
     TextField(
         value = currentValue,
         onValueChange = {},
-        placeholder = { Text(text = stringResource(R.string.relation)) },
+        placeholder = { Text(text = placeHolderText) },
         trailingIcon = {
             IconButton(
                 onClick = { dropDownToggle() },
-                modifier = Modifier.testTag(tag = TestTagEmergencyContactRelation)
+                modifier = Modifier.testTag(tag = testingTag)
             ) {
                 Icon(
-                    imageVector = if (expandDropDown) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
+                    imageVector = if (expandedDropDown) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
                     contentDescription = "", //TODO add content description to string xml
                 )
-                DropdownMenu(expanded = expandDropDown, onDismissRequest = { dropDownToggle() }) {
-                    for (rel in Relation.entries) {
-                        if (rel != Relation.NONE) {
-                            DropdownMenuItem(
-                                text = { Text(text = stringResource(rel.stringVal)) },
-                                onClick = {
-                                    selectRelation(rel)
-                                    dropDownToggle()
-                                }
-                            )
-                        }
-                    }
-                }
+
+                // Display specific menu dropdown content
+                menu()
             }
         },
         readOnly = true,
         singleLine = true,
-        modifier = Modifier
-            .clip(shape = RoundedCornerShape(size = 8.dp))
-            .width(400.dp)
-            .height(60.dp)
+        modifier = modifier.clip(shape = RoundedCornerShape(size = 8.dp))
     )
 }
 

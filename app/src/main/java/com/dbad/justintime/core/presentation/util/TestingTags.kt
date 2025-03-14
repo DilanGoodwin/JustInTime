@@ -12,9 +12,16 @@ const val TestTagDatePickerPopUp = "DatePickerPopUp"
 const val TestTagPhoneNumberField = "PhoneNumbField"
 const val TestTagPreferredContactMethodField = "PreferredContactMethod"
 const val TestTagEmergencyContactRelation = "EmergencyContactRelationMethod"
+
 const val TestTagUserInformationExpandableField = "UserInformationExpandable"
 const val TestTagEmergencyContactExpandableField = "EmergencyContactExpandable"
-const val TestTagPasswordChangeExpandableField = "PasswordChangeArea"
-const val TestTagCompanyInformationExpandableField = "CompanyInformationArea"
+const val TestTagPasswordChangeExpandableField = "PasswordChangeExpandable"
+const val TestTagCompanyInformationExpandableField = "CompanyInformationExpandable"
+
+const val TestTagCompanyInformationCompanyNameField = "CompanyInformationCompanyNameField"
+const val TestTagCompanyInformationManagerNameField = "CompanyInformationManagerNameField"
+const val TestTagCompanyInformationContractType = "CompanyInformationContractType"
+const val TestTagCompanyInformationRole = "CompanyInformationRole"
+
 
 const val TestTagCalendarView = "CalendarView"

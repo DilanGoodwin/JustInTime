@@ -14,6 +14,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
@@ -29,10 +31,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.dbad.justintime.R
+import com.dbad.justintime.core.domain.model.util.ContractType
 import com.dbad.justintime.core.domain.model.util.PreferredContactMethod
 import com.dbad.justintime.core.domain.model.util.Relation
 import com.dbad.justintime.core.presentation.util.DateSelectorField
 import com.dbad.justintime.core.presentation.util.ExpandableCardArea
+import com.dbad.justintime.core.presentation.util.LabelledTextDropDownFields
 import com.dbad.justintime.core.presentation.util.LabelledTextInputFields
 import com.dbad.justintime.core.presentation.util.PasswordField
 import com.dbad.justintime.core.presentation.util.PreferredContactField
@@ -330,22 +334,34 @@ fun CompanyInformationArea(state: ProfileState) {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-                LabelledTextInputFields(
+                LabelledTextDropDownFields(
                     currentValue = stringResource(state.employee.contractType.stringVal),
                     placeHolderText = stringResource(R.string.contractType),
-                    onValueChange = {},
+                    testTag = "",
                     readOnly = !state.employee.isAdmin,
-                    modifier = Modifier.width(180.dp),
-                    testingTag = ""
-                )
+                    expandedDropDown = state.companyInformationExpandedContractType,
+                    dropDownToggle = {},
+                    modifier = Modifier.width(180.dp)
+                ) {
+                    DropdownMenu(
+                        expanded = state.companyInformationExpandedContractType,
+                        onDismissRequest = {}) {
+                        for (method in ContractType.entries) {
+                            DropdownMenuItem(
+                                text = { Text(text = stringResource(method.stringVal)) },
+                                onClick = {}
+                            )
+                        }
+                    }
+                }
 
                 LabelledTextInputFields(
                     currentValue = state.employee.role,
                     placeHolderText = stringResource(R.string.role),
-                    onValueChange = {},
+                    testingTag = "",
                     readOnly = !state.employee.isAdmin,
-                    modifier = Modifier.width(190.dp),
-                    testingTag = ""
+                    onValueChange = {},
+                    modifier = Modifier.width(190.dp)
                 )
             }
         }
