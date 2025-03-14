@@ -12,4 +12,4 @@ object RegisterScreenRoute
 data class UserDetailsRoute(val userUid: String)
 
 @Serializable
-data class ProfileScreen(val userUid: String)
+object ProfileScreen
