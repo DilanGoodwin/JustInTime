@@ -11,7 +11,7 @@ import com.dbad.justintime.core.RegisterScreenRoute
 import com.dbad.justintime.core.UserDetailsRoute
 import com.dbad.justintime.f_local_datastore.domain.repository.UserPreferencesRepository
 import com.dbad.justintime.f_login_register.data.UserPreferencesTestingImplementation
-import com.dbad.justintime.f_login_register.domain.user_case.UserUseCases
+import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
 import com.dbad.justintime.f_login_register.presentation.login.LoginScreen
 import com.dbad.justintime.f_login_register.presentation.login.LoginViewModel
 import com.dbad.justintime.f_login_register.presentation.register.RegisterScreen

@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.dbad.justintime.core.domain.model.User
 import com.dbad.justintime.f_local_datastore.domain.repository.UserPreferencesRepository
-import com.dbad.justintime.f_login_register.domain.user_case.UserUseCases
+import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
 import com.dbad.justintime.f_login_register.domain.util.PasswordErrors
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -80,8 +80,7 @@ class LoginViewModel(
             useCases: UserUseCases,
             preferencesDataStore: UserPreferencesRepository
         ): ViewModelProvider.Factory {
-            return object :
-                ViewModelProvider.Factory {
+            return object : ViewModelProvider.Factory {
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
                     return LoginViewModel(
                         useCases = useCases,

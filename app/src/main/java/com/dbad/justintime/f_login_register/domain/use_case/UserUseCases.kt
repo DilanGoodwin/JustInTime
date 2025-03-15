@@ -1,9 +1,5 @@
-package com.dbad.justintime.f_login_register.domain.user_case
+package com.dbad.justintime.f_login_register.domain.use_case
 
-import com.dbad.justintime.core.domain.use_case.GetUser
-import com.dbad.justintime.core.domain.use_case.UpsertEmergencyContact
-import com.dbad.justintime.core.domain.use_case.UpsertEmployee
-import com.dbad.justintime.core.domain.use_case.UpsertUser
 import com.dbad.justintime.core.domain.use_case.ValidateDate
 import com.dbad.justintime.core.domain.use_case.ValidateEmail
 import com.dbad.justintime.core.domain.use_case.ValidatePassword

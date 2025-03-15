@@ -11,7 +11,7 @@ import com.dbad.justintime.core.presentation.util.TestTagEmailField
 import com.dbad.justintime.core.presentation.util.TestTagPasswordField
 import com.dbad.justintime.f_login_register.data.UserPreferencesTestingImplementation
 import com.dbad.justintime.f_login_register.data.generateUseCase
-import com.dbad.justintime.f_login_register.domain.user_case.UserUseCases
+import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
 import com.dbad.justintime.f_login_register.presentation.LoginTestingNavController
 import kotlinx.coroutines.test.runTest
 import org.junit.Before

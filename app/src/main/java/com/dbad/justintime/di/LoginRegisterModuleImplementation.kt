@@ -2,10 +2,10 @@ package com.dbad.justintime.di
 
 import android.content.Context
 import com.dbad.justintime.core.data.data_source.UsersDB
-import com.dbad.justintime.core.domain.use_case.GetUser
-import com.dbad.justintime.core.domain.use_case.UpsertEmergencyContact
-import com.dbad.justintime.core.domain.use_case.UpsertEmployee
-import com.dbad.justintime.core.domain.use_case.UpsertUser
+import com.dbad.justintime.f_login_register.domain.use_case.GetUser
+import com.dbad.justintime.f_login_register.domain.use_case.UpsertEmergencyContact
+import com.dbad.justintime.f_login_register.domain.use_case.UpsertEmployee
+import com.dbad.justintime.f_login_register.domain.use_case.UpsertUser
 import com.dbad.justintime.core.domain.use_case.ValidateDate
 import com.dbad.justintime.core.domain.use_case.ValidateEmail
 import com.dbad.justintime.core.domain.use_case.ValidatePassword
@@ -13,7 +13,7 @@ import com.dbad.justintime.core.domain.use_case.ValidatePhoneNumber
 import com.dbad.justintime.f_login_register.data.data_source.UserDatabaseRegisterLogin
 import com.dbad.justintime.f_login_register.data.repository.UsersRepositoryImplementation
 import com.dbad.justintime.f_login_register.domain.repository.UserRepository
-import com.dbad.justintime.f_login_register.domain.user_case.UserUseCases
+import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
 
 class LoginRegisterModuleImplementation(context: Context) :
     LoginRegisterModule {

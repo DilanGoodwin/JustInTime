@@ -12,10 +12,10 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextReplacement
 import com.dbad.justintime.R
 import com.dbad.justintime.core.domain.model.User
-import com.dbad.justintime.core.domain.use_case.GetUser
-import com.dbad.justintime.core.domain.use_case.UpsertEmergencyContact
-import com.dbad.justintime.core.domain.use_case.UpsertEmployee
-import com.dbad.justintime.core.domain.use_case.UpsertUser
+import com.dbad.justintime.f_login_register.domain.use_case.GetUser
+import com.dbad.justintime.f_login_register.domain.use_case.UpsertEmergencyContact
+import com.dbad.justintime.f_login_register.domain.use_case.UpsertEmployee
+import com.dbad.justintime.f_login_register.domain.use_case.UpsertUser
 import com.dbad.justintime.core.domain.use_case.ValidateDate
 import com.dbad.justintime.core.domain.use_case.ValidateEmail
 import com.dbad.justintime.core.domain.use_case.ValidatePassword
@@ -24,7 +24,7 @@ import com.dbad.justintime.core.presentation.util.TestTagEmailField
 import com.dbad.justintime.core.presentation.util.TestTagPasswordField
 import com.dbad.justintime.f_login_register.data.UsersRepositoryTestingImplementation
 import com.dbad.justintime.f_login_register.domain.repository.UserRepository
-import com.dbad.justintime.f_login_register.domain.user_case.UserUseCases
+import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
 import com.dbad.justintime.f_login_register.presentation.LoginTestingNavController
 import com.dbad.justintime.util.emailValidation
 import kotlinx.coroutines.test.runTest
