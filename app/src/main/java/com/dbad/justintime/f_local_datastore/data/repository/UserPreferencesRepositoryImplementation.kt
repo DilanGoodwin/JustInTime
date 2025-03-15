@@ -1,4 +1,4 @@
-package com.dbad.justintime.f_local_datastore.domain.model
+package com.dbad.justintime.f_local_datastore.data.repository
 
 import android.content.Context
 import androidx.datastore.preferences.core.edit
