@@ -1,4 +1,4 @@
-package com.dbad.justintime.f_login_register.core
+package com.dbad.justintime.core
 
 import kotlinx.serialization.Serializable
 

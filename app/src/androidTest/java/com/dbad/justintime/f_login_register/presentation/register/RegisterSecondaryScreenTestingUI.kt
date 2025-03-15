@@ -20,7 +20,7 @@ import com.dbad.justintime.core.presentation.util.TestTagPasswordMatchField
 import com.dbad.justintime.core.presentation.util.TestTagPhoneNumberField
 import com.dbad.justintime.core.presentation.util.TestTagPreferredContactMethodField
 import com.dbad.justintime.f_login_register.data.generateUseCase
-import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
+import com.dbad.justintime.f_login_register.domain.user_case.UserUseCases
 import com.dbad.justintime.f_login_register.presentation.LoginTestingNavController
 import com.dbad.justintime.util.EmergencyContactAreaTests
 import com.dbad.justintime.util.EmergencyContactAreaTests.Companion.fillInEmergencyContact

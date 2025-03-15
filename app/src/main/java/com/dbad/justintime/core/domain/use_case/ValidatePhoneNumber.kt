@@ -1,4 +1,4 @@
-package com.dbad.justintime.f_login_register.domain.use_case
+package com.dbad.justintime.core.domain.use_case
 
 class ValidatePhoneNumber {
     operator fun invoke(phone: String): Boolean {

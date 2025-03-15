@@ -5,13 +5,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.dbad.justintime.core.LoginScreenRoute
+import com.dbad.justintime.core.ProfileScreen
+import com.dbad.justintime.core.RegisterScreenRoute
+import com.dbad.justintime.core.UserDetailsRoute
 import com.dbad.justintime.f_local_datastore.domain.repository.UserPreferencesRepository
-import com.dbad.justintime.f_login_register.core.LoginScreenRoute
-import com.dbad.justintime.f_login_register.core.ProfileScreen
-import com.dbad.justintime.f_login_register.core.RegisterScreenRoute
-import com.dbad.justintime.f_login_register.core.UserDetailsRoute
 import com.dbad.justintime.f_login_register.data.UserPreferencesTestingImplementation
-import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
+import com.dbad.justintime.f_login_register.domain.user_case.UserUseCases
 import com.dbad.justintime.f_login_register.presentation.login.LoginScreen
 import com.dbad.justintime.f_login_register.presentation.login.LoginViewModel
 import com.dbad.justintime.f_login_register.presentation.register.RegisterScreen
@@ -72,7 +72,7 @@ fun LoginTestingNavController(
         }
 
         composable<ProfileScreen> {
-            ProfileScreen(viewModel = ProfileViewModel(), userId = "")
+            ProfileScreen(viewModel = ProfileViewModel())
         }
     }
 }
