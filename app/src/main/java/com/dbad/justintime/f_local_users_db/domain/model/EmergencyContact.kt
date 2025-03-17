@@ -1,10 +1,10 @@
-package com.dbad.justintime.core.domain.model
+package com.dbad.justintime.f_local_users_db.domain.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.dbad.justintime.core.domain.model.util.PreferredContactMethod
-import com.dbad.justintime.core.domain.model.util.Relation
-import com.dbad.justintime.core.domain.model.util.generateIdentifier
+import com.dbad.justintime.f_local_users_db.domain.model.util.PreferredContactMethod
+import com.dbad.justintime.f_local_users_db.domain.model.util.Relation
+import com.dbad.justintime.f_local_users_db.domain.model.util.generateIdentifier
 
 @Entity(tableName = "emergency_contact")
 data class EmergencyContact(
@@ -17,8 +17,8 @@ data class EmergencyContact(
     val relation: Relation = Relation.OTHER
 ) {
     companion object {
-        fun generateUid(email: String): String {
-            return generateIdentifier(identifier = email)
+        fun generateUid(email: String, employeeUid: String): String {
+            return generateIdentifier(identifier = email, extraValues = employeeUid)
         }
 
         fun EmergencyContact.toHashMap(): Map<String, Any> {

@@ -1,10 +1,10 @@
-package com.dbad.justintime.core.domain.model
+package com.dbad.justintime.f_local_users_db.domain.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.dbad.justintime.core.domain.model.util.ContractType
-import com.dbad.justintime.core.domain.model.util.PreferredContactMethod
-import com.dbad.justintime.core.domain.model.util.generateIdentifier
+import com.dbad.justintime.f_local_users_db.domain.model.util.ContractType
+import com.dbad.justintime.f_local_users_db.domain.model.util.PreferredContactMethod
+import com.dbad.justintime.f_local_users_db.domain.model.util.generateIdentifier
 
 @Entity(tableName = "employee")
 data class Employee(
@@ -23,8 +23,8 @@ data class Employee(
     val role: String = ""
 ) {
     companion object {
-        fun generateUid(name: String, phone: String): String {
-            return generateIdentifier(identifier = (name + phone))
+        fun generateUid(userUid: String, name: String, phone: String): String {
+            return generateIdentifier(identifier = (name + phone), extraValues = userUid)
         }
 
         fun Employee.toHashMap(): Map<String, Any> {

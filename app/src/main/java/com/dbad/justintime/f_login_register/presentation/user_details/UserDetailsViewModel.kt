@@ -3,13 +3,13 @@ package com.dbad.justintime.f_login_register.presentation.user_details
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dbad.justintime.core.domain.model.EmergencyContact
-import com.dbad.justintime.core.domain.model.Employee
-import com.dbad.justintime.core.domain.model.User
-import com.dbad.justintime.core.domain.model.util.PreferredContactMethod
-import com.dbad.justintime.core.domain.model.util.Relation
 import com.dbad.justintime.core.presentation.util.DATE_FORMATTER
 import com.dbad.justintime.f_local_datastore.domain.repository.UserPreferencesRepository
+import com.dbad.justintime.f_local_users_db.domain.model.EmergencyContact
+import com.dbad.justintime.f_local_users_db.domain.model.Employee
+import com.dbad.justintime.f_local_users_db.domain.model.User
+import com.dbad.justintime.f_local_users_db.domain.model.util.PreferredContactMethod
+import com.dbad.justintime.f_local_users_db.domain.model.util.Relation
 import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -133,7 +133,10 @@ class UserDetailsViewModel(
                             _state.value.showPhoneNumbFieldError ||
                             _state.value.showEmergencyContactPhoneError ||
                             _state.value.showEmergencyContactEmailError)
-                ) viewModelScope.launch { createUser() }
+                ) {
+                    viewModelScope.launch { createUser() }
+                    _state.value.registerEvent()
+                }
             }
         }
     }
@@ -175,9 +178,16 @@ class UserDetailsViewModel(
     }
 
     private suspend fun createUser() {
+        val employeeKey = Employee.generateUid(
+            userUid = _state.value.userUid,
+            name = _state.value.name,
+            phone = _state.value.phoneNumber
+        )
+
         // Create emergency contact
         val emergencyContactKey = EmergencyContact.generateUid(
-            email = _state.value.emergencyContactEmail
+            email = _state.value.emergencyContactEmail,
+            employeeUid = employeeKey
         )
         val emergencyContact = EmergencyContact(
             name = _state.value.emergencyContactName,
@@ -198,10 +208,6 @@ class UserDetailsViewModel(
         useCases.upsertEmergencyContact(emergencyContact = emergencyContact)
 
         // Create Employee Store
-        val employeeKey = Employee.generateUid(
-            name = _state.value.name,
-            phone = _state.value.phoneNumber
-        )
         val employee = Employee(
             uid = employeeKey,
             name = _state.value.name,
@@ -228,7 +234,7 @@ class UserDetailsViewModel(
             )
         )
 
-        // Pass the user primary key to Profile Screen
-        _state.value.registerEvent() //TODO save uid to dataStore to skip login process next time
+        // Store the generated uid within the local datastore on device
+        preferencesDataStore.updateLoginToken(token = _state.value.userUid)
     }
 }

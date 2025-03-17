@@ -1,8 +1,8 @@
 package com.dbad.justintime.f_login_register.domain.repository
 
-import com.dbad.justintime.core.domain.model.EmergencyContact
-import com.dbad.justintime.core.domain.model.Employee
-import com.dbad.justintime.core.domain.model.User
+import com.dbad.justintime.f_local_users_db.domain.model.EmergencyContact
+import com.dbad.justintime.f_local_users_db.domain.model.Employee
+import com.dbad.justintime.f_local_users_db.domain.model.User
 import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {

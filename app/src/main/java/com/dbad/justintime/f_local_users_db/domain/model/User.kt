@@ -1,9 +1,8 @@
-package com.dbad.justintime.core.domain.model
+package com.dbad.justintime.f_local_users_db.domain.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.dbad.justintime.core.domain.SaltValue
-import com.dbad.justintime.core.domain.model.util.generateIdentifier
+import com.dbad.justintime.f_local_users_db.domain.model.util.generateIdentifier
 import java.util.Base64
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.PBEKeySpec

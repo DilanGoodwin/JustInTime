@@ -3,7 +3,7 @@ package com.dbad.justintime.f_login_register.presentation.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.dbad.justintime.core.domain.model.User
+import com.dbad.justintime.f_local_users_db.domain.model.User
 import com.dbad.justintime.f_local_datastore.domain.repository.UserPreferencesRepository
 import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
 import com.dbad.justintime.f_login_register.domain.util.PasswordErrors
