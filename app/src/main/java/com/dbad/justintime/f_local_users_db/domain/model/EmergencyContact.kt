@@ -5,6 +5,9 @@ import androidx.room.PrimaryKey
 import com.dbad.justintime.f_local_users_db.domain.model.util.PreferredContactMethod
 import com.dbad.justintime.f_local_users_db.domain.model.util.Relation
 import com.dbad.justintime.f_local_users_db.domain.model.util.generateIdentifier
+import com.dbad.justintime.f_local_users_db.domain.model.util.toLong
+import com.dbad.justintime.f_local_users_db.domain.model.util.toPreferredContactMethod
+import com.dbad.justintime.f_local_users_db.domain.model.util.toRelation
 
 @Entity(tableName = "emergency_contact")
 data class EmergencyContact(
@@ -28,8 +31,8 @@ data class EmergencyContact(
                 "preferredName" to preferredName,
                 "email" to email,
                 "phone" to phone,
-                "preferredContactMethod" to preferredContactMethod,
-                "relation" to relation
+                "preferredContactMethod" to preferredContactMethod.toLong(),
+                "relation" to relation.toLong()
             )
         }
 
@@ -40,8 +43,8 @@ data class EmergencyContact(
                 preferredName = this["preferredName"] as String,
                 email = this["email"] as String,
                 phone = this["phone"] as String,
-                preferredContactMethod = this["preferredContactMethod"] as PreferredContactMethod,
-                relation = this["relation"] as Relation
+                preferredContactMethod = (this["preferredContactMethod"] as Long).toPreferredContactMethod(),
+                relation = (this["relation"] as Long).toRelation()
             )
         }
     }

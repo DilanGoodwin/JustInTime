@@ -16,7 +16,7 @@ class UserPreferencesRepositoryImplementation(private val context: Context) :
 
     val LOGIN_TOKEN = stringPreferencesKey("login_token")
 
-    val tokenFlow: Flow<String> = context.dataStore.data.map { preferences ->
+    override val tokenFlow: Flow<String> = context.dataStore.data.map { preferences ->
         preferences[LOGIN_TOKEN] ?: ""
     }
 

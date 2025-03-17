@@ -39,9 +39,13 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
 
                     val userPreferences = UserPreferencesRepositoryImplementation(this)
+
                     val storedLoginState = userPreferences.tokenFlow
                     val startingPosition =
-                        runBlocking { if (storedLoginState.first() != "") ProfileScreen else LoginNav }
+                        runBlocking {
+                            userPreferences.clearLoginToken()
+                            if (storedLoginState.first() != "") ProfileScreen else LoginNav
+                        }
 
                     NavHost(navController = navController, startDestination = startingPosition) {
 
@@ -105,7 +109,8 @@ class MainActivity : ComponentActivity() {
                             ProfileScreen(
                                 viewModel = viewModel<ProfileViewModel>(
                                     factory = ProfileViewModel.generateViewModel(
-                                        useCases = App.profile.useCases
+                                        useCases = App.profile.useCases,
+                                        preferencesDataStore = userPreferences
                                     )
                                 )
                             )

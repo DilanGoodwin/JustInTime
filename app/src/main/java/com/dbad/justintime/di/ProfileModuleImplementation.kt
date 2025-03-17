@@ -20,7 +20,7 @@ class ProfileModuleImplementation(private val localDatabase: LocalDatabaseUseCas
     override val profileRepository: ProfileRepository =
         ProfileRepositoryImplementation(localDatabase = localDatabase)
     override val useCases: ProfileUseCases = ProfileUseCases(
-        getUser = GetUser(),
+        getUser = GetUser(repository = profileRepository),
         upsertUser = UpsertUser(),
         getEmployee = GetEmployee(repository = profileRepository),
         upsertEmployee = UpsertEmployee(),

@@ -22,13 +22,31 @@ class UsersRepositoryImplementation(
         localDatabase.upsertUser(user = user)
     }
 
-    override suspend fun upsertEmergencyContact(contact: EmergencyContact) {
-        dataStore.upsertEmergencyContact(emergencyContact = contact)
-        localDatabase.upsertEmergencyContact(emergencyContact = contact)
+    override suspend fun getEmployee(employee: Employee): Flow<Employee> {
+        return dataStore.getEmployee(employee = employee)
     }
 
     override suspend fun upsertEmployee(employee: Employee) {
         dataStore.upsertEmployee(employee = employee)
         localDatabase.upsertEmployee(employee = employee)
+    }
+
+    override suspend fun getEmergencyContact(emergencyContact: EmergencyContact): Flow<EmergencyContact> {
+        return dataStore.getEmergencyContact(emergencyContact = emergencyContact)
+    }
+
+    override suspend fun upsertEmergencyContact(contact: EmergencyContact) {
+        dataStore.upsertEmergencyContact(emergencyContact = contact)
+        localDatabase.upsertEmergencyContact(emergencyContact = contact)
+    }
+
+    override suspend fun updateLocalDatabase(
+        user: User,
+        employee: Employee,
+        emergencyContact: EmergencyContact
+    ) {
+        localDatabase.upsertUser(user = user)
+        localDatabase.upsertEmployee(employee = employee)
+        localDatabase.upsertEmergencyContact(emergencyContact = emergencyContact)
     }
 }

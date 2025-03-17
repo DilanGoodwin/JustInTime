@@ -8,7 +8,10 @@ import com.dbad.justintime.f_local_users_db.domain.use_case.LocalDatabaseUseCase
 import com.dbad.justintime.f_login_register.data.data_source.UserDatabaseRegisterLogin
 import com.dbad.justintime.f_login_register.data.repository.UsersRepositoryImplementation
 import com.dbad.justintime.f_login_register.domain.repository.UserRepository
+import com.dbad.justintime.f_login_register.domain.use_case.GetEmergencyContact
+import com.dbad.justintime.f_login_register.domain.use_case.GetEmployee
 import com.dbad.justintime.f_login_register.domain.use_case.GetUser
+import com.dbad.justintime.f_login_register.domain.use_case.UpdateLocalDatabase
 import com.dbad.justintime.f_login_register.domain.use_case.UpsertEmergencyContact
 import com.dbad.justintime.f_login_register.domain.use_case.UpsertEmployee
 import com.dbad.justintime.f_login_register.domain.use_case.UpsertUser
@@ -27,8 +30,11 @@ class LoginRegisterModuleImplementation(localDatabase: LocalDatabaseUseCases) :
         UserUseCases(
             getUser = GetUser(repository = usersRepository),
             upsertUser = UpsertUser(repository = usersRepository),
+            getEmployee = GetEmployee(repository = usersRepository),
             upsertEmployee = UpsertEmployee(repository = usersRepository),
+            getEmergencyContact = GetEmergencyContact(repository = usersRepository),
             upsertEmergencyContact = UpsertEmergencyContact(repository = usersRepository),
+            updateLocalDatabase = UpdateLocalDatabase(repository = usersRepository),
             validateEmail = ValidateEmail(),
             validatePassword = ValidatePassword(),
             validatePhoneNumber = ValidatePhoneNumber(),

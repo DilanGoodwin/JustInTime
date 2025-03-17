@@ -5,6 +5,9 @@ import androidx.room.PrimaryKey
 import com.dbad.justintime.f_local_users_db.domain.model.util.ContractType
 import com.dbad.justintime.f_local_users_db.domain.model.util.PreferredContactMethod
 import com.dbad.justintime.f_local_users_db.domain.model.util.generateIdentifier
+import com.dbad.justintime.f_local_users_db.domain.model.util.toContractType
+import com.dbad.justintime.f_local_users_db.domain.model.util.toLong
+import com.dbad.justintime.f_local_users_db.domain.model.util.toPreferredContactMethod
 
 @Entity(tableName = "employee")
 data class Employee(
@@ -32,7 +35,16 @@ data class Employee(
                 "uid" to uid,
                 "name" to name,
                 "preferredName" to preferredName,
-                "phone" to phone
+                "phone" to phone,
+                "preferredContactMethod" to preferredContactMethod.toLong(),
+                "dateOfBirth" to dateOfBirth,
+                "minimumHours" to minimumHours,
+                "emergencyContact" to emergencyContact,
+                "isAdmin" to isAdmin,
+                "companyName" to companyName,
+                "contractType" to contractType.toLong(),
+                "manager" to manager,
+                "role" to role
             )
         }
 
@@ -41,7 +53,16 @@ data class Employee(
                 uid = this["uid"] as String,
                 name = this["name"] as String,
                 preferredName = this["preferredName"] as String,
-                phone = this["phone"] as String
+                phone = this["phone"] as String,
+                preferredContactMethod = (this["preferredContactMethod"] as Long).toPreferredContactMethod(),
+                dateOfBirth = this["dateOfBirth"] as String,
+                minimumHours = (this["minimumHours"] as Long).toInt(),
+                emergencyContact = this["emergencyContact"] as String,
+                isAdmin = this["isAdmin"] as Boolean,
+                companyName = this["companyName"] as String,
+                contractType = (this["contractType"] as Long).toContractType(),
+                manager = this["manager"] as String,
+                role = this["role"] as String
             )
         }
     }

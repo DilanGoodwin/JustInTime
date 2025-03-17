@@ -9,6 +9,15 @@ interface UserRepository {
     fun getUser(user: User): Flow<User>
     suspend fun upsertUser(user: User)
 
-    suspend fun upsertEmergencyContact(contact: EmergencyContact)
+    suspend fun getEmployee(employee: Employee): Flow<Employee>
     suspend fun upsertEmployee(employee: Employee)
+
+    suspend fun getEmergencyContact(emergencyContact: EmergencyContact): Flow<EmergencyContact>
+    suspend fun upsertEmergencyContact(contact: EmergencyContact)
+
+    suspend fun updateLocalDatabase(
+        user: User,
+        employee: Employee,
+        emergencyContact: EmergencyContact
+    )
 }
