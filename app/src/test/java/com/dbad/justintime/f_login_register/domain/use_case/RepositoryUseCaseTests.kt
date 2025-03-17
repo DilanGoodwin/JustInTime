@@ -1,6 +1,6 @@
 package com.dbad.justintime.f_login_register.domain.use_case
 
-import com.dbad.justintime.core.domain.model.User
+import com.dbad.justintime.f_local_users_db.domain.model.User
 import com.dbad.justintime.core.domain.use_case.ValidateDate
 import com.dbad.justintime.core.domain.use_case.ValidateEmail
 import com.dbad.justintime.core.domain.use_case.ValidatePassword

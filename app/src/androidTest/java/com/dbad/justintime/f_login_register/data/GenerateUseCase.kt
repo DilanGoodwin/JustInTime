@@ -1,6 +1,6 @@
 package com.dbad.justintime.f_login_register.data
 
-import com.dbad.justintime.core.domain.model.User
+import com.dbad.justintime.f_local_users_db.domain.model.User
 import com.dbad.justintime.f_login_register.domain.use_case.GetUser
 import com.dbad.justintime.f_login_register.domain.use_case.UpsertEmergencyContact
 import com.dbad.justintime.f_login_register.domain.use_case.UpsertEmployee

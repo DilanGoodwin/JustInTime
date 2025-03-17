@@ -11,7 +11,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextReplacement
 import com.dbad.justintime.R
-import com.dbad.justintime.core.domain.model.User
+import com.dbad.justintime.f_local_users_db.domain.model.User
 import com.dbad.justintime.core.presentation.util.TestTagEmailField
 import com.dbad.justintime.core.presentation.util.TestTagEmergencyContactExpandableField
 import com.dbad.justintime.core.presentation.util.TestTagNameField

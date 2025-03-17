@@ -101,9 +101,14 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                         }
-
                         composable<ProfileScreen> { //TODO move to separate nav window
-                            ProfileScreen(viewModel = ProfileViewModel())
+                            ProfileScreen(
+                                viewModel = viewModel<ProfileViewModel>(
+                                    factory = ProfileViewModel.generateViewModel(
+                                        useCases = App.profile.useCases
+                                    )
+                                )
+                            )
                         }
 
                     }
