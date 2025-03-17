@@ -1,7 +1,7 @@
 package com.dbad.justintime.f_profile.presentation.profile
 
-import com.dbad.justintime.core.domain.model.util.PreferredContactMethod
-import com.dbad.justintime.core.domain.model.util.Relation
+import com.dbad.justintime.f_local_users_db.domain.model.util.PreferredContactMethod
+import com.dbad.justintime.f_local_users_db.domain.model.util.Relation
 
 interface ProfileEmergencyContactEvents {
 

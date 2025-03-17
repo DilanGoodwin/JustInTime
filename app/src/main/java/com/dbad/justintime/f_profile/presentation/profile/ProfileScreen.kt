@@ -31,9 +31,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.dbad.justintime.R
-import com.dbad.justintime.core.domain.model.util.ContractType
-import com.dbad.justintime.core.domain.model.util.PreferredContactMethod
-import com.dbad.justintime.core.domain.model.util.Relation
+import com.dbad.justintime.f_local_users_db.domain.model.util.ContractType
+import com.dbad.justintime.f_local_users_db.domain.model.util.PreferredContactMethod
+import com.dbad.justintime.f_local_users_db.domain.model.util.Relation
 import com.dbad.justintime.core.presentation.util.DateSelectorField
 import com.dbad.justintime.core.presentation.util.ExpandableCardArea
 import com.dbad.justintime.core.presentation.util.LabelledTextDropDownFields

@@ -1,16 +1,18 @@
 package com.dbad.justintime.f_profile.presentation.profile
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.dbad.justintime.core.domain.model.Employee
-import com.dbad.justintime.core.domain.model.User
-import com.dbad.justintime.core.domain.model.util.PreferredContactMethod
+import com.dbad.justintime.f_local_users_db.domain.model.Employee
+import com.dbad.justintime.f_local_users_db.domain.model.User
+import com.dbad.justintime.f_local_users_db.domain.model.util.PreferredContactMethod
+import com.dbad.justintime.f_profile.domain.use_case.ProfileUseCases
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 
-class ProfileViewModel() : ViewModel() {
+class ProfileViewModel(private val useCases: ProfileUseCases) : ViewModel() {
     private val _state = MutableStateFlow(ProfileState())
     val state = _state.stateIn(
         viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000L),
@@ -109,4 +111,13 @@ class ProfileViewModel() : ViewModel() {
     }
 
 
+    companion object {
+        fun generateViewModel(useCases: ProfileUseCases): ViewModelProvider.Factory {
+            return object : ViewModelProvider.Factory {
+                override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                    return ProfileViewModel(useCases = useCases) as T
+                }
+            }
+        }
+    }
 }
