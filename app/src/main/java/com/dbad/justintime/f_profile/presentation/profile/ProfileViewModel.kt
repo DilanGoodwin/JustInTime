@@ -8,6 +8,7 @@ import com.dbad.justintime.f_local_users_db.domain.model.EmergencyContact
 import com.dbad.justintime.f_local_users_db.domain.model.Employee
 import com.dbad.justintime.f_local_users_db.domain.model.User
 import com.dbad.justintime.f_local_users_db.domain.model.util.PreferredContactMethod
+import com.dbad.justintime.f_login_register.domain.util.PasswordErrors
 import com.dbad.justintime.f_profile.domain.use_case.ProfileUseCases
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -45,6 +46,9 @@ class ProfileViewModel(
         ProfileState()
     )
 
+    /**
+     * Helper function pulling data from the local database into the ViewModel on start
+     */
     fun loadInitialData() {
         viewModelScope.launch {
             _loadingData.value = true
@@ -70,9 +74,8 @@ class ProfileViewModel(
             is ProfileUserEvents.SetPhoneNumb -> updateEmployee(phone = event.phone)
             is ProfileUserEvents.SetPrefContactMethod -> updateEmployee(prefContactMethod = event.contactMethod)
 
-            ProfileUserEvents.ToggleExpandedArea -> _state.update {
-                it.copy(expandUserInformationArea = !_state.value.expandUserInformationArea)
-            }
+            ProfileUserEvents.ToggleExpandedArea ->
+                toggleExpandableAreas(userInformation = !_state.value.expandUserInformationArea)
 
             ProfileUserEvents.TogglePrefContactDropDown -> _state.update {
                 it.copy(expandPrefContactMethod = !_state.value.expandPrefContactMethod)
@@ -81,6 +84,78 @@ class ProfileViewModel(
             ProfileUserEvents.ToggleShowDatePicker -> _state.update {
                 it.copy(showDateOfBirthPicker = !_state.value.showDateOfBirthPicker)
             }
+        }
+    }
+
+    fun onPasswordEvent(event: ProfilePasswordEvents) {
+        when (event) {
+            is ProfilePasswordEvents.OldPasswordInput -> _state.update { it.copy(oldPassword = event.oldPassword) }
+            is ProfilePasswordEvents.NewPasswordInput -> {
+                // If the password does not meet standards then raise the appropriate error to the
+                // user
+                val passwordError = useCases.validatePassword(password = event.newPassword)
+                val showError = passwordError != PasswordErrors.PASSWORD_NONE
+                _state.update {
+                    it.copy(
+                        newPassword = event.newPassword,
+                        newPasswordErrorString = passwordError,
+                        newPasswordShowError = showError
+                    )
+                }
+            }
+
+            is ProfilePasswordEvents.NewPasswordMatchInput -> {
+                // If the passwords do not match then flag an error to the user
+                val showError = _state.value.newPassword != event.newPassword
+                _state.update {
+                    it.copy(
+                        newMatchPassword = event.newPassword,
+                        newMatchPasswordShowError = showError
+                    )
+                }
+            }
+
+            ProfilePasswordEvents.ToggleExpandableArea ->
+                toggleExpandableAreas(password = !_state.value.expandPasswordArea)
+
+            ProfilePasswordEvents.ToggleOldPasswordView -> _state.update {
+                it.copy(oldPasswordView = !_state.value.oldPasswordView)
+            }
+
+            ProfilePasswordEvents.ToggleNewPasswordView -> _state.update {
+                it.copy(newPasswordView = !_state.value.newPasswordView)
+            }
+
+            ProfilePasswordEvents.ToggleNewPasswordMatchView -> _state.update {
+                it.copy(newMatchPasswordView = !_state.value.newMatchPasswordView)
+            }
+        }
+    }
+
+    /**
+     * Function to toggle which areas are expanded. By default all values for the areas are false.
+     *
+     * @param userInformation Boolean value stating whether the user information area is expanded or
+     * not
+     * @param emergencyContact Boolean value stating whether the emergency contact area is expanded
+     * or not
+     * @param password Boolean value stating whether the password area is expanded or not
+     * @param companyInformation Boolean value stating whether the company information area is
+     * expanded or not
+     */
+    private fun toggleExpandableAreas(
+        userInformation: Boolean = false,
+        emergencyContact: Boolean = false,
+        password: Boolean = false,
+        companyInformation: Boolean = false
+    ) {
+        _state.update {
+            it.copy(
+                expandUserInformationArea = userInformation,
+                expandEmergencyContactArea = emergencyContact,
+                expandPasswordArea = password,
+                expandCompanyInformationArea = companyInformation
+            )
         }
     }
 

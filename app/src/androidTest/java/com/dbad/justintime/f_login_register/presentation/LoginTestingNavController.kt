@@ -87,7 +87,7 @@ fun LoginTestingNavController(
             // Create blank instance of ProfileUseCases
             val profileRepo = ProfileRepositoryTestingImplementation()
             val profileUseCases = ProfileUseCases(
-                getUser = GetUser(),
+                getUser = GetUser(repository = profileRepo),
                 upsertUser = UpsertUser(),
                 getEmployee = GetEmployee(repository = profileRepo),
                 upsertEmployee = UpsertEmployee(),
@@ -99,7 +99,12 @@ fun LoginTestingNavController(
                 validateDate = ValidateDate()
             )
 
-            ProfileScreen(viewModel = ProfileViewModel(useCases = profileUseCases))
+            ProfileScreen(
+                viewModel = ProfileViewModel(
+                    useCases = profileUseCases,
+                    preferencesDataStore = userPreferencesStore
+                )
+            )
         }
     }
 }

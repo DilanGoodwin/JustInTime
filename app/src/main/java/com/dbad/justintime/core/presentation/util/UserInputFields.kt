@@ -405,7 +405,7 @@ fun ExpandableCardArea(
         ),
         onClick = { expandableButtonClick() },
         modifier = Modifier
-            .width(400.dp)
+            .width(500.dp)
             .testTag(tag = testTag)
     ) {
         Column(

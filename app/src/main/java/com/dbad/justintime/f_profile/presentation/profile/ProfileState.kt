@@ -30,7 +30,6 @@ data class ProfileState(
     val oldPassword: String = "",
     val oldPasswordView: Boolean = false,
     val oldPasswordShowError: Boolean = false,
-    val oldPasswordErrorString: PasswordErrors = PasswordErrors.PASSWORD_NONE,
 
     // Password Area - New Password
     val newPassword: String = "",

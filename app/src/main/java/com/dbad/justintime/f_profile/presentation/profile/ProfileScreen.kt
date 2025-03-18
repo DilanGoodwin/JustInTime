@@ -31,9 +31,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.dbad.justintime.R
-import com.dbad.justintime.f_local_users_db.domain.model.util.ContractType
-import com.dbad.justintime.f_local_users_db.domain.model.util.PreferredContactMethod
-import com.dbad.justintime.f_local_users_db.domain.model.util.Relation
 import com.dbad.justintime.core.presentation.util.DateSelectorField
 import com.dbad.justintime.core.presentation.util.ExpandableCardArea
 import com.dbad.justintime.core.presentation.util.LabelledTextDropDownFields
@@ -56,6 +53,9 @@ import com.dbad.justintime.core.presentation.util.TestTagPhoneNumberField
 import com.dbad.justintime.core.presentation.util.TestTagUserInformationExpandableField
 import com.dbad.justintime.core.presentation.util.TextInputField
 import com.dbad.justintime.core.presentation.util.ViewingSystemThemes
+import com.dbad.justintime.f_local_users_db.domain.model.util.ContractType
+import com.dbad.justintime.f_local_users_db.domain.model.util.PreferredContactMethod
+import com.dbad.justintime.f_local_users_db.domain.model.util.Relation
 import com.dbad.justintime.ui.theme.JustInTimeTheme
 
 @Composable
@@ -64,14 +64,16 @@ fun ProfileScreen(viewModel: ProfileViewModel) {
 
     ProfileScreen(
         state = state,
-        userEvent = viewModel::onUserEvent
+        userEvent = viewModel::onUserEvent,
+        passwordEvent = viewModel::onPasswordEvent
     )
 }
 
 @Composable
 fun ProfileScreen(
     state: ProfileState,
-    userEvent: (ProfileUserEvents) -> Unit
+    userEvent: (ProfileUserEvents) -> Unit,
+    passwordEvent: (ProfilePasswordEvents) -> Unit
 ) {
     Scaffold(
         topBar = { ProfileTopBar() },
@@ -108,7 +110,7 @@ fun ProfileScreen(
                 Spacer(modifier = Modifier.height(20.dp))
 
                 // Password Change Field
-                PasswordUpdateFields(state = state)
+                PasswordUpdateFields(state = state, onEvent = passwordEvent)
                 Spacer(modifier = Modifier.height(20.dp))
 
                 // Company Information
@@ -198,10 +200,13 @@ fun UserUpdateFields(
 }
 
 @Composable
-fun PasswordUpdateFields(state: ProfileState) {
+fun PasswordUpdateFields(
+    state: ProfileState,
+    onEvent: (ProfilePasswordEvents) -> Unit
+) {
     ExpandableCardArea(
         isExpanded = state.expandPasswordArea,
-        expandableButtonClick = {},
+        expandableButtonClick = { onEvent(ProfilePasswordEvents.ToggleExpandableArea) },
         cardTitle = stringResource(R.string.passwordChangeFields),
         testTag = TestTagPasswordChangeExpandableField
     ) {
@@ -211,9 +216,9 @@ fun PasswordUpdateFields(state: ProfileState) {
             placeHolderText = stringResource(R.string.oldPassword),
             showPassword = state.oldPasswordView,
             textFieldError = state.oldPasswordShowError,
-            errorString = stringResource(state.oldPasswordErrorString.errorCode),
-            onValueChange = {},
-            visiblePassword = {},
+            errorString = stringResource(R.string.passwordDoNotMatch),
+            onValueChange = { onEvent(ProfilePasswordEvents.OldPasswordInput(oldPassword = it)) },
+            visiblePassword = { onEvent(ProfilePasswordEvents.ToggleOldPasswordView) },
             testingTag = TestTagPasswordField
         )
 
@@ -385,7 +390,7 @@ fun CompanyInformationArea(state: ProfileState) {
 @Composable
 fun ProfileScreenPreview() {
     JustInTimeTheme {
-        ProfileScreen(state = ProfileState(), userEvent = {})
+        ProfileScreen(state = ProfileState(), userEvent = {}, {})
     }
 }
 
@@ -400,7 +405,11 @@ fun ProfileScreenUserInformationPreview() {
 @ViewingSystemThemes
 @Composable
 fun ProfileScreenPasswordChangePreview() {
-    JustInTimeTheme { PasswordUpdateFields(state = ProfileState(expandPasswordArea = true)) }
+    JustInTimeTheme {
+        PasswordUpdateFields(
+            state = ProfileState(expandPasswordArea = true),
+            onEvent = {})
+    }
 }
 
 @ViewingSystemThemes

@@ -9,12 +9,14 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextReplacement
 import com.dbad.justintime.R
-import com.dbad.justintime.f_local_users_db.domain.model.User
 import com.dbad.justintime.core.presentation.util.TestTagEmailField
 import com.dbad.justintime.core.presentation.util.TestTagNameField
 import com.dbad.justintime.core.presentation.util.TestTagPasswordField
 import com.dbad.justintime.core.presentation.util.TestTagPasswordMatchField
 import com.dbad.justintime.core.presentation.util.TestTagPhoneNumberField
+import com.dbad.justintime.f_local_users_db.domain.model.EmergencyContact
+import com.dbad.justintime.f_local_users_db.domain.model.Employee
+import com.dbad.justintime.f_local_users_db.domain.model.User
 import com.dbad.justintime.f_login_register.data.generateUseCase
 import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
 import com.dbad.justintime.f_login_register.presentation.LoginTestingNavController
@@ -45,7 +47,13 @@ class UserDetailsValidationTests {
         ),
         User(uid = User.generateUid(email = validEmail), email = validEmail)
     )
-    private var useCases: UserUseCases = generateUseCase(users = users)
+    private var useCases: UserUseCases = generateUseCase(
+        users = users,
+        employees = listOf(
+            Employee(uid = "TmpEmployee", emergencyContact = "TmpEmergencyContact")
+        ),
+        emergencyContact = listOf(EmergencyContact(uid = "TmpEmergencyContact"))
+    )
 
     private fun fillInDetails(
         name: String = "",
@@ -88,6 +96,8 @@ class UserDetailsValidationTests {
 
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
             .performScrollTo().performClick()
+        testRule.onNodeWithText(text = testRule.activity.getString(R.string.name))
+            .performScrollTo()
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.noNameProvided))
             .performScrollTo().assertIsDisplayed()
     }
