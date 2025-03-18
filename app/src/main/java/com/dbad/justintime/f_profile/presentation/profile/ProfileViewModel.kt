@@ -8,6 +8,7 @@ import com.dbad.justintime.f_local_users_db.domain.model.EmergencyContact
 import com.dbad.justintime.f_local_users_db.domain.model.Employee
 import com.dbad.justintime.f_local_users_db.domain.model.User
 import com.dbad.justintime.f_local_users_db.domain.model.util.PreferredContactMethod
+import com.dbad.justintime.f_local_users_db.domain.model.util.Relation
 import com.dbad.justintime.f_login_register.domain.util.PasswordErrors
 import com.dbad.justintime.f_profile.domain.use_case.ProfileUseCases
 import kotlinx.coroutines.delay
@@ -132,6 +133,39 @@ class ProfileViewModel(
         }
     }
 
+    fun onEmergencyContactEvent(event: ProfileEmergencyContactEvents) {
+        when (event) {
+            is ProfileEmergencyContactEvents.SetEmergencyContactName ->
+                updateEmergencyContact(name = event.name)
+
+            is ProfileEmergencyContactEvents.SetEmergencyContactPrefName ->
+                updateEmergencyContact(preferredName = event.name)
+
+            is ProfileEmergencyContactEvents.SetEmergencyContactPhone ->
+                updateEmergencyContact(phone = event.phone)
+
+            is ProfileEmergencyContactEvents.SetEmergencyContactEmail ->
+                updateEmergencyContact(email = event.email)
+
+            is ProfileEmergencyContactEvents.SetEmergencyContactPrefContactMethod ->
+                updateEmergencyContact(preferredContactMethod = event.contactMethod)
+
+            is ProfileEmergencyContactEvents.SetEmergencyContactRelation ->
+                updateEmergencyContact(relation = event.relation)
+
+            ProfileEmergencyContactEvents.ToggleExpandableArea ->
+                toggleExpandableAreas(emergencyContact = !_state.value.expandEmergencyContactArea)
+
+            ProfileEmergencyContactEvents.ToggleEmergencyContactPrefContactDropDown -> _state.update {
+                it.copy(emergencyContactExpandPrefContactMethod = !_state.value.emergencyContactExpandPrefContactMethod)
+            }
+
+            ProfileEmergencyContactEvents.ToggleEmergencyContactRelationDropDown -> _state.update {
+                it.copy(emergencyContactExpandedRelation = !_state.value.emergencyContactExpandedRelation)
+            }
+        }
+    }
+
     /**
      * Function to toggle which areas are expanded. By default all values for the areas are false.
      *
@@ -196,11 +230,11 @@ class ProfileViewModel(
      * @param dateOfBirth Value to change the date of birth to, default is current state held value
      */
     private fun updateEmployee(
-        name: String = _state.value.employee.name,
-        preferredName: String = _state.value.employee.preferredName,
-        phone: String = _state.value.employee.phone,
-        prefContactMethod: PreferredContactMethod = _state.value.employee.preferredContactMethod,
-        dateOfBirth: String = _state.value.employee.dateOfBirth
+        name: String = _employee.value.name,
+        preferredName: String = _employee.value.preferredName,
+        phone: String = _employee.value.phone,
+        prefContactMethod: PreferredContactMethod = _employee.value.preferredContactMethod,
+        dateOfBirth: String = _employee.value.dateOfBirth
     ) {
         _employee.update {
             it.copy(
@@ -209,6 +243,38 @@ class ProfileViewModel(
                 phone = phone,
                 preferredContactMethod = prefContactMethod,
                 dateOfBirth = dateOfBirth,
+            )
+        }
+        _state.update { it.copy(changeMade = true) }
+    }
+
+    /**
+     * Updates the EmergencyContact details that can be edited on the profile screen.
+     * Update changes status to True.
+     * @param name Value to change the name to, default value is current held value
+     * @param preferredName Value to change preferred name to, default value is current held value
+     * @param email Value to change email to, default value is current held value
+     * @param phone Value to change phone to, default value is current held value
+     * @param preferredContactMethod Value to change preferred contact method to, default value is
+     * current held value
+     * @param relation Value to change relation to, default value is current held value
+     */
+    private fun updateEmergencyContact(
+        name: String = _emergencyContact.value.name,
+        preferredName: String = _emergencyContact.value.preferredName,
+        email: String = _emergencyContact.value.email,
+        phone: String = _emergencyContact.value.phone,
+        preferredContactMethod: PreferredContactMethod = _emergencyContact.value.preferredContactMethod,
+        relation: Relation = _emergencyContact.value.relation
+    ) {
+        _emergencyContact.update {
+            it.copy(
+                name = name,
+                preferredName = preferredName,
+                email = email,
+                phone = phone,
+                preferredContactMethod = preferredContactMethod,
+                relation = relation
             )
         }
         _state.update { it.copy(changeMade = true) }

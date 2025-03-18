@@ -24,7 +24,7 @@ class UserDatabaseRegisterLogin() {
     private val employeeCollection = "employee"
 
     init {
-        dataStore.useEmulator("10.0.2.2", 8080)
+//        dataStore.useEmulator("10.0.2.2", 8080)
     }
 
     fun getUser(user: User): Flow<User> {

@@ -65,7 +65,8 @@ fun ProfileScreen(viewModel: ProfileViewModel) {
     ProfileScreen(
         state = state,
         userEvent = viewModel::onUserEvent,
-        passwordEvent = viewModel::onPasswordEvent
+        passwordEvent = viewModel::onPasswordEvent,
+        emergencyContactEvent = viewModel::onEmergencyContactEvent
     )
 }
 
@@ -73,7 +74,8 @@ fun ProfileScreen(viewModel: ProfileViewModel) {
 fun ProfileScreen(
     state: ProfileState,
     userEvent: (ProfileUserEvents) -> Unit,
-    passwordEvent: (ProfilePasswordEvents) -> Unit
+    passwordEvent: (ProfilePasswordEvents) -> Unit,
+    emergencyContactEvent: (ProfileEmergencyContactEvents) -> Unit
 ) {
     Scaffold(
         topBar = { ProfileTopBar() },
@@ -106,7 +108,7 @@ fun ProfileScreen(
                 Spacer(modifier = Modifier.height(20.dp))
 
                 // Emergency Contact Area
-                EmergencyContactArea(state = state)
+                EmergencyContactArea(state = state, onEvent = emergencyContactEvent)
                 Spacer(modifier = Modifier.height(20.dp))
 
                 // Password Change Field
@@ -249,10 +251,13 @@ fun PasswordUpdateFields(
 }
 
 @Composable
-fun EmergencyContactArea(state: ProfileState) {
+fun EmergencyContactArea(
+    state: ProfileState,
+    onEvent: (ProfileEmergencyContactEvents) -> Unit
+) {
     ExpandableCardArea(
         isExpanded = state.expandEmergencyContactArea,
-        expandableButtonClick = {},
+        expandableButtonClick = { onEvent(ProfileEmergencyContactEvents.ToggleExpandableArea) },
         cardTitle = stringResource(R.string.emergencyContact),
         testTag = TestTagEmergencyContactExpandableField
     ) {
@@ -260,7 +265,7 @@ fun EmergencyContactArea(state: ProfileState) {
         TextInputField(
             currentValue = state.emergencyContact.name,
             placeHolderText = stringResource(R.string.name),
-            onValueChange = {},
+            onValueChange = { onEvent(ProfileEmergencyContactEvents.SetEmergencyContactName(name = it)) },
             textFieldError = state.emergencyContactNameError,
             errorString = stringResource(R.string.noNameProvided),
             testingTag = TestTagNameField
@@ -270,7 +275,7 @@ fun EmergencyContactArea(state: ProfileState) {
         TextInputField(
             currentValue = state.emergencyContact.preferredName,
             placeHolderText = stringResource(R.string.preferredName),
-            onValueChange = {}
+            onValueChange = { onEvent(ProfileEmergencyContactEvents.SetEmergencyContactPrefName(name = it)) }
         )
 
         // Emergency Contact Phone Number Field
@@ -280,7 +285,7 @@ fun EmergencyContactArea(state: ProfileState) {
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
             textFieldError = state.emergencyContactPhoneError,
             errorString = stringResource(R.string.invalidPhoneNumb),
-            onValueChange = {},
+            onValueChange = { onEvent(ProfileEmergencyContactEvents.SetEmergencyContactPhone(phone = it)) },
             testingTag = TestTagPhoneNumberField
         )
 
@@ -291,7 +296,7 @@ fun EmergencyContactArea(state: ProfileState) {
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             textFieldError = state.emergencyContactEmailError,
             errorString = stringResource(R.string.invalidEmailError),
-            onValueChange = {},
+            onValueChange = { onEvent(ProfileEmergencyContactEvents.SetEmergencyContactEmail(email = it)) },
             testingTag = TestTagEmailField
         )
 
@@ -303,8 +308,12 @@ fun EmergencyContactArea(state: ProfileState) {
                 stringResource(state.emergencyContact.preferredContactMethod.stringVal)
             },
             expandDropDown = state.emergencyContactExpandPrefContactMethod,
-            dropDownToggle = {},
-            selectContactMethod = {}
+            dropDownToggle = { onEvent(ProfileEmergencyContactEvents.ToggleEmergencyContactPrefContactDropDown) },
+            selectContactMethod = {
+                onEvent(
+                    ProfileEmergencyContactEvents.SetEmergencyContactPrefContactMethod(contactMethod = it)
+                )
+            }
         )
 
         Spacer(modifier = Modifier.height(15.dp))
@@ -317,8 +326,12 @@ fun EmergencyContactArea(state: ProfileState) {
                 stringResource(state.emergencyContact.relation.stringVal)
             },
             expandDropDown = state.emergencyContactExpandedRelation,
-            dropDownToggle = {},
-            selectRelation = {}
+            dropDownToggle = { onEvent(ProfileEmergencyContactEvents.ToggleEmergencyContactRelationDropDown) },
+            selectRelation = {
+                onEvent(
+                    ProfileEmergencyContactEvents.SetEmergencyContactRelation(relation = it)
+                )
+            }
         )
     }
 }
@@ -390,7 +403,12 @@ fun CompanyInformationArea(state: ProfileState) {
 @Composable
 fun ProfileScreenPreview() {
     JustInTimeTheme {
-        ProfileScreen(state = ProfileState(), userEvent = {}, {})
+        ProfileScreen(
+            state = ProfileState(),
+            userEvent = {},
+            passwordEvent = {},
+            emergencyContactEvent = {}
+        )
     }
 }
 
@@ -415,7 +433,12 @@ fun ProfileScreenPasswordChangePreview() {
 @ViewingSystemThemes
 @Composable
 fun ProfileScreenEmergencyContactPreview() {
-    JustInTimeTheme { EmergencyContactArea(state = ProfileState(expandEmergencyContactArea = true)) }
+    JustInTimeTheme {
+        EmergencyContactArea(
+            state = ProfileState(expandEmergencyContactArea = true),
+            onEvent = {}
+        )
+    }
 }
 
 @ViewingSystemThemes
