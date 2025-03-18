@@ -3,21 +3,63 @@ package com.dbad.justintime.f_profile.presentation.profile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.dbad.justintime.f_local_datastore.domain.repository.UserPreferencesRepository
+import com.dbad.justintime.f_local_users_db.domain.model.EmergencyContact
 import com.dbad.justintime.f_local_users_db.domain.model.Employee
 import com.dbad.justintime.f_local_users_db.domain.model.User
 import com.dbad.justintime.f_local_users_db.domain.model.util.PreferredContactMethod
 import com.dbad.justintime.f_profile.domain.use_case.ProfileUseCases
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
-class ProfileViewModel(private val useCases: ProfileUseCases) : ViewModel() {
+class ProfileViewModel(
+    private val useCases: ProfileUseCases,
+    private val preferencesDataStore: UserPreferencesRepository
+) : ViewModel() {
+
+    // ViewModel State
     private val _state = MutableStateFlow(ProfileState())
-    val state = _state.stateIn(
+    private val _loadingData = MutableStateFlow(false)
+
+    // User, Employee & EmergencyContact State
+    private val _user = MutableStateFlow(User())
+    private val _employee = MutableStateFlow(Employee())
+    private val _emergencyContact = MutableStateFlow(EmergencyContact())
+
+    val state = combine(_state, _user, _employee, _emergencyContact)
+    { state, user, employee, emergencyContact ->
+        state.copy(
+            user = user,
+            employee = employee,
+            emergencyContact = emergencyContact
+        )
+    }.onStart { loadInitialData() }.stateIn(
         viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000L),
         ProfileState()
     )
+
+    fun loadInitialData() {
+        viewModelScope.launch {
+            _loadingData.value = true
+
+            delay(timeMillis = 5000L) //TODO need a better way of working out how long to wait before loading data
+
+            val loginToken = preferencesDataStore.tokenFlow.first()
+            _user.value = useCases.getUser(user = User(uid = loginToken))
+            _employee.value = useCases.getEmployee(employee = Employee(uid = _user.value.employee))
+            _emergencyContact.value =
+                useCases.getEmergencyContact(emergencyContact = EmergencyContact(uid = _employee.value.emergencyContact))
+
+            _loadingData.value = false
+        }
+    }
 
     fun onUserEvent(event: ProfileUserEvents) {
         when (event) {
@@ -53,20 +95,17 @@ class ProfileViewModel(private val useCases: ProfileUseCases) : ViewModel() {
      * Passed value must be hashed otherwise value will be updated to plaintext
      */
     private fun updateUser(
-        email: String = _state.value.user.email,
-        password: String = _state.value.user.password
+        email: String = _user.value.email,
+        password: String = _user.value.password
     ) {
-        _state.update {
+        _user.update {
             it.copy(
-                user = User(
-                    uid = User.generateUid(email = email),
-                    email = email,
-                    password = password,
-                    employee = _state.value.user.employee
-                ),
-                changeMade = true
+                uid = User.generateUid(email = email),
+                email = email,
+                password = password
             )
         }
+        _state.update { it.copy(changeMade = true) }
     }
 
     /**
@@ -88,34 +127,30 @@ class ProfileViewModel(private val useCases: ProfileUseCases) : ViewModel() {
         prefContactMethod: PreferredContactMethod = _state.value.employee.preferredContactMethod,
         dateOfBirth: String = _state.value.employee.dateOfBirth
     ) {
-        _state.update {
+        _employee.update {
             it.copy(
-                employee = Employee(
-                    uid = _state.value.employee.uid,
-                    name = name,
-                    preferredName = preferredName,
-                    phone = phone,
-                    preferredContactMethod = prefContactMethod,
-                    dateOfBirth = dateOfBirth,
-                    minimumHours = _state.value.employee.minimumHours,
-                    emergencyContact = _state.value.employee.emergencyContact,
-                    isAdmin = _state.value.employee.isAdmin,
-                    companyName = _state.value.employee.companyName,
-                    contractType = _state.value.employee.contractType,
-                    manager = _state.value.employee.manager,
-                    role = _state.value.employee.role
-                ),
-                changeMade = true
+                name = name,
+                preferredName = preferredName,
+                phone = phone,
+                preferredContactMethod = prefContactMethod,
+                dateOfBirth = dateOfBirth,
             )
         }
+        _state.update { it.copy(changeMade = true) }
     }
 
 
     companion object {
-        fun generateViewModel(useCases: ProfileUseCases): ViewModelProvider.Factory {
+        fun generateViewModel(
+            useCases: ProfileUseCases,
+            preferencesDataStore: UserPreferencesRepository
+        ): ViewModelProvider.Factory {
             return object : ViewModelProvider.Factory {
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return ProfileViewModel(useCases = useCases) as T
+                    return ProfileViewModel(
+                        useCases = useCases,
+                        preferencesDataStore = preferencesDataStore
+                    ) as T
                 }
             }
         }

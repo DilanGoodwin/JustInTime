@@ -18,7 +18,7 @@ class ProfileRepositoryImplementation(private val localDatabase: LocalDatabaseUs
     }
 
     override suspend fun getEmergencyContact(contact: EmergencyContact): EmergencyContact {
-        TODO("Not yet implemented")
+        return localDatabase.getEmergencyContact(emergencyContact = contact)
     }
 
     override suspend fun upsertEmergencyContact(contact: EmergencyContact) {
@@ -26,7 +26,7 @@ class ProfileRepositoryImplementation(private val localDatabase: LocalDatabaseUs
     }
 
     override suspend fun getEmployee(employee: Employee): Employee {
-        TODO("Not yet implemented")
+        return localDatabase.getEmployee(employee = employee)
     }
 
     override suspend fun upsertEmployee(employee: Employee) {

@@ -43,7 +43,7 @@ class MainActivity : ComponentActivity() {
                     val storedLoginState = userPreferences.tokenFlow
                     val startingPosition =
                         runBlocking {
-                            userPreferences.clearLoginToken()
+//                            userPreferences.clearLoginToken()
                             if (storedLoginState.first() != "") ProfileScreen else LoginNav
                         }
 
