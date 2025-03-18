@@ -66,7 +66,8 @@ fun ProfileScreen(viewModel: ProfileViewModel) {
         state = state,
         userEvent = viewModel::onUserEvent,
         passwordEvent = viewModel::onPasswordEvent,
-        emergencyContactEvent = viewModel::onEmergencyContactEvent
+        emergencyContactEvent = viewModel::onEmergencyContactEvent,
+        companyEvents = viewModel::onCompanyEvent
     )
 }
 
@@ -75,7 +76,8 @@ fun ProfileScreen(
     state: ProfileState,
     userEvent: (ProfileUserEvents) -> Unit,
     passwordEvent: (ProfilePasswordEvents) -> Unit,
-    emergencyContactEvent: (ProfileEmergencyContactEvents) -> Unit
+    emergencyContactEvent: (ProfileEmergencyContactEvents) -> Unit,
+    companyEvents: (ProfileCompanyEvents) -> Unit
 ) {
     Scaffold(
         topBar = { ProfileTopBar() },
@@ -116,7 +118,7 @@ fun ProfileScreen(
                 Spacer(modifier = Modifier.height(20.dp))
 
                 // Company Information
-                CompanyInformationArea(state = state)
+                CompanyInformationArea(state = state, onEvent = companyEvents)
             }
         }
     }
@@ -337,10 +339,13 @@ fun EmergencyContactArea(
 }
 
 @Composable
-fun CompanyInformationArea(state: ProfileState) {
+fun CompanyInformationArea(
+    state: ProfileState,
+    onEvent: (ProfileCompanyEvents) -> Unit
+) {
     ExpandableCardArea(
         isExpanded = state.expandCompanyInformationArea,
-        expandableButtonClick = {},
+        expandableButtonClick = { onEvent(ProfileCompanyEvents.ToggleExpandedArea) },
         cardTitle = stringResource(R.string.companyInformation),
         testTag = TestTagCompanyInformationExpandableField
     ) {
@@ -348,15 +353,15 @@ fun CompanyInformationArea(state: ProfileState) {
             LabelledTextInputFields(
                 currentValue = state.employee.companyName,
                 placeHolderText = stringResource(R.string.companyName),
-                onValueChange = {},
+                onValueChange = { onEvent(ProfileCompanyEvents.SetCompanyName(companyName = it)) },
                 readOnly = !state.employee.isAdmin,
                 testingTag = TestTagCompanyInformationCompanyNameField
             )
 
             LabelledTextInputFields(
-                currentValue = state.companyInformationManagerName,
+                currentValue = state.employee.companyName,
                 placeHolderText = stringResource(R.string.directReport),
-                onValueChange = {},
+                onValueChange = { onEvent(ProfileCompanyEvents.SetManagerName(managerName = it)) },
                 readOnly = !state.employee.isAdmin,
                 testingTag = TestTagCompanyInformationManagerNameField
             )
@@ -371,16 +376,20 @@ fun CompanyInformationArea(state: ProfileState) {
                     testTag = TestTagCompanyInformationContractType,
                     readOnly = !state.employee.isAdmin,
                     expandedDropDown = state.companyInformationExpandedContractType,
-                    dropDownToggle = {},
+                    dropDownToggle = { onEvent(ProfileCompanyEvents.ToggleContractTypeDropDown) },
                     modifier = Modifier.width(180.dp)
                 ) {
                     DropdownMenu(
                         expanded = state.companyInformationExpandedContractType,
-                        onDismissRequest = {}) {
+                        onDismissRequest = { onEvent(ProfileCompanyEvents.ToggleContractTypeDropDown) }) {
                         for (method in ContractType.entries) {
                             DropdownMenuItem(
                                 text = { Text(text = stringResource(method.stringVal)) },
-                                onClick = {}
+                                onClick = {
+                                    onEvent(
+                                        ProfileCompanyEvents.SetContractType(contractType = method)
+                                    )
+                                }
                             )
                         }
                     }
@@ -391,7 +400,7 @@ fun CompanyInformationArea(state: ProfileState) {
                     placeHolderText = stringResource(R.string.role),
                     testingTag = TestTagCompanyInformationRole,
                     readOnly = !state.employee.isAdmin,
-                    onValueChange = {},
+                    onValueChange = { onEvent(ProfileCompanyEvents.SetRole(role = it)) },
                     modifier = Modifier.width(190.dp)
                 )
             }
@@ -407,7 +416,8 @@ fun ProfileScreenPreview() {
             state = ProfileState(),
             userEvent = {},
             passwordEvent = {},
-            emergencyContactEvent = {}
+            emergencyContactEvent = {},
+            companyEvents = {}
         )
     }
 }
@@ -444,5 +454,9 @@ fun ProfileScreenEmergencyContactPreview() {
 @ViewingSystemThemes
 @Composable
 fun ProfileScreenCompanyInformationPreview() {
-    JustInTimeTheme { CompanyInformationArea(state = ProfileState(expandCompanyInformationArea = true)) }
+    JustInTimeTheme {
+        CompanyInformationArea(
+            state = ProfileState(expandCompanyInformationArea = true),
+            onEvent = {})
+    }
 }

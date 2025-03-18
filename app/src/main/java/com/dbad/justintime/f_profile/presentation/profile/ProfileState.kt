@@ -52,6 +52,5 @@ data class ProfileState(
     val emergencyContactExpandedRelation: Boolean = false,
 
     // Company Information Area
-    val companyInformationManagerName: String = "",
     val companyInformationExpandedContractType: Boolean = false
 )

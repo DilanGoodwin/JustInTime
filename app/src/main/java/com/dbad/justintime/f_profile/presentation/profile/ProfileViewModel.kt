@@ -7,6 +7,7 @@ import com.dbad.justintime.f_local_datastore.domain.repository.UserPreferencesRe
 import com.dbad.justintime.f_local_users_db.domain.model.EmergencyContact
 import com.dbad.justintime.f_local_users_db.domain.model.Employee
 import com.dbad.justintime.f_local_users_db.domain.model.User
+import com.dbad.justintime.f_local_users_db.domain.model.util.ContractType
 import com.dbad.justintime.f_local_users_db.domain.model.util.PreferredContactMethod
 import com.dbad.justintime.f_local_users_db.domain.model.util.Relation
 import com.dbad.justintime.f_login_register.domain.util.PasswordErrors
@@ -166,6 +167,22 @@ class ProfileViewModel(
         }
     }
 
+    fun onCompanyEvent(event: ProfileCompanyEvents) {
+        when (event) {
+            is ProfileCompanyEvents.SetCompanyName -> updateEmployee(companyName = event.companyName)
+            is ProfileCompanyEvents.SetManagerName -> updateEmployee(manager = event.managerName)
+            is ProfileCompanyEvents.SetContractType -> updateEmployee(contractType = event.contractType)
+            is ProfileCompanyEvents.SetRole -> updateEmployee(role = event.role)
+
+            ProfileCompanyEvents.ToggleExpandedArea ->
+                toggleExpandableAreas(companyInformation = !_state.value.expandCompanyInformationArea)
+
+            ProfileCompanyEvents.ToggleContractTypeDropDown -> _state.update {
+                it.copy(companyInformationExpandedContractType = !_state.value.companyInformationExpandedContractType)
+            }
+        }
+    }
+
     /**
      * Function to toggle which areas are expanded. By default all values for the areas are false.
      *
@@ -234,7 +251,11 @@ class ProfileViewModel(
         preferredName: String = _employee.value.preferredName,
         phone: String = _employee.value.phone,
         prefContactMethod: PreferredContactMethod = _employee.value.preferredContactMethod,
-        dateOfBirth: String = _employee.value.dateOfBirth
+        dateOfBirth: String = _employee.value.dateOfBirth,
+        companyName: String = _employee.value.companyName,
+        contractType: ContractType = _employee.value.contractType,
+        manager: String = _employee.value.manager,
+        role: String = _employee.value.role
     ) {
         _employee.update {
             it.copy(
@@ -243,6 +264,10 @@ class ProfileViewModel(
                 phone = phone,
                 preferredContactMethod = prefContactMethod,
                 dateOfBirth = dateOfBirth,
+                companyName = companyName,
+                contractType = contractType,
+                manager = manager,
+                role = role
             )
         }
         _state.update { it.copy(changeMade = true) }
@@ -279,7 +304,6 @@ class ProfileViewModel(
         }
         _state.update { it.copy(changeMade = true) }
     }
-
 
     companion object {
         fun generateViewModel(
