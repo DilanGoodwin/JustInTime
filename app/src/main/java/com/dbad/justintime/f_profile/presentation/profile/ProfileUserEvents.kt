@@ -8,7 +8,7 @@ sealed interface ProfileUserEvents {
     data class SetName(val name: String) : ProfileUserEvents
     data class SetPreferredName(val name: String) : ProfileUserEvents
     data class SetEmail(val email: String) : ProfileUserEvents
-    data class SetDatOfBirth(val dateOfBirth: String) : ProfileUserEvents
+    data class SetDateOfBirth(val dateOfBirth: String) : ProfileUserEvents
     data class SetPhoneNumb(val phone: String) : ProfileUserEvents
     data class SetPrefContactMethod(val contactMethod: PreferredContactMethod) : ProfileUserEvents
 

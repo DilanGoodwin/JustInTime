@@ -3,6 +3,7 @@ package com.dbad.justintime.f_profile.presentation.profile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.dbad.justintime.core.presentation.util.DATE_FORMATTER
 import com.dbad.justintime.f_local_datastore.domain.repository.UserPreferencesRepository
 import com.dbad.justintime.f_local_users_db.domain.model.EmergencyContact
 import com.dbad.justintime.f_local_users_db.domain.model.Employee
@@ -21,6 +22,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.Date
 
 class ProfileViewModel(
     private val useCases: ProfileUseCases,
@@ -67,12 +69,22 @@ class ProfileViewModel(
         }
     }
 
+    fun onEvent(event: ProfileEvent) {
+        when (event) {
+            ProfileEvent.SaveButton -> saveData()
+        }
+    }
+
     fun onUserEvent(event: ProfileUserEvents) {
         when (event) {
             is ProfileUserEvents.SetName -> updateEmployee(name = event.name)
             is ProfileUserEvents.SetPreferredName -> updateEmployee(preferredName = event.name)
             is ProfileUserEvents.SetEmail -> updateUser(email = event.email)
-            is ProfileUserEvents.SetDatOfBirth -> updateEmployee(dateOfBirth = event.dateOfBirth)
+            is ProfileUserEvents.SetDateOfBirth -> {
+                updateEmployee(dateOfBirth = event.dateOfBirth)
+                onUserEvent(ProfileUserEvents.ToggleShowDatePicker)
+            }
+
             is ProfileUserEvents.SetPhoneNumb -> updateEmployee(phone = event.phone)
             is ProfileUserEvents.SetPrefContactMethod -> updateEmployee(prefContactMethod = event.contactMethod)
 
@@ -303,6 +315,59 @@ class ProfileViewModel(
             )
         }
         _state.update { it.copy(changeMade = true) }
+    }
+
+    private fun saveData() {
+        _state.update {
+            it.copy(
+                // Check email/passwords
+                userEmailError = !useCases.validateEmail(email = _user.value.email),
+
+                // Check name/DOB/phone
+                userNameError = _employee.value.name.isBlank(),
+                dateOfBirthError = !useCases.validateDate(
+                    currentDate = DATE_FORMATTER.format(Date()),
+                    dateToCheck = _employee.value.dateOfBirth
+                ),
+                userPhoneError = !useCases.validatePhoneNumber(phone = _employee.value.phone),
+
+                // Check emergency contact name/email/phone
+                emergencyContactNameError = _emergencyContact.value.name.isBlank(),
+                emergencyContactEmailError = !useCases.validateEmail(email = _emergencyContact.value.email),
+                emergencyContactPhoneError = !useCases.validatePhoneNumber(phone = _emergencyContact.value.phone)
+            )
+        }
+
+        // Was the user updating their password
+        if (_state.value.oldPassword.isNotBlank()) _state.update {
+            it.copy(
+                oldPasswordShowError = (
+                        _user.value.password != User.hashPassword(password = _state.value.oldPassword))
+            )
+        }
+
+        // No User errors - update User info
+        if (!(_state.value.userEmailError ||
+                    _state.value.oldPasswordShowError ||
+                    _state.value.newPasswordShowError ||
+                    _state.value.newMatchPasswordShowError)
+        ) viewModelScope.launch { useCases.upsertUser(user = _user.value) }
+
+        // No Employee errors - update Employee info
+        if (!(_state.value.userNameError ||
+                    _state.value.userPhoneError ||
+                    _state.value.dateOfBirthError)
+        ) viewModelScope.launch { useCases.upsertEmployee(employee = _employee.value) }
+
+        // No EmergencyContact errors - update EmergencyContact info
+        if (!(_state.value.emergencyContactNameError ||
+                    _state.value.emergencyContactEmailError ||
+                    _state.value.emergencyContactPhoneError)
+        ) viewModelScope.launch { useCases.upsertEmergencyContact(emergencyContact = _emergencyContact.value) }
+
+        _state.update { it.copy(changeMade = false) }
+
+        //TODO start background operation to sync to remote database
     }
 
     companion object {

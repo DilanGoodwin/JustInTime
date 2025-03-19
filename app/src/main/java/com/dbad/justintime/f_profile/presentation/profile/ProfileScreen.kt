@@ -64,6 +64,7 @@ fun ProfileScreen(viewModel: ProfileViewModel) {
 
     ProfileScreen(
         state = state,
+        onEvent = viewModel::onEvent,
         userEvent = viewModel::onUserEvent,
         passwordEvent = viewModel::onPasswordEvent,
         emergencyContactEvent = viewModel::onEmergencyContactEvent,
@@ -74,6 +75,7 @@ fun ProfileScreen(viewModel: ProfileViewModel) {
 @Composable
 fun ProfileScreen(
     state: ProfileState,
+    onEvent: (ProfileEvent) -> Unit,
     userEvent: (ProfileUserEvents) -> Unit,
     passwordEvent: (ProfilePasswordEvents) -> Unit,
     emergencyContactEvent: (ProfileEmergencyContactEvents) -> Unit,
@@ -82,8 +84,8 @@ fun ProfileScreen(
     Scaffold(
         topBar = { ProfileTopBar() },
         floatingActionButton = {
-            if (state.changeMade) { //TODO If content edited show action button else hide it
-                SmallFloatingActionButton(onClick = {}) {
+            if (state.changeMade) {
+                SmallFloatingActionButton(onClick = { onEvent(ProfileEvent.SaveButton) }) {
                     Box(modifier = Modifier.padding(10.dp)) {
                         Text(
                             text = "Save",
@@ -179,12 +181,12 @@ fun UserUpdateFields(
             showDatePicker = state.showDateOfBirthPicker,
             toggleDatePicker = { onEvent(ProfileUserEvents.ToggleShowDatePicker) },
             dateError = state.dateOfBirthError,
-            saveSelectedDate = { onEvent(ProfileUserEvents.SetDatOfBirth(it)) }
+            saveSelectedDate = { onEvent(ProfileUserEvents.SetDateOfBirth(dateOfBirth = it)) }
         )
 
         // Phone Number Field
         TextInputField(
-            currentValue = state.employee.dateOfBirth,
+            currentValue = state.employee.phone,
             placeHolderText = stringResource(R.string.phoneNumb),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
             onValueChange = { onEvent(ProfileUserEvents.SetPhoneNumb(it)) },
@@ -359,7 +361,7 @@ fun CompanyInformationArea(
             )
 
             LabelledTextInputFields(
-                currentValue = state.employee.companyName,
+                currentValue = state.employee.manager,
                 placeHolderText = stringResource(R.string.directReport),
                 onValueChange = { onEvent(ProfileCompanyEvents.SetManagerName(managerName = it)) },
                 readOnly = !state.employee.isAdmin,
@@ -414,6 +416,7 @@ fun ProfileScreenPreview() {
     JustInTimeTheme {
         ProfileScreen(
             state = ProfileState(),
+            onEvent = {},
             userEvent = {},
             passwordEvent = {},
             emergencyContactEvent = {},

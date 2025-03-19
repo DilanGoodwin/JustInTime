@@ -21,11 +21,11 @@ class ProfileModuleImplementation(private val localDatabase: LocalDatabaseUseCas
         ProfileRepositoryImplementation(localDatabase = localDatabase)
     override val useCases: ProfileUseCases = ProfileUseCases(
         getUser = GetUser(repository = profileRepository),
-        upsertUser = UpsertUser(),
+        upsertUser = UpsertUser(repository = profileRepository),
         getEmployee = GetEmployee(repository = profileRepository),
-        upsertEmployee = UpsertEmployee(),
+        upsertEmployee = UpsertEmployee(repository = profileRepository),
         getEmergencyContact = GetEmergencyContact(repository = profileRepository),
-        upsertEmergencyContact = UpsertEmergencyContact(),
+        upsertEmergencyContact = UpsertEmergencyContact(repository = profileRepository),
         validateEmail = ValidateEmail(),
         validatePassword = ValidatePassword(),
         validatePhoneNumber = ValidatePhoneNumber(),
