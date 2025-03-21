@@ -1,4 +1,4 @@
-package com.dbad.justintime.f_login_register.data
+package com.dbad.justintime.util
 
 import com.dbad.justintime.f_local_datastore.domain.repository.UserPreferencesRepository
 import kotlinx.coroutines.flow.Flow

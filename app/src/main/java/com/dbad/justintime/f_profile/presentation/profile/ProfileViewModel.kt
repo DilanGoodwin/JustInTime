@@ -238,7 +238,7 @@ class ProfileViewModel(
     ) {
         _user.update {
             it.copy(
-                uid = User.generateUid(email = email),
+                uid = if (email.isBlank()) "" else User.generateUid(email = email),
                 email = email,
                 password = password
             )

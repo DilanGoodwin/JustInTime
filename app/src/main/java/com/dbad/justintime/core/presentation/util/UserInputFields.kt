@@ -220,7 +220,8 @@ fun PreferredContactField(
     DropDownField(
         currentValue = currentValue,
         placeHolderText = stringResource(R.string.prefContactMethod),
-        testingTag = TestTagPreferredContactMethodField,
+        fieldTestingTag = TestTagMainPreferredContactMethodField,
+        dropDownToggleTestingTag = TestTagPreferredContactMethodField,
         expandedDropDown = expandDropDown,
         dropDownToggle = dropDownToggle,
         modifier = Modifier
@@ -253,7 +254,7 @@ fun RelationField(
     DropDownField(
         currentValue = currentValue,
         placeHolderText = stringResource(R.string.relation),
-        testingTag = TestTagEmergencyContactRelation,
+        dropDownToggleTestingTag = TestTagEmergencyContactRelation,
         expandedDropDown = expandDropDown,
         dropDownToggle = dropDownToggle,
         modifier = Modifier
@@ -281,7 +282,8 @@ fun DropDownField(
     modifier: Modifier = Modifier,
     currentValue: String,
     placeHolderText: String,
-    testingTag: String,
+    fieldTestingTag: String = "",
+    dropDownToggleTestingTag: String,
     expandedDropDown: Boolean,
     dropDownToggle: () -> Unit,
     menu: @Composable () -> Unit
@@ -293,7 +295,7 @@ fun DropDownField(
         trailingIcon = {
             IconButton(
                 onClick = { dropDownToggle() },
-                modifier = Modifier.testTag(tag = testingTag)
+                modifier = Modifier.testTag(tag = dropDownToggleTestingTag)
             ) {
                 Icon(
                     imageVector = if (expandedDropDown) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
@@ -306,7 +308,9 @@ fun DropDownField(
         },
         readOnly = true,
         singleLine = true,
-        modifier = modifier.clip(shape = RoundedCornerShape(size = 8.dp))
+        modifier = modifier
+            .clip(shape = RoundedCornerShape(size = 8.dp))
+            .testTag(tag = fieldTestingTag)
     )
 }
 

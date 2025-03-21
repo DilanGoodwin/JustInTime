@@ -15,7 +15,6 @@ import com.dbad.justintime.core.domain.use_case.ValidatePassword
 import com.dbad.justintime.core.domain.use_case.ValidatePhoneNumber
 import com.dbad.justintime.f_local_datastore.domain.repository.UserPreferencesRepository
 import com.dbad.justintime.f_login_register.data.ProfileRepositoryTestingImplementation
-import com.dbad.justintime.f_login_register.data.UserPreferencesTestingImplementation
 import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
 import com.dbad.justintime.f_login_register.presentation.login.LoginScreen
 import com.dbad.justintime.f_login_register.presentation.login.LoginViewModel
@@ -33,6 +32,7 @@ import com.dbad.justintime.f_profile.domain.use_case.UpsertEmployee
 import com.dbad.justintime.f_profile.domain.use_case.UpsertUser
 import com.dbad.justintime.f_profile.presentation.profile.ProfileScreen
 import com.dbad.justintime.f_profile.presentation.profile.ProfileViewModel
+import com.dbad.justintime.util.UserPreferencesTestingImplementation
 
 @Composable
 fun LoginTestingNavController(
@@ -88,11 +88,11 @@ fun LoginTestingNavController(
             val profileRepo = ProfileRepositoryTestingImplementation()
             val profileUseCases = ProfileUseCases(
                 getUser = GetUser(repository = profileRepo),
-                upsertUser = UpsertUser(),
+                upsertUser = UpsertUser(repository = profileRepo),
                 getEmployee = GetEmployee(repository = profileRepo),
-                upsertEmployee = UpsertEmployee(),
+                upsertEmployee = UpsertEmployee(repository = profileRepo),
                 getEmergencyContact = GetEmergencyContact(repository = profileRepo),
-                upsertEmergencyContact = UpsertEmergencyContact(),
+                upsertEmergencyContact = UpsertEmergencyContact(repository = profileRepo),
                 validateEmail = ValidateEmail(),
                 validatePassword = ValidatePassword(),
                 validatePhoneNumber = ValidatePhoneNumber(),

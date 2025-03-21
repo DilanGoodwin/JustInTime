@@ -26,6 +26,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -50,6 +51,8 @@ import com.dbad.justintime.core.presentation.util.TestTagPasswordChangeExpandabl
 import com.dbad.justintime.core.presentation.util.TestTagPasswordField
 import com.dbad.justintime.core.presentation.util.TestTagPasswordMatchField
 import com.dbad.justintime.core.presentation.util.TestTagPhoneNumberField
+import com.dbad.justintime.core.presentation.util.TestTagPreferredName
+import com.dbad.justintime.core.presentation.util.TestTagProfileSaveButton
 import com.dbad.justintime.core.presentation.util.TestTagUserInformationExpandableField
 import com.dbad.justintime.core.presentation.util.TextInputField
 import com.dbad.justintime.core.presentation.util.ViewingSystemThemes
@@ -85,7 +88,9 @@ fun ProfileScreen(
         topBar = { ProfileTopBar() },
         floatingActionButton = {
             if (state.changeMade) {
-                SmallFloatingActionButton(onClick = { onEvent(ProfileEvent.SaveButton) }) {
+                SmallFloatingActionButton(
+                    modifier = Modifier.testTag(tag = TestTagProfileSaveButton),
+                    onClick = { onEvent(ProfileEvent.SaveButton) }) {
                     Box(modifier = Modifier.padding(10.dp)) {
                         Text(
                             text = "Save",
@@ -160,7 +165,8 @@ fun UserUpdateFields(
         TextInputField(
             currentValue = state.employee.preferredName,
             placeHolderText = stringResource(R.string.preferredName),
-            onValueChange = { onEvent(ProfileUserEvents.SetPreferredName(it)) }
+            onValueChange = { onEvent(ProfileUserEvents.SetPreferredName(it)) },
+            testingTag = TestTagPreferredName
         )
 
         // Email Field
