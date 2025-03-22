@@ -12,6 +12,7 @@ const val TestTagDatePickerPopUp = "DatePickerPopUp"
 const val TestTagPhoneNumberField = "PhoneNumbField"
 const val TestTagMainPreferredContactMethodField = "MainPrefContactArea"
 const val TestTagPreferredContactMethodField = "PreferredContactMethod"
+const val TestTagMainEmergencyContactRelationField = "MainRelationArea"
 const val TestTagEmergencyContactRelation = "EmergencyContactRelationMethod"
 
 const val TestTagUserInformationExpandableField = "UserInformationExpandable"

@@ -21,18 +21,18 @@ import com.dbad.justintime.core.domain.use_case.ValidateDate
 import com.dbad.justintime.core.domain.use_case.ValidateEmail
 import com.dbad.justintime.core.domain.use_case.ValidatePassword
 import com.dbad.justintime.core.domain.use_case.ValidatePhoneNumber
-import com.dbad.justintime.core.presentation.util.TestTagCompanyInformationExpandableField
 import com.dbad.justintime.core.presentation.util.TestTagEmailField
 import com.dbad.justintime.core.presentation.util.TestTagEmergencyContactExpandableField
+import com.dbad.justintime.core.presentation.util.TestTagEmergencyContactRelation
+import com.dbad.justintime.core.presentation.util.TestTagMainEmergencyContactRelationField
 import com.dbad.justintime.core.presentation.util.TestTagMainPreferredContactMethodField
 import com.dbad.justintime.core.presentation.util.TestTagNameField
-import com.dbad.justintime.core.presentation.util.TestTagPasswordChangeExpandableField
 import com.dbad.justintime.core.presentation.util.TestTagPhoneNumberField
 import com.dbad.justintime.core.presentation.util.TestTagPreferredContactMethodField
 import com.dbad.justintime.core.presentation.util.TestTagPreferredName
 import com.dbad.justintime.core.presentation.util.TestTagProfileSaveButton
-import com.dbad.justintime.core.presentation.util.TestTagUserInformationExpandableField
 import com.dbad.justintime.f_local_users_db.domain.model.util.PreferredContactMethod
+import com.dbad.justintime.f_local_users_db.domain.model.util.Relation
 import com.dbad.justintime.f_profile.data.ProfileRepositoryTestingImplementation
 import com.dbad.justintime.f_profile.data.ProfileRepositoryTestingImplementation.Companion.generateProfileTestRepo
 import com.dbad.justintime.f_profile.domain.repository.ProfileRepository
@@ -52,7 +52,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
-class ProfileScreenUserEventsTesting {
+class ProfileScreenEmergencyContactTesting {
 
     @get:Rule
     val testRule = createAndroidComposeRule<ComponentActivity>()
@@ -86,84 +86,77 @@ class ProfileScreenUserEventsTesting {
                 )
             )
         }
+
+        testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).performClick()
     }
 
     @Test
     fun checkFieldsDisplayed() = runTest {
-        testRule.onNodeWithTag(testTag = TestTagUserInformationExpandableField).onChildren()
+        testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).onChildren()
             .filterToOne(matcher = hasTestTag(testTag = TestTagNameField)).assertIsDisplayed()
-        testRule.onNodeWithTag(testTag = TestTagUserInformationExpandableField).onChildren()
+        testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).onChildren()
             .filterToOne(matcher = hasTestTag(testTag = TestTagPreferredName)).assertIsDisplayed()
-        testRule.onNodeWithTag(testTag = TestTagUserInformationExpandableField).onChildren()
-            .filterToOne(matcher = hasTestTag(testTag = TestTagEmailField)).assertIsDisplayed()
-        testRule.onNodeWithTag(testTag = TestTagUserInformationExpandableField).onChildren()
+        testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).onChildren()
             .filterToOne(matcher = hasTestTag(testTag = TestTagPhoneNumberField))
             .assertIsDisplayed()
-        testRule.onNodeWithTag(testTag = TestTagUserInformationExpandableField).onChildren()
+        testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).onChildren()
+            .filterToOne(matcher = hasTestTag(testTag = TestTagEmailField)).assertIsDisplayed()
+        testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).onChildren()
             .filterToOne(matcher = hasTestTag(testTag = TestTagMainPreferredContactMethodField))
+            .assertIsDisplayed()
+        testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).onChildren()
+            .filterToOne(matcher = hasTestTag(testTag = TestTagMainEmergencyContactRelationField))
             .onChildren()
-            .filterToOne(matcher = hasTestTag(testTag = TestTagPreferredContactMethodField))
+            .filterToOne(matcher = hasTestTag(testTag = TestTagEmergencyContactRelation))
             .assertIsDisplayed()
     }
 
     @Test
-    fun collapseExpandInformationArea() {
-        testRule.onNodeWithTag(testTag = TestTagUserInformationExpandableField).performClick()
-            .assertIsDisplayed()
-        testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).performClick()
-            .assertIsDisplayed()
-        testRule.onNodeWithTag(testTag = TestTagPasswordChangeExpandableField).performClick()
-            .assertIsDisplayed()
-        testRule.onNodeWithTag(testTag = TestTagCompanyInformationExpandableField).performClick()
-            .assertIsDisplayed()
-    }
-
-    @Test
-    fun checkNameField() {
-        val expectedName = "Cassandra Negrete"
+    fun checkNameField() = runTest {
+        val expectedName = "Jessica Bland"
 
         runBlocking { waitOutLoadDelay() }
 
         // Check the name is displayed & clear it
-        testRule.onNodeWithTag(testTag = TestTagUserInformationExpandableField).onChildren()
+        testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).onChildren()
             .filterToOne(matcher = hasTestTag(testTag = TestTagNameField)).assertIsDisplayed()
             .assertTextContains(value = expectedName)
-        testRule.onNodeWithTag(testTag = TestTagUserInformationExpandableField).onChildren()
+        testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).onChildren()
             .filterToOne(matcher = hasTestTag(testTag = TestTagNameField)).assertIsDisplayed()
             .performTextClearance()
 
         // Check that error is raised when no name is present
         testRule.onNodeWithTag(testTag = TestTagProfileSaveButton).assertIsDisplayed()
             .performClick()
-        testRule.onNodeWithTag(testTag = TestTagUserInformationExpandableField).onChildren()
+        testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).onChildren()
             .filterToOne(matcher = hasText(text = testRule.activity.getString(R.string.noNameProvided)))
             .assertIsDisplayed()
 
         // Re-add the name & check it is displayed
-        testRule.onNodeWithTag(testTag = TestTagUserInformationExpandableField).onChildren()
+        testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).onChildren()
             .filterToOne(matcher = hasTestTag(testTag = TestTagNameField))
             .performTextReplacement(text = expectedName)
         testRule.onNodeWithTag(testTag = TestTagProfileSaveButton).assertIsDisplayed()
             .performClick()
-        testRule.onNodeWithTag(testTag = TestTagUserInformationExpandableField).onChildren()
+        testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).onChildren()
             .filterToOne(matcher = hasTestTag(testTag = TestTagNameField)).assertIsDisplayed()
             .assertTextContains(value = expectedName)
     }
 
     @Test
-    fun checkPreferredNameField() {
-        val newValue = "Cassandra"
+    fun checkPrefNameField() = runTest {
+        val newValue = "Jessica"
 
         runBlocking { waitOutLoadDelay() }
 
         // Check default value within pref name field
-        testRule.onNodeWithTag(testTag = TestTagUserInformationExpandableField).onChildren()
+        testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).onChildren()
             .filterToOne(matcher = hasTestTag(testTag = TestTagPreferredName)).assertIsDisplayed()
             .assertTextContains(value = "")
 
         // Update value within pref name field
         // Check save button is displayed
-        testRule.onNodeWithTag(testTag = TestTagUserInformationExpandableField).onChildren()
+        testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).onChildren()
             .filterToOne(matcher = hasTestTag(testTag = TestTagPreferredName)).assertIsDisplayed()
             .performTextReplacement(text = newValue)
         testRule.onNodeWithTag(testTag = TestTagProfileSaveButton).assertIsDisplayed()
@@ -171,82 +164,82 @@ class ProfileScreenUserEventsTesting {
         testRule.onNodeWithTag(testTag = TestTagProfileSaveButton).assertIsNotDisplayed()
 
         // Check value has been updated
-        testRule.onNodeWithTag(testTag = TestTagUserInformationExpandableField).onChildren()
+        testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).onChildren()
             .filterToOne(matcher = hasTestTag(testTag = TestTagPreferredName)).assertIsDisplayed()
             .assertTextContains(value = newValue)
     }
 
     @Test
-    fun checkEmailField() {
-        val expectedValue = "cassandra.negrete@justintime.com"
+    fun checkEmailField() = runTest {
+        val expectedValue = "jessica.bland@justintime.com"
 
         runBlocking { waitOutLoadDelay() }
 
         // Check email value is expected & clear it
-        testRule.onNodeWithTag(testTag = TestTagUserInformationExpandableField).onChildren()
+        testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).onChildren()
             .filterToOne(matcher = hasTestTag(testTag = TestTagEmailField)).assertIsDisplayed()
             .assertTextContains(value = expectedValue)
-        testRule.onNodeWithTag(testTag = TestTagUserInformationExpandableField).onChildren()
+        testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).onChildren()
             .filterToOne(matcher = hasTestTag(testTag = TestTagEmailField)).assertIsDisplayed()
             .performTextClearance()
 
         // Check that error is raised when no email is present
         testRule.onNodeWithTag(testTag = TestTagProfileSaveButton).assertIsDisplayed()
             .performClick()
-        testRule.onNodeWithTag(testTag = TestTagUserInformationExpandableField).onChildren()
+        testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).onChildren()
             .filterToOne(matcher = hasText(text = testRule.activity.getString(R.string.invalidEmailError)))
             .assertIsDisplayed()
 
         // Re-add email & check it is displayed
-        testRule.onNodeWithTag(testTag = TestTagUserInformationExpandableField).onChildren()
+        testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).onChildren()
             .filterToOne(matcher = hasTestTag(testTag = TestTagEmailField))
             .performTextReplacement(text = expectedValue)
         testRule.onNodeWithTag(testTag = TestTagProfileSaveButton).assertIsDisplayed()
             .performClick()
-        testRule.onNodeWithTag(testTag = TestTagUserInformationExpandableField).onChildren()
+        testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).onChildren()
             .filterToOne(matcher = hasTestTag(testTag = TestTagEmailField)).assertIsDisplayed()
             .assertTextContains(value = expectedValue)
     }
 
     @Test
-    fun checkPhoneNumber() {
-        val expectedValue = "07573881133"
+    fun checkPhoneField() = runTest {
+        val expectedValue = "07154979316"
 
         runBlocking { waitOutLoadDelay() }
 
-        testRule.onNodeWithTag(testTag = TestTagUserInformationExpandableField).onChildren()
+        testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).onChildren()
             .filterToOne(matcher = hasTestTag(testTag = TestTagPhoneNumberField))
             .assertIsDisplayed().assertTextContains(value = expectedValue)
-        testRule.onNodeWithTag(testTag = TestTagUserInformationExpandableField).onChildren()
+        testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).onChildren()
             .filterToOne(matcher = hasTestTag(testTag = TestTagPhoneNumberField))
             .performTextClearance()
 
         testRule.onNodeWithTag(testTag = TestTagProfileSaveButton).assertIsDisplayed()
             .performClick()
-        testRule.onNodeWithTag(testTag = TestTagUserInformationExpandableField).onChildren()
+        testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).onChildren()
             .filterToOne(matcher = hasText(text = testRule.activity.getString(R.string.invalidPhoneNumb)))
             .assertIsDisplayed()
 
-        testRule.onNodeWithTag(testTag = TestTagUserInformationExpandableField).onChildren()
+        testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).onChildren()
             .filterToOne(matcher = hasTestTag(testTag = TestTagPhoneNumberField))
             .performTextReplacement(text = expectedValue)
         testRule.onNodeWithTag(testTag = TestTagProfileSaveButton).assertIsDisplayed()
             .performClick()
-        testRule.onNodeWithTag(testTag = TestTagUserInformationExpandableField).onChildren()
+        testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).onChildren()
             .filterToOne(matcher = hasTestTag(testTag = TestTagPhoneNumberField))
             .assertIsDisplayed().assertTextContains(value = expectedValue)
     }
 
     @Test
-    fun checkPreferredContactMethod() {
+    fun checkPrefContactMethodField() = runTest {
         runBlocking { waitOutLoadDelay() }
 
-        testRule.onNodeWithTag(testTag = TestTagUserInformationExpandableField).onChildren()
+        testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).onChildren()
             .filterToOne(matcher = hasTestTag(testTag = TestTagMainPreferredContactMethodField))
             .assertIsDisplayed()
             .assertTextContains(value = testRule.activity.getString(PreferredContactMethod.PHONE.stringVal))
 
-        testRule.onNodeWithTag(testTag = TestTagUserInformationExpandableField).onChildren()
+        testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).onChildren()
             .filterToOne(matcher = hasTestTag(testTag = TestTagMainPreferredContactMethodField))
             .onChildren()
             .filterToOne(matcher = hasTestTag(testTag = TestTagPreferredContactMethodField))
@@ -256,5 +249,26 @@ class ProfileScreenUserEventsTesting {
             .assertIsDisplayed()
         testRule.onAllNodesWithText(text = testRule.activity.getString(PreferredContactMethod.PHONE.stringVal))
             .onFirst().assertIsDisplayed()
+    }
+
+    @Test
+    fun checkRelationField() = runTest {
+        runBlocking { waitOutLoadDelay() }
+
+        testRule.onNodeWithText(text = testRule.activity.getString(Relation.SIGNIFICANT_OTHER.stringVal))
+            .assertIsDisplayed()
+        testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).onChildren()
+            .filterToOne(matcher = hasTestTag(testTag = TestTagMainEmergencyContactRelationField))
+            .onChildren()
+            .filterToOne(matcher = hasTestTag(testTag = TestTagEmergencyContactRelation))
+            .performClick()
+
+        for (rel in Relation.entries) {
+            if (rel != Relation.NONE) {
+                testRule.onAllNodesWithText(text = testRule.activity.getString(rel.stringVal))
+                    .onFirst()
+                    .assertIsDisplayed()
+            }
+        }
     }
 }

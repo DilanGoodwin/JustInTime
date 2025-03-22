@@ -254,6 +254,7 @@ fun RelationField(
     DropDownField(
         currentValue = currentValue,
         placeHolderText = stringResource(R.string.relation),
+        fieldTestingTag = TestTagMainEmergencyContactRelationField,
         dropDownToggleTestingTag = TestTagEmergencyContactRelation,
         expandedDropDown = expandDropDown,
         dropDownToggle = dropDownToggle,

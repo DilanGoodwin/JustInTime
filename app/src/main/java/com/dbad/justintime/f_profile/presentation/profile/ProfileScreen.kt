@@ -285,7 +285,8 @@ fun EmergencyContactArea(
         TextInputField(
             currentValue = state.emergencyContact.preferredName,
             placeHolderText = stringResource(R.string.preferredName),
-            onValueChange = { onEvent(ProfileEmergencyContactEvents.SetEmergencyContactPrefName(name = it)) }
+            onValueChange = { onEvent(ProfileEmergencyContactEvents.SetEmergencyContactPrefName(name = it)) },
+            testingTag = TestTagPreferredName
         )
 
         // Emergency Contact Phone Number Field
