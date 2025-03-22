@@ -49,6 +49,9 @@
     <string name="passwordBlank">Password cannot be blank</string>
     <string name="passwordDoNotMatch">Passwords do not match</string>
 
+    <!-- Profile -->
+    <string name="save">Save</string>
+
     <!-- Name Errors -->
     <string name="noNameProvided">Please enter a name</string>
 

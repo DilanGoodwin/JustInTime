@@ -103,7 +103,11 @@ class ProfileViewModel(
 
     fun onPasswordEvent(event: ProfilePasswordEvents) {
         when (event) {
-            is ProfilePasswordEvents.OldPasswordInput -> _state.update { it.copy(oldPassword = event.oldPassword) }
+            is ProfilePasswordEvents.OldPasswordInput -> {
+                _state.update { it.copy(oldPassword = event.oldPassword) }
+                checkPasswordChanges()
+            }
+
             is ProfilePasswordEvents.NewPasswordInput -> {
                 // If the password does not meet standards then raise the appropriate error to the
                 // user
@@ -116,6 +120,8 @@ class ProfileViewModel(
                         newPasswordShowError = showError
                     )
                 }
+
+                checkPasswordChanges()
             }
 
             is ProfilePasswordEvents.NewPasswordMatchInput -> {
@@ -127,6 +133,8 @@ class ProfileViewModel(
                         newMatchPasswordShowError = showError
                     )
                 }
+
+                checkPasswordChanges()
             }
 
             ProfilePasswordEvents.ToggleExpandableArea ->
@@ -317,6 +325,18 @@ class ProfileViewModel(
         _state.update { it.copy(changeMade = true) }
     }
 
+    /**
+     * Check that the expected fields have been filled in before allowing the user to save the
+     * changes made to their password.
+     */
+    private fun checkPasswordChanges() {
+        if (_state.value.oldPassword.isNotBlank() &&
+            _state.value.newPassword.isNotBlank() &&
+            !_state.value.newPasswordShowError &&
+            !_state.value.newMatchPasswordShowError
+        ) _state.update { it.copy(changeMade = true) }
+    }
+
     private fun saveData() {
         _state.update {
             it.copy(
@@ -346,12 +366,29 @@ class ProfileViewModel(
             )
         }
 
+        if (_state.value.oldPassword.isNotBlank() &&
+            _state.value.newPassword.isNotBlank() &&
+            _state.value.newMatchPassword.isNotBlank() &&
+            !_state.value.oldPasswordShowError &&
+            !_state.value.newPasswordShowError &&
+            !_state.value.newMatchPasswordShowError
+        ) updateUser(password = User.hashPassword(password = _state.value.newPassword))
+
         // No User errors - update User info
         if (!(_state.value.userEmailError ||
                     _state.value.oldPasswordShowError ||
                     _state.value.newPasswordShowError ||
                     _state.value.newMatchPasswordShowError)
-        ) viewModelScope.launch { useCases.upsertUser(user = _user.value) }
+        ) {
+            viewModelScope.launch { useCases.upsertUser(user = _user.value) }
+            _state.update {
+                it.copy(
+                    oldPassword = "",
+                    newPassword = "",
+                    newMatchPassword = ""
+                )
+            }
+        }
 
         // No Employee errors - update Employee info
         if (!(_state.value.userNameError ||

@@ -91,7 +91,7 @@ class ProfileScreenEmergencyContactTesting {
     }
 
     @Test
-    fun checkFieldsDisplayed() = runTest {
+    fun checkFieldsDisplayed() {
         testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).onChildren()
             .filterToOne(matcher = hasTestTag(testTag = TestTagNameField)).assertIsDisplayed()
         testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).onChildren()
@@ -112,7 +112,7 @@ class ProfileScreenEmergencyContactTesting {
     }
 
     @Test
-    fun checkNameField() = runTest {
+    fun checkNameField() {
         val expectedName = "Jessica Bland"
 
         runBlocking { waitOutLoadDelay() }
@@ -144,7 +144,7 @@ class ProfileScreenEmergencyContactTesting {
     }
 
     @Test
-    fun checkPrefNameField() = runTest {
+    fun checkPrefNameField() {
         val newValue = "Jessica"
 
         runBlocking { waitOutLoadDelay() }
@@ -170,7 +170,7 @@ class ProfileScreenEmergencyContactTesting {
     }
 
     @Test
-    fun checkEmailField() = runTest {
+    fun checkEmailField() {
         val expectedValue = "jessica.bland@justintime.com"
 
         runBlocking { waitOutLoadDelay() }
@@ -202,7 +202,7 @@ class ProfileScreenEmergencyContactTesting {
     }
 
     @Test
-    fun checkPhoneField() = runTest {
+    fun checkPhoneField() {
         val expectedValue = "07154979316"
 
         runBlocking { waitOutLoadDelay() }
@@ -231,7 +231,7 @@ class ProfileScreenEmergencyContactTesting {
     }
 
     @Test
-    fun checkPrefContactMethodField() = runTest {
+    fun checkPrefContactMethodField() {
         runBlocking { waitOutLoadDelay() }
 
         testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).onChildren()
@@ -252,7 +252,7 @@ class ProfileScreenEmergencyContactTesting {
     }
 
     @Test
-    fun checkRelationField() = runTest {
+    fun checkRelationField() {
         runBlocking { waitOutLoadDelay() }
 
         testRule.onNodeWithText(text = testRule.activity.getString(Relation.SIGNIFICANT_OTHER.stringVal))

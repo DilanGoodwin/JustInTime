@@ -115,7 +115,10 @@ class RegisterPrimaryScreenTestingUI {
 
     @Test
     fun checkPasswordFieldErrors() = runTest {
-        passwordValidation(testRule = testRule)
+        passwordValidation(
+            testRule = testRule,
+            buttonToPress = testRule.activity.getString(R.string.register)
+        )
 
         testRule.onNodeWithTag(testTag = TestTagPasswordField)
             .performTextReplacement(text = validPassword)
@@ -128,7 +131,10 @@ class RegisterPrimaryScreenTestingUI {
 
     @Test
     fun checkPasswordMatchFieldErrors() = runTest {
-        passwordMatchValidation(testRule = testRule)
+        passwordMatchValidation(
+            testRule = testRule,
+            buttonToPress = testRule.activity.getString(R.string.register)
+        )
     }
 
     @Test

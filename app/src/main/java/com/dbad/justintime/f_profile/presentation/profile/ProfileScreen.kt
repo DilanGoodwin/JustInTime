@@ -47,6 +47,7 @@ import com.dbad.justintime.core.presentation.util.TestTagCompanyInformationRole
 import com.dbad.justintime.core.presentation.util.TestTagEmailField
 import com.dbad.justintime.core.presentation.util.TestTagEmergencyContactExpandableField
 import com.dbad.justintime.core.presentation.util.TestTagNameField
+import com.dbad.justintime.core.presentation.util.TestTagOldPasswordField
 import com.dbad.justintime.core.presentation.util.TestTagPasswordChangeExpandableField
 import com.dbad.justintime.core.presentation.util.TestTagPasswordField
 import com.dbad.justintime.core.presentation.util.TestTagPasswordMatchField
@@ -93,7 +94,7 @@ fun ProfileScreen(
                     onClick = { onEvent(ProfileEvent.SaveButton) }) {
                     Box(modifier = Modifier.padding(10.dp)) {
                         Text(
-                            text = "Save",
+                            text = stringResource(R.string.save),
                             fontSize = 20.sp
                         )
                     }
@@ -231,7 +232,7 @@ fun PasswordUpdateFields(
             errorString = stringResource(R.string.passwordDoNotMatch),
             onValueChange = { onEvent(ProfilePasswordEvents.OldPasswordInput(oldPassword = it)) },
             visiblePassword = { onEvent(ProfilePasswordEvents.ToggleOldPasswordView) },
-            testingTag = TestTagPasswordField
+            testingTag = TestTagOldPasswordField
         )
 
         // New Password
@@ -241,8 +242,8 @@ fun PasswordUpdateFields(
             showPassword = state.newPasswordView,
             textFieldError = state.newPasswordShowError,
             errorString = stringResource(state.newPasswordErrorString.errorCode),
-            onValueChange = {},
-            visiblePassword = {},
+            onValueChange = { onEvent(ProfilePasswordEvents.NewPasswordInput(newPassword = it)) },
+            visiblePassword = { onEvent(ProfilePasswordEvents.ToggleNewPasswordView) },
             testingTag = TestTagPasswordField
         )
 
@@ -253,8 +254,8 @@ fun PasswordUpdateFields(
             showPassword = state.newMatchPasswordView,
             textFieldError = state.newMatchPasswordShowError,
             errorString = stringResource(R.string.passwordDoNotMatch),
-            onValueChange = {},
-            visiblePassword = {},
+            onValueChange = { onEvent(ProfilePasswordEvents.NewPasswordMatchInput(newPassword = it)) },
+            visiblePassword = { onEvent(ProfilePasswordEvents.ToggleNewPasswordMatchView) },
             testingTag = TestTagPasswordMatchField
         )
     }

@@ -20,6 +20,8 @@ const val TestTagEmergencyContactExpandableField = "EmergencyContactExpandable"
 const val TestTagPasswordChangeExpandableField = "PasswordChangeExpandable"
 const val TestTagCompanyInformationExpandableField = "CompanyInformationExpandable"
 
+const val TestTagOldPasswordField = "NewPasswordField"
+
 const val TestTagCompanyInformationCompanyNameField = "CompanyInformationCompanyNameField"
 const val TestTagCompanyInformationManagerNameField = "CompanyInformationManagerNameField"
 const val TestTagCompanyInformationContractType = "CompanyInformationContractType"
