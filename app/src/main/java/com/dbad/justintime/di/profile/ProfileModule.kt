@@ -1,4 +1,4 @@
-package com.dbad.justintime.di
+package com.dbad.justintime.di.profile
 
 import com.dbad.justintime.f_profile.domain.repository.ProfileRepository
 import com.dbad.justintime.f_profile.domain.use_case.ProfileUseCases

@@ -1,12 +1,12 @@
 package com.dbad.justintime
 
 import android.app.Application
-import com.dbad.justintime.di.LocalDatabaseModule
-import com.dbad.justintime.di.LocalDatabaseModuleImplementation
-import com.dbad.justintime.di.LoginRegisterModule
-import com.dbad.justintime.di.LoginRegisterModuleImplementation
-import com.dbad.justintime.di.ProfileModule
-import com.dbad.justintime.di.ProfileModuleImplementation
+import com.dbad.justintime.di.local_database.LocalDatabaseModule
+import com.dbad.justintime.di.local_database.LocalDatabaseModuleImplementation
+import com.dbad.justintime.di.login_register.LoginRegisterModule
+import com.dbad.justintime.di.login_register.LoginRegisterModuleImplementation
+import com.dbad.justintime.di.profile.ProfileModule
+import com.dbad.justintime.di.profile.ProfileModuleImplementation
 
 class App : Application() {
     companion object {

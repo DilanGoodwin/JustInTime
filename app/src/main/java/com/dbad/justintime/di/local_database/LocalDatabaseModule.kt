@@ -1,4 +1,4 @@
-package com.dbad.justintime.di
+package com.dbad.justintime.di.local_database
 
 import com.dbad.justintime.f_local_users_db.data.data_source.UsersDB
 import com.dbad.justintime.f_local_users_db.domain.repository.LocalUsersRepository

@@ -1,4 +1,4 @@
-package com.dbad.justintime.di
+package com.dbad.justintime.di.local_database
 
 import android.content.Context
 import com.dbad.justintime.f_local_users_db.data.data_source.UsersDB
@@ -14,7 +14,7 @@ import com.dbad.justintime.f_local_users_db.domain.use_case.UpsertEmployee
 import com.dbad.justintime.f_local_users_db.domain.use_case.UpsertUser
 
 class LocalDatabaseModuleImplementation(context: Context) : LocalDatabaseModule {
-    override val localUsersDB: UsersDB = UsersDB.getInstance(context = context)
+    override val localUsersDB: UsersDB = UsersDB.Companion.getInstance(context = context)
     override val localDatabaseRepo: LocalUsersRepository by lazy {
         LocalUsersRepositoryImplementation(dao = localUsersDB.dao)
     }

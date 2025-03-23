@@ -1,4 +1,4 @@
-package com.dbad.justintime.di
+package com.dbad.justintime.di.login_register
 
 import com.dbad.justintime.core.domain.use_case.ValidateDate
 import com.dbad.justintime.core.domain.use_case.ValidateEmail
