@@ -63,15 +63,19 @@ fun contactMethodValidation(
 }
 
 fun passwordValidation(
-    testRule: AndroidComposeTestRule<ActivityScenarioRule<ComponentActivity>, ComponentActivity>
+    testRule: AndroidComposeTestRule<ActivityScenarioRule<ComponentActivity>, ComponentActivity>,
+    buttonToPress: String,
+    buttonShown: Boolean = true
 ) {
     fun inputPassword(password: String, expectedError: String) {
         testRule.onNodeWithTag(testTag = TestTagPasswordField)
             .performTextReplacement(text = password)
         testRule.onNodeWithTag(testTag = TestTagPasswordMatchField)
             .performTextReplacement(text = password)
-        testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
-            .performClick()
+        if (buttonShown) {
+            testRule.onNodeWithText(text = buttonToPress)
+                .performClick()
+        }
         testRule.onNodeWithText(expectedError).assertIsDisplayed()
     }
 
@@ -95,14 +99,17 @@ fun passwordValidation(
 }
 
 fun passwordMatchValidation(
-    testRule: AndroidComposeTestRule<ActivityScenarioRule<ComponentActivity>, ComponentActivity>
+    testRule: AndroidComposeTestRule<ActivityScenarioRule<ComponentActivity>, ComponentActivity>,
+    buttonToPress: String,
+    buttonShown: Boolean = true
 ) {
     fun inputMatchingPassword(password: String, errorExpected: Boolean = true) {
         testRule.onNodeWithTag(testTag = TestTagPasswordMatchField)
             .performTextReplacement(text = password)
-        testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
-            .performClick()
-
+        if (buttonShown) {
+            testRule.onNodeWithText(text = buttonToPress)
+                .performClick()
+        }
         if (errorExpected) {
             testRule.onNodeWithText(text = testRule.activity.getString(R.string.passwordDoNotMatch))
                 .assertIsDisplayed()

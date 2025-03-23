@@ -3,8 +3,10 @@ package com.dbad.justintime.f_login_register.presentation.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.dbad.justintime.core.domain.model.User
 import com.dbad.justintime.f_local_datastore.domain.repository.UserPreferencesRepository
+import com.dbad.justintime.f_local_users_db.domain.model.EmergencyContact
+import com.dbad.justintime.f_local_users_db.domain.model.Employee
+import com.dbad.justintime.f_local_users_db.domain.model.User
 import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
 import com.dbad.justintime.f_login_register.domain.util.PasswordErrors
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -63,15 +65,35 @@ class LoginViewModel(
                 if (receivedUser.uid.isBlank()) {
                     _state.update { it.copy(showError = true) }
                 } else {
-                    // Add the user to the local database for faster response
-                    useCases.upsertUser(user = receivedUser)
+                    // Grab the employee & emergency contact information
+                    val employeeInfo =
+                        useCases.getEmployee(employee = Employee(uid = receivedUser.employee))
+                            .first()
 
-                    // Place user uid into datastore preferences to bypass login next time
-                    preferencesDataStore.updateLoginToken(token = receivedUser.uid)
+                    if (employeeInfo.uid.isBlank()) {
+                        _state.update { it.copy(showError = true) }
+                    } else {
+                        val emergencyContactInfo =
+                            useCases.getEmergencyContact(emergencyContact = EmergencyContact(uid = employeeInfo.emergencyContact))
+                                .first()
+
+                        if (emergencyContactInfo.uid.isBlank()) {
+                            _state.update { it.copy(showError = true) }
+                        } else {
+                            // Add details to local database
+                            useCases.updateLocalDatabase(
+                                user = receivedUser,
+                                employee = employeeInfo,
+                                emergencyContact = emergencyContactInfo
+                            )
+
+                            // Place user uid into datastore preferences to bypass login next time
+                            preferencesDataStore.updateLoginToken(token = receivedUser.uid)
+                        }
+                    }
                 }
-
-                if (!_state.value.showError) _state.value.onLogin()
             }
+            if (!_state.value.showError) _state.value.onLogin()
         }
     }
 
@@ -80,8 +102,7 @@ class LoginViewModel(
             useCases: UserUseCases,
             preferencesDataStore: UserPreferencesRepository
         ): ViewModelProvider.Factory {
-            return object :
-                ViewModelProvider.Factory {
+            return object : ViewModelProvider.Factory {
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
                     return LoginViewModel(
                         useCases = useCases,

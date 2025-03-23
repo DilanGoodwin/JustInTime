@@ -1,14 +1,15 @@
 package com.dbad.justintime.f_profile.presentation.profile
 
-import com.dbad.justintime.core.domain.model.EmergencyContact
-import com.dbad.justintime.core.domain.model.Employee
-import com.dbad.justintime.core.domain.model.User
+import com.dbad.justintime.f_local_users_db.domain.model.EmergencyContact
+import com.dbad.justintime.f_local_users_db.domain.model.Employee
+import com.dbad.justintime.f_local_users_db.domain.model.User
 import com.dbad.justintime.f_login_register.domain.util.PasswordErrors
 
 data class ProfileState(
     val changeMade: Boolean = false,
 
     // User Name States
+    val expandUserInformationArea: Boolean = true,
     val user: User = User(),
     val employee: Employee = Employee(),
     val userNameError: Boolean = false,
@@ -29,7 +30,6 @@ data class ProfileState(
     val oldPassword: String = "",
     val oldPasswordView: Boolean = false,
     val oldPasswordShowError: Boolean = false,
-    val oldPasswordErrorString: PasswordErrors = PasswordErrors.PASSWORD_NONE,
 
     // Password Area - New Password
     val newPassword: String = "",
@@ -52,5 +52,5 @@ data class ProfileState(
     val emergencyContactExpandedRelation: Boolean = false,
 
     // Company Information Area
-    val companyInformationManagerName: String = ""
+    val companyInformationExpandedContractType: Boolean = false
 )

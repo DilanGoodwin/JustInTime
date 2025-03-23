@@ -1,34 +1,35 @@
 package com.dbad.justintime.f_profile.data.repository
 
-import com.dbad.justintime.core.data.data_source.UsersDao
-import com.dbad.justintime.core.domain.model.EmergencyContact
-import com.dbad.justintime.core.domain.model.Employee
-import com.dbad.justintime.core.domain.model.User
+import com.dbad.justintime.f_local_users_db.domain.model.EmergencyContact
+import com.dbad.justintime.f_local_users_db.domain.model.Employee
+import com.dbad.justintime.f_local_users_db.domain.model.User
+import com.dbad.justintime.f_local_users_db.domain.use_case.LocalDatabaseUseCases
 import com.dbad.justintime.f_profile.domain.repository.ProfileRepository
 
-class ProfileRepositoryImplementation(private val dao: UsersDao) : ProfileRepository {
+class ProfileRepositoryImplementation(private val localDatabase: LocalDatabaseUseCases) :
+    ProfileRepository {
 
     override suspend fun getUser(user: User): User {
-        return dao.getUser(uid = user.uid)
+        return localDatabase.getUser(user = user)
     }
 
     override suspend fun upsertUser(user: User) {
-        dao.upsertUser(user = user)
+        localDatabase.upsertUser(user = user)
     }
 
     override suspend fun getEmergencyContact(contact: EmergencyContact): EmergencyContact {
-        TODO("Not yet implemented")
+        return localDatabase.getEmergencyContact(emergencyContact = contact)
     }
 
     override suspend fun upsertEmergencyContact(contact: EmergencyContact) {
-        dao.upsertEmergencyContact(contact = contact)
+        localDatabase.upsertEmergencyContact(emergencyContact = contact)
     }
 
     override suspend fun getEmployee(employee: Employee): Employee {
-        TODO("Not yet implemented")
+        return localDatabase.getEmployee(employee = employee)
     }
 
     override suspend fun upsertEmployee(employee: Employee) {
-        dao.upsertEmployee(employee = employee)
+        localDatabase.upsertEmployee(employee = employee)
     }
 }

@@ -1,8 +1,8 @@
 package com.dbad.justintime.f_login_register.data
 
-import com.dbad.justintime.core.domain.model.EmergencyContact
-import com.dbad.justintime.core.domain.model.Employee
-import com.dbad.justintime.core.domain.model.User
+import com.dbad.justintime.f_local_users_db.domain.model.EmergencyContact
+import com.dbad.justintime.f_local_users_db.domain.model.Employee
+import com.dbad.justintime.f_local_users_db.domain.model.User
 import com.dbad.justintime.f_login_register.domain.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,6 +39,10 @@ class UserRepositoryTestingImplementation(users: List<User>) : UserRepository {
         _usersList.value = currentUsers.toList()
     }
 
+    override suspend fun getEmployee(employee: Employee): Flow<Employee> {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun upsertEmergencyContact(contact: EmergencyContact) {
         for (existingEmergencyContact in _emergencyContact.value) {
             if ((existingEmergencyContact.uid == contact.uid) && (existingEmergencyContact.email == contact.email)) {
@@ -58,6 +62,14 @@ class UserRepositoryTestingImplementation(users: List<User>) : UserRepository {
                 relation = contact.relation
             )
         )
+    }
+
+    override suspend fun updateLocalDatabase(
+        user: User,
+        employee: Employee,
+        emergencyContact: EmergencyContact
+    ) {
+        TODO("Not yet implemented")
     }
 
     override suspend fun upsertEmployee(employee: Employee) {
@@ -83,5 +95,9 @@ class UserRepositoryTestingImplementation(users: List<User>) : UserRepository {
                 role = employee.role
             )
         )
+    }
+
+    override suspend fun getEmergencyContact(emergencyContact: EmergencyContact): Flow<EmergencyContact> {
+        TODO("Not yet implemented")
     }
 }

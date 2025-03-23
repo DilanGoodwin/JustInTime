@@ -14,7 +14,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.dbad.justintime.f_local_datastore.domain.model.UserPreferencesRepositoryImplementation
+import com.dbad.justintime.f_local_datastore.data.repository.UserPreferencesRepositoryImplementation
 import com.dbad.justintime.f_login_register.presentation.login.LoginScreen
 import com.dbad.justintime.f_login_register.presentation.login.LoginViewModel
 import com.dbad.justintime.f_login_register.presentation.register.RegisterScreen
@@ -37,16 +37,20 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
 
                     val navController = rememberNavController()
-                    val loginRegisterUseCases = App.loginRegister.useCases
 
                     val userPreferences = UserPreferencesRepositoryImplementation(this)
+
                     val storedLoginState = userPreferences.tokenFlow
                     val startingPosition =
-                        runBlocking { if (storedLoginState.first() != "") ProfileScreen else LoginNav }
+                        runBlocking {
+//                            userPreferences.clearLoginToken()
+                            if (storedLoginState.first() != "") ProfileScreen else LoginNav
+                        }
 
                     NavHost(navController = navController, startDestination = startingPosition) {
 
                         navigation<LoginNav>(startDestination = LoginScreen) {
+                            val loginRegisterUseCases = App.loginRegister.useCases
 
                             composable<LoginScreen> {
                                 LoginScreen(
@@ -101,11 +105,14 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                         }
-
                         composable<ProfileScreen> { //TODO move to separate nav window
                             ProfileScreen(
-                                viewModel = ProfileViewModel(),
-                                userId = ""
+                                viewModel = viewModel<ProfileViewModel>(
+                                    factory = ProfileViewModel.generateViewModel(
+                                        useCases = App.profile.useCases,
+                                        preferencesDataStore = userPreferences
+                                    )
+                                )
                             )
                         }
 

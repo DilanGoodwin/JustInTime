@@ -6,13 +6,15 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import com.dbad.justintime.R
-import com.dbad.justintime.core.domain.model.User
 import com.dbad.justintime.core.presentation.util.TestTagEmailField
 import com.dbad.justintime.core.presentation.util.TestTagPasswordField
-import com.dbad.justintime.f_login_register.data.UserPreferencesTestingImplementation
+import com.dbad.justintime.f_local_users_db.domain.model.EmergencyContact
+import com.dbad.justintime.f_local_users_db.domain.model.Employee
+import com.dbad.justintime.f_local_users_db.domain.model.User
 import com.dbad.justintime.f_login_register.data.generateUseCase
 import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
 import com.dbad.justintime.f_login_register.presentation.LoginTestingNavController
+import com.dbad.justintime.util.UserPreferencesTestingImplementation
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -28,7 +30,8 @@ class LoginStoredToken {
         User(
             uid = User.generateUid(email = validEmail),
             email = validEmail,
-            password = User.hashPassword(validPassword)
+            password = User.hashPassword(validPassword),
+            employee = "TmpEmployee"
         )
     )
 
@@ -37,7 +40,13 @@ class LoginStoredToken {
 
     @Before
     fun reset() = runTest {
-        useCases = generateUseCase(users = users)
+        useCases = generateUseCase(
+            users = users,
+            employees = listOf(
+                Employee(uid = "TmpEmployee", emergencyContact = "TmpEmergencyContact")
+            ),
+            emergencyContact = listOf(EmergencyContact(uid = "TmpEmergencyContact"))
+        )
     }
 
     @Test

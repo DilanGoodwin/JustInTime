@@ -1,17 +1,22 @@
 package com.dbad.justintime.f_login_register.data
 
-import com.dbad.justintime.core.domain.model.EmergencyContact
-import com.dbad.justintime.core.domain.model.Employee
-import com.dbad.justintime.core.domain.model.User
+import com.dbad.justintime.f_local_users_db.domain.model.EmergencyContact
+import com.dbad.justintime.f_local_users_db.domain.model.Employee
+import com.dbad.justintime.f_local_users_db.domain.model.User
 import com.dbad.justintime.f_login_register.domain.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 
-class UsersRepositoryTestingImplementation(users: List<User>) : UserRepository {
+class UsersRepositoryTestingImplementation(
+    users: List<User>,
+    employees: List<Employee>,
+    emergencyContact: List<EmergencyContact>
+) :
+    UserRepository {
     private val _usersList = MutableStateFlow(users)
-    private val _emergencyContact = MutableStateFlow(listOf(EmergencyContact()))
-    private val _employee = MutableStateFlow(listOf(Employee()))
+    private val _employee = MutableStateFlow(employees)
+    private val _emergencyContact = MutableStateFlow(emergencyContact)
 
     override fun getUser(user: User): Flow<User> {
         for (existingUser in _usersList.value) {
@@ -39,6 +44,15 @@ class UsersRepositoryTestingImplementation(users: List<User>) : UserRepository {
         _usersList.value = currentUsers.toList()
     }
 
+    override suspend fun getEmployee(employee: Employee): Flow<Employee> {
+        for (existingEmployee in _employee.value) {
+            if (existingEmployee.uid == employee.uid) {
+                return flowOf(existingEmployee)
+            }
+        }
+        return flowOf(Employee())
+    }
+
     override suspend fun upsertEmergencyContact(contact: EmergencyContact) {
         for (existingEmergencyContact in _emergencyContact.value) {
             if ((existingEmergencyContact.uid == contact.uid) && (existingEmergencyContact.email == contact.email)) {
@@ -58,6 +72,16 @@ class UsersRepositoryTestingImplementation(users: List<User>) : UserRepository {
                 relation = contact.relation
             )
         )
+    }
+
+    override suspend fun updateLocalDatabase(
+        user: User,
+        employee: Employee,
+        emergencyContact: EmergencyContact
+    ) {
+        upsertUser(user = user)
+        upsertEmployee(employee = employee)
+        upsertEmergencyContact(contact = emergencyContact)
     }
 
     override suspend fun upsertEmployee(employee: Employee) {
@@ -83,5 +107,14 @@ class UsersRepositoryTestingImplementation(users: List<User>) : UserRepository {
                 role = employee.role
             )
         )
+    }
+
+    override suspend fun getEmergencyContact(emergencyContact: EmergencyContact): Flow<EmergencyContact> {
+        for (existingEmergencyContact in _emergencyContact.value) {
+            if (existingEmergencyContact.uid == emergencyContact.uid) {
+                return flowOf(existingEmergencyContact)
+            }
+        }
+        return flowOf(EmergencyContact())
     }
 }

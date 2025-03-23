@@ -10,10 +10,23 @@ const val TestTagPreferredName = "PreferredNameField"
 const val TestTagDateOfBirthField = "DateOfBirthField"
 const val TestTagDatePickerPopUp = "DatePickerPopUp"
 const val TestTagPhoneNumberField = "PhoneNumbField"
+const val TestTagMainPreferredContactMethodField = "MainPrefContactArea"
 const val TestTagPreferredContactMethodField = "PreferredContactMethod"
+const val TestTagMainEmergencyContactRelationField = "MainRelationArea"
 const val TestTagEmergencyContactRelation = "EmergencyContactRelationMethod"
+
+const val TestTagUserInformationExpandableField = "UserInformationExpandable"
 const val TestTagEmergencyContactExpandableField = "EmergencyContactExpandable"
-const val TestTagPasswordChangeExpandableField = "PasswordChangeArea"
-const val TestTagCompanyInformationExpandableField="CompanyInformationArea"
+const val TestTagPasswordChangeExpandableField = "PasswordChangeExpandable"
+const val TestTagCompanyInformationExpandableField = "CompanyInformationExpandable"
+
+const val TestTagOldPasswordField = "NewPasswordField"
+
+const val TestTagCompanyInformationCompanyNameField = "CompanyInformationCompanyNameField"
+const val TestTagCompanyInformationManagerNameField = "CompanyInformationManagerNameField"
+const val TestTagCompanyInformationContractType = "CompanyInformationContractType"
+const val TestTagCompanyInformationRole = "CompanyInformationRole"
+
+const val TestTagProfileSaveButton = "ProfileSaveButton"
 
 const val TestTagCalendarView = "CalendarView"

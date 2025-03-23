@@ -1,6 +1,10 @@
 package com.dbad.justintime.f_login_register.domain.use_case
 
-import com.dbad.justintime.core.domain.model.User
+import com.dbad.justintime.core.domain.use_case.ValidateDate
+import com.dbad.justintime.core.domain.use_case.ValidateEmail
+import com.dbad.justintime.core.domain.use_case.ValidatePassword
+import com.dbad.justintime.core.domain.use_case.ValidatePhoneNumber
+import com.dbad.justintime.f_local_users_db.domain.model.User
 import com.dbad.justintime.f_login_register.data.UserRepositoryTestingImplementation
 import com.dbad.justintime.f_login_register.domain.repository.UserRepository
 import com.dbad.justintime.f_login_register.domain.util.PasswordErrors
@@ -39,8 +43,11 @@ class RepositoryUseCaseTests {
         useCases = UserUseCases(
             getUser = GetUser(repository = userRepo),
             upsertUser = UpsertUser(repository = userRepo),
+            getEmployee = GetEmployee(repository = userRepo),
             upsertEmployee = UpsertEmployee(repository = userRepo),
+            getEmergencyContact = GetEmergencyContact(repository = userRepo),
             upsertEmergencyContact = UpsertEmergencyContact(repository = userRepo),
+            updateLocalDatabase = UpdateLocalDatabase(repository = userRepo),
             validateEmail = ValidateEmail(),
             validatePassword = ValidatePassword(),
             validatePhoneNumber = ValidatePhoneNumber(),

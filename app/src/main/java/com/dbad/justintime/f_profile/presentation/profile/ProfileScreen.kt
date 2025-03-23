@@ -14,6 +14,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
@@ -24,51 +26,75 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.dbad.justintime.R
-import com.dbad.justintime.core.domain.model.util.PreferredContactMethod
-import com.dbad.justintime.core.domain.model.util.Relation
 import com.dbad.justintime.core.presentation.util.DateSelectorField
 import com.dbad.justintime.core.presentation.util.ExpandableCardArea
+import com.dbad.justintime.core.presentation.util.LabelledTextDropDownFields
 import com.dbad.justintime.core.presentation.util.LabelledTextInputFields
 import com.dbad.justintime.core.presentation.util.PasswordField
 import com.dbad.justintime.core.presentation.util.PreferredContactField
 import com.dbad.justintime.core.presentation.util.RelationField
+import com.dbad.justintime.core.presentation.util.TestTagCompanyInformationCompanyNameField
+import com.dbad.justintime.core.presentation.util.TestTagCompanyInformationContractType
 import com.dbad.justintime.core.presentation.util.TestTagCompanyInformationExpandableField
+import com.dbad.justintime.core.presentation.util.TestTagCompanyInformationManagerNameField
+import com.dbad.justintime.core.presentation.util.TestTagCompanyInformationRole
 import com.dbad.justintime.core.presentation.util.TestTagEmailField
 import com.dbad.justintime.core.presentation.util.TestTagEmergencyContactExpandableField
 import com.dbad.justintime.core.presentation.util.TestTagNameField
+import com.dbad.justintime.core.presentation.util.TestTagOldPasswordField
 import com.dbad.justintime.core.presentation.util.TestTagPasswordChangeExpandableField
 import com.dbad.justintime.core.presentation.util.TestTagPasswordField
 import com.dbad.justintime.core.presentation.util.TestTagPasswordMatchField
 import com.dbad.justintime.core.presentation.util.TestTagPhoneNumberField
+import com.dbad.justintime.core.presentation.util.TestTagPreferredName
+import com.dbad.justintime.core.presentation.util.TestTagProfileSaveButton
+import com.dbad.justintime.core.presentation.util.TestTagUserInformationExpandableField
 import com.dbad.justintime.core.presentation.util.TextInputField
 import com.dbad.justintime.core.presentation.util.ViewingSystemThemes
+import com.dbad.justintime.f_local_users_db.domain.model.util.ContractType
+import com.dbad.justintime.f_local_users_db.domain.model.util.PreferredContactMethod
+import com.dbad.justintime.f_local_users_db.domain.model.util.Relation
 import com.dbad.justintime.ui.theme.JustInTimeTheme
 
 @Composable
-fun ProfileScreen(
-    viewModel: ProfileViewModel,
-    userId: String
-) {
+fun ProfileScreen(viewModel: ProfileViewModel) {
     val state by viewModel.state.collectAsState()
 
-    ProfileScreen(state = state)
+    ProfileScreen(
+        state = state,
+        onEvent = viewModel::onEvent,
+        userEvent = viewModel::onUserEvent,
+        passwordEvent = viewModel::onPasswordEvent,
+        emergencyContactEvent = viewModel::onEmergencyContactEvent,
+        companyEvents = viewModel::onCompanyEvent
+    )
 }
 
 @Composable
-fun ProfileScreen(state: ProfileState) {
+fun ProfileScreen(
+    state: ProfileState,
+    onEvent: (ProfileEvent) -> Unit,
+    userEvent: (ProfileUserEvents) -> Unit,
+    passwordEvent: (ProfilePasswordEvents) -> Unit,
+    emergencyContactEvent: (ProfileEmergencyContactEvents) -> Unit,
+    companyEvents: (ProfileCompanyEvents) -> Unit
+) {
     Scaffold(
         topBar = { ProfileTopBar() },
         floatingActionButton = {
-            if (state.changeMade) { //TODO If content edited show action button else hide it
-                SmallFloatingActionButton(onClick = {}) {
+            if (state.changeMade) {
+                SmallFloatingActionButton(
+                    modifier = Modifier.testTag(tag = TestTagProfileSaveButton),
+                    onClick = { onEvent(ProfileEvent.SaveButton) }) {
                     Box(modifier = Modifier.padding(10.dp)) {
                         Text(
-                            text = "Save",
+                            text = stringResource(R.string.save),
                             fontSize = 20.sp
                         )
                     }
@@ -88,79 +114,19 @@ fun ProfileScreen(state: ProfileState) {
                     .verticalScroll(rememberScrollState())
                     .padding(20.dp)
             ) {
-
-                // Name Field
-                TextInputField(
-                    currentValue = state.employee.name,
-                    placeHolderText = stringResource(R.string.name),
-                    textFieldError = state.userNameError,
-                    errorString = stringResource(R.string.noNameProvided),
-                    onValueChange = {},
-                    testingTag = TestTagNameField
-                )
-
-                // Pref Name Field
-                TextInputField(
-                    currentValue = state.employee.preferredName,
-                    placeHolderText = stringResource(R.string.preferredName),
-                    onValueChange = {}
-                )
-
-                // Email Field
-                TextInputField(
-                    currentValue = state.user.email,
-                    placeHolderText = stringResource(R.string.email),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                    onValueChange = {},
-                    textFieldError = state.userEmailError,
-                    errorString = stringResource(R.string.invalidEmailError),
-                    testingTag = TestTagEmailField
-                )
-
-                // DOB Picker
-                DateSelectorField(
-                    currentValue = state.employee.dateOfBirth,
-                    placeHolderText = stringResource(R.string.dateOfBirth),
-                    showDatePicker = state.showDateOfBirthPicker,
-                    toggleDatePicker = {},
-                    dateError = state.dateOfBirthError,
-                    saveSelectedDate = {}
-                )
-
-                // Phone Number Field
-                TextInputField(
-                    currentValue = state.employee.dateOfBirth,
-                    placeHolderText = stringResource(R.string.phoneNumb),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                    onValueChange = {},
-                    textFieldError = state.userPhoneError,
-                    errorString = stringResource(R.string.invalidPhoneNumb),
-                    testingTag = TestTagPhoneNumberField
-                )
-
-                // Pref Contact Method Drop Down
-                PreferredContactField(
-                    currentValue = if (state.employee.preferredContactMethod == PreferredContactMethod.NONE) {
-                        ""
-                    } else {
-                        stringResource(state.employee.preferredContactMethod.stringVal)
-                    },
-                    expandDropDown = state.expandPrefContactMethod,
-                    dropDownToggle = {},
-                    selectContactMethod = {}
-                )
+                UserUpdateFields(state = state, onEvent = userEvent)
                 Spacer(modifier = Modifier.height(20.dp))
 
                 // Emergency Contact Area
-                EmergencyContactArea(state = state)
+                EmergencyContactArea(state = state, onEvent = emergencyContactEvent)
                 Spacer(modifier = Modifier.height(20.dp))
 
                 // Password Change Field
-                PasswordUpdateFields(state = state)
+                PasswordUpdateFields(state = state, onEvent = passwordEvent)
                 Spacer(modifier = Modifier.height(20.dp))
 
                 // Company Information
-                CompanyInformationArea(state = state)
+                CompanyInformationArea(state = state, onEvent = companyEvents)
             }
         }
     }
@@ -176,10 +142,84 @@ fun ProfileTopBar() {
 }
 
 @Composable
-fun PasswordUpdateFields(state: ProfileState) {
+fun UserUpdateFields(
+    state: ProfileState,
+    onEvent: (ProfileUserEvents) -> Unit
+) {
+    ExpandableCardArea(
+        isExpanded = state.expandUserInformationArea,
+        expandableButtonClick = { onEvent(ProfileUserEvents.ToggleExpandedArea) },
+        cardTitle = stringResource(R.string.user_information),
+        testTag = TestTagUserInformationExpandableField
+    ) {
+        // Name Field
+        TextInputField(
+            currentValue = state.employee.name,
+            placeHolderText = stringResource(R.string.name),
+            textFieldError = state.userNameError,
+            errorString = stringResource(R.string.noNameProvided),
+            onValueChange = { onEvent(ProfileUserEvents.SetName(it)) },
+            testingTag = TestTagNameField
+        )
+
+        // Pref Name Field
+        TextInputField(
+            currentValue = state.employee.preferredName,
+            placeHolderText = stringResource(R.string.preferredName),
+            onValueChange = { onEvent(ProfileUserEvents.SetPreferredName(it)) },
+            testingTag = TestTagPreferredName
+        )
+
+        // Email Field
+        TextInputField(
+            currentValue = state.user.email,
+            placeHolderText = stringResource(R.string.email),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            onValueChange = { onEvent(ProfileUserEvents.SetEmail(it)) },
+            textFieldError = state.userEmailError,
+            errorString = stringResource(R.string.invalidEmailError),
+            testingTag = TestTagEmailField
+        )
+
+        // DOB Picker
+        DateSelectorField(
+            currentValue = state.employee.dateOfBirth,
+            placeHolderText = stringResource(R.string.dateOfBirth),
+            showDatePicker = state.showDateOfBirthPicker,
+            toggleDatePicker = { onEvent(ProfileUserEvents.ToggleShowDatePicker) },
+            dateError = state.dateOfBirthError,
+            saveSelectedDate = { onEvent(ProfileUserEvents.SetDateOfBirth(dateOfBirth = it)) }
+        )
+
+        // Phone Number Field
+        TextInputField(
+            currentValue = state.employee.phone,
+            placeHolderText = stringResource(R.string.phoneNumb),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+            onValueChange = { onEvent(ProfileUserEvents.SetPhoneNumb(it)) },
+            textFieldError = state.userPhoneError,
+            errorString = stringResource(R.string.invalidPhoneNumb),
+            testingTag = TestTagPhoneNumberField
+        )
+
+        // Pref Contact Method Drop Down
+        PreferredContactField(
+            currentValue = stringResource(state.employee.preferredContactMethod.stringVal),
+            expandDropDown = state.expandPrefContactMethod,
+            dropDownToggle = { onEvent(ProfileUserEvents.TogglePrefContactDropDown) },
+            selectContactMethod = { onEvent(ProfileUserEvents.SetPrefContactMethod(it)) }
+        )
+    }
+}
+
+@Composable
+fun PasswordUpdateFields(
+    state: ProfileState,
+    onEvent: (ProfilePasswordEvents) -> Unit
+) {
     ExpandableCardArea(
         isExpanded = state.expandPasswordArea,
-        expandableButtonClick = {},
+        expandableButtonClick = { onEvent(ProfilePasswordEvents.ToggleExpandableArea) },
         cardTitle = stringResource(R.string.passwordChangeFields),
         testTag = TestTagPasswordChangeExpandableField
     ) {
@@ -189,10 +229,10 @@ fun PasswordUpdateFields(state: ProfileState) {
             placeHolderText = stringResource(R.string.oldPassword),
             showPassword = state.oldPasswordView,
             textFieldError = state.oldPasswordShowError,
-            errorString = stringResource(state.oldPasswordErrorString.errorCode),
-            onValueChange = {},
-            visiblePassword = {},
-            testingTag = TestTagPasswordField
+            errorString = stringResource(R.string.passwordDoNotMatch),
+            onValueChange = { onEvent(ProfilePasswordEvents.OldPasswordInput(oldPassword = it)) },
+            visiblePassword = { onEvent(ProfilePasswordEvents.ToggleOldPasswordView) },
+            testingTag = TestTagOldPasswordField
         )
 
         // New Password
@@ -202,8 +242,8 @@ fun PasswordUpdateFields(state: ProfileState) {
             showPassword = state.newPasswordView,
             textFieldError = state.newPasswordShowError,
             errorString = stringResource(state.newPasswordErrorString.errorCode),
-            onValueChange = {},
-            visiblePassword = {},
+            onValueChange = { onEvent(ProfilePasswordEvents.NewPasswordInput(newPassword = it)) },
+            visiblePassword = { onEvent(ProfilePasswordEvents.ToggleNewPasswordView) },
             testingTag = TestTagPasswordField
         )
 
@@ -214,18 +254,21 @@ fun PasswordUpdateFields(state: ProfileState) {
             showPassword = state.newMatchPasswordView,
             textFieldError = state.newMatchPasswordShowError,
             errorString = stringResource(R.string.passwordDoNotMatch),
-            onValueChange = {},
-            visiblePassword = {},
+            onValueChange = { onEvent(ProfilePasswordEvents.NewPasswordMatchInput(newPassword = it)) },
+            visiblePassword = { onEvent(ProfilePasswordEvents.ToggleNewPasswordMatchView) },
             testingTag = TestTagPasswordMatchField
         )
     }
 }
 
 @Composable
-fun EmergencyContactArea(state: ProfileState) {
+fun EmergencyContactArea(
+    state: ProfileState,
+    onEvent: (ProfileEmergencyContactEvents) -> Unit
+) {
     ExpandableCardArea(
         isExpanded = state.expandEmergencyContactArea,
-        expandableButtonClick = {},
+        expandableButtonClick = { onEvent(ProfileEmergencyContactEvents.ToggleExpandableArea) },
         cardTitle = stringResource(R.string.emergencyContact),
         testTag = TestTagEmergencyContactExpandableField
     ) {
@@ -233,7 +276,7 @@ fun EmergencyContactArea(state: ProfileState) {
         TextInputField(
             currentValue = state.emergencyContact.name,
             placeHolderText = stringResource(R.string.name),
-            onValueChange = {},
+            onValueChange = { onEvent(ProfileEmergencyContactEvents.SetEmergencyContactName(name = it)) },
             textFieldError = state.emergencyContactNameError,
             errorString = stringResource(R.string.noNameProvided),
             testingTag = TestTagNameField
@@ -243,7 +286,8 @@ fun EmergencyContactArea(state: ProfileState) {
         TextInputField(
             currentValue = state.emergencyContact.preferredName,
             placeHolderText = stringResource(R.string.preferredName),
-            onValueChange = {}
+            onValueChange = { onEvent(ProfileEmergencyContactEvents.SetEmergencyContactPrefName(name = it)) },
+            testingTag = TestTagPreferredName
         )
 
         // Emergency Contact Phone Number Field
@@ -253,7 +297,7 @@ fun EmergencyContactArea(state: ProfileState) {
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
             textFieldError = state.emergencyContactPhoneError,
             errorString = stringResource(R.string.invalidPhoneNumb),
-            onValueChange = {},
+            onValueChange = { onEvent(ProfileEmergencyContactEvents.SetEmergencyContactPhone(phone = it)) },
             testingTag = TestTagPhoneNumberField
         )
 
@@ -264,7 +308,7 @@ fun EmergencyContactArea(state: ProfileState) {
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             textFieldError = state.emergencyContactEmailError,
             errorString = stringResource(R.string.invalidEmailError),
-            onValueChange = {},
+            onValueChange = { onEvent(ProfileEmergencyContactEvents.SetEmergencyContactEmail(email = it)) },
             testingTag = TestTagEmailField
         )
 
@@ -276,8 +320,12 @@ fun EmergencyContactArea(state: ProfileState) {
                 stringResource(state.emergencyContact.preferredContactMethod.stringVal)
             },
             expandDropDown = state.emergencyContactExpandPrefContactMethod,
-            dropDownToggle = {},
-            selectContactMethod = {}
+            dropDownToggle = { onEvent(ProfileEmergencyContactEvents.ToggleEmergencyContactPrefContactDropDown) },
+            selectContactMethod = {
+                onEvent(
+                    ProfileEmergencyContactEvents.SetEmergencyContactPrefContactMethod(contactMethod = it)
+                )
+            }
         )
 
         Spacer(modifier = Modifier.height(15.dp))
@@ -290,17 +338,24 @@ fun EmergencyContactArea(state: ProfileState) {
                 stringResource(state.emergencyContact.relation.stringVal)
             },
             expandDropDown = state.emergencyContactExpandedRelation,
-            dropDownToggle = {},
-            selectRelation = {}
+            dropDownToggle = { onEvent(ProfileEmergencyContactEvents.ToggleEmergencyContactRelationDropDown) },
+            selectRelation = {
+                onEvent(
+                    ProfileEmergencyContactEvents.SetEmergencyContactRelation(relation = it)
+                )
+            }
         )
     }
 }
 
 @Composable
-fun CompanyInformationArea(state: ProfileState) {
+fun CompanyInformationArea(
+    state: ProfileState,
+    onEvent: (ProfileCompanyEvents) -> Unit
+) {
     ExpandableCardArea(
         isExpanded = state.expandCompanyInformationArea,
-        expandableButtonClick = {},
+        expandableButtonClick = { onEvent(ProfileCompanyEvents.ToggleExpandedArea) },
         cardTitle = stringResource(R.string.companyInformation),
         testTag = TestTagCompanyInformationExpandableField
     ) {
@@ -308,39 +363,55 @@ fun CompanyInformationArea(state: ProfileState) {
             LabelledTextInputFields(
                 currentValue = state.employee.companyName,
                 placeHolderText = stringResource(R.string.companyName),
-                onValueChange = {},
+                onValueChange = { onEvent(ProfileCompanyEvents.SetCompanyName(companyName = it)) },
                 readOnly = !state.employee.isAdmin,
-                testingTag = ""
+                testingTag = TestTagCompanyInformationCompanyNameField
             )
 
             LabelledTextInputFields(
-                currentValue = state.companyInformationManagerName,
+                currentValue = state.employee.manager,
                 placeHolderText = stringResource(R.string.directReport),
-                onValueChange = {},
+                onValueChange = { onEvent(ProfileCompanyEvents.SetManagerName(managerName = it)) },
                 readOnly = !state.employee.isAdmin,
-                testingTag = ""
+                testingTag = TestTagCompanyInformationManagerNameField
             )
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-                LabelledTextInputFields(
+                LabelledTextDropDownFields(
                     currentValue = stringResource(state.employee.contractType.stringVal),
                     placeHolderText = stringResource(R.string.contractType),
-                    onValueChange = {},
+                    testTag = TestTagCompanyInformationContractType,
                     readOnly = !state.employee.isAdmin,
-                    modifier = Modifier.width(180.dp),
-                    testingTag = ""
-                )
+                    expandedDropDown = state.companyInformationExpandedContractType,
+                    dropDownToggle = { onEvent(ProfileCompanyEvents.ToggleContractTypeDropDown) },
+                    modifier = Modifier.width(180.dp)
+                ) {
+                    DropdownMenu(
+                        expanded = state.companyInformationExpandedContractType,
+                        onDismissRequest = { onEvent(ProfileCompanyEvents.ToggleContractTypeDropDown) }) {
+                        for (method in ContractType.entries) {
+                            DropdownMenuItem(
+                                text = { Text(text = stringResource(method.stringVal)) },
+                                onClick = {
+                                    onEvent(
+                                        ProfileCompanyEvents.SetContractType(contractType = method)
+                                    )
+                                }
+                            )
+                        }
+                    }
+                }
 
                 LabelledTextInputFields(
                     currentValue = state.employee.role,
                     placeHolderText = stringResource(R.string.role),
-                    onValueChange = {},
+                    testingTag = TestTagCompanyInformationRole,
                     readOnly = !state.employee.isAdmin,
-                    modifier = Modifier.width(190.dp),
-                    testingTag = ""
+                    onValueChange = { onEvent(ProfileCompanyEvents.SetRole(role = it)) },
+                    modifier = Modifier.width(190.dp)
                 )
             }
         }
@@ -350,23 +421,53 @@ fun CompanyInformationArea(state: ProfileState) {
 @ViewingSystemThemes
 @Composable
 fun ProfileScreenPreview() {
-    JustInTimeTheme { ProfileScreen(state = ProfileState()) }
+    JustInTimeTheme {
+        ProfileScreen(
+            state = ProfileState(),
+            onEvent = {},
+            userEvent = {},
+            passwordEvent = {},
+            emergencyContactEvent = {},
+            companyEvents = {}
+        )
+    }
+}
+
+@ViewingSystemThemes
+@Composable
+fun ProfileScreenUserInformationPreview() {
+    JustInTimeTheme {
+        UserUpdateFields(state = ProfileState(), onEvent = {})
+    }
 }
 
 @ViewingSystemThemes
 @Composable
 fun ProfileScreenPasswordChangePreview() {
-    JustInTimeTheme { PasswordUpdateFields(state = ProfileState(expandPasswordArea = true)) }
+    JustInTimeTheme {
+        PasswordUpdateFields(
+            state = ProfileState(expandPasswordArea = true),
+            onEvent = {})
+    }
 }
 
 @ViewingSystemThemes
-@Composable //TODO Expand emergency contact area
+@Composable
 fun ProfileScreenEmergencyContactPreview() {
-    JustInTimeTheme { EmergencyContactArea(state = ProfileState(expandEmergencyContactArea = true)) }
+    JustInTimeTheme {
+        EmergencyContactArea(
+            state = ProfileState(expandEmergencyContactArea = true),
+            onEvent = {}
+        )
+    }
 }
 
 @ViewingSystemThemes
 @Composable
 fun ProfileScreenCompanyInformationPreview() {
-    JustInTimeTheme { CompanyInformationArea(state = ProfileState(expandCompanyInformationArea = true)) }
+    JustInTimeTheme {
+        CompanyInformationArea(
+            state = ProfileState(expandCompanyInformationArea = true),
+            onEvent = {})
+    }
 }

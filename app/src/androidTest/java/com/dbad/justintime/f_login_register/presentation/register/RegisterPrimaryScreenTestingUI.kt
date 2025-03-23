@@ -9,22 +9,27 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextReplacement
 import com.dbad.justintime.R
-import com.dbad.justintime.core.domain.model.User
+import com.dbad.justintime.core.domain.use_case.ValidateDate
+import com.dbad.justintime.core.domain.use_case.ValidateEmail
+import com.dbad.justintime.core.domain.use_case.ValidatePassword
+import com.dbad.justintime.core.domain.use_case.ValidatePhoneNumber
 import com.dbad.justintime.core.presentation.util.TestTagEmailField
 import com.dbad.justintime.core.presentation.util.TestTagErrorNotifier
 import com.dbad.justintime.core.presentation.util.TestTagPasswordField
 import com.dbad.justintime.core.presentation.util.TestTagPasswordMatchField
+import com.dbad.justintime.f_local_users_db.domain.model.EmergencyContact
+import com.dbad.justintime.f_local_users_db.domain.model.Employee
+import com.dbad.justintime.f_local_users_db.domain.model.User
 import com.dbad.justintime.f_login_register.data.UsersRepositoryTestingImplementation
 import com.dbad.justintime.f_login_register.domain.repository.UserRepository
+import com.dbad.justintime.f_login_register.domain.use_case.GetEmergencyContact
+import com.dbad.justintime.f_login_register.domain.use_case.GetEmployee
 import com.dbad.justintime.f_login_register.domain.use_case.GetUser
+import com.dbad.justintime.f_login_register.domain.use_case.UpdateLocalDatabase
 import com.dbad.justintime.f_login_register.domain.use_case.UpsertEmergencyContact
 import com.dbad.justintime.f_login_register.domain.use_case.UpsertEmployee
 import com.dbad.justintime.f_login_register.domain.use_case.UpsertUser
 import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
-import com.dbad.justintime.f_login_register.domain.use_case.ValidateDate
-import com.dbad.justintime.f_login_register.domain.use_case.ValidateEmail
-import com.dbad.justintime.f_login_register.domain.use_case.ValidatePassword
-import com.dbad.justintime.f_login_register.domain.use_case.ValidatePhoneNumber
 import com.dbad.justintime.f_login_register.presentation.LoginTestingNavController
 import com.dbad.justintime.util.emailValidation
 import com.dbad.justintime.util.passwordMatchValidation
@@ -42,11 +47,6 @@ class RegisterPrimaryScreenTestingUI {
     private lateinit var useCases: UserUseCases
     private val users: List<User> = listOf(
         User(
-            uid = User.generateUid(email = "testing@testing.com"),
-            email = "testing@testing.com",
-            password = User.hashPassword(validPassword)
-        ),
-        User(
             uid = User.generateUid(email = "test.test@test.com"),
             email = "test.test@test.com",
             password = User.hashPassword(validPassword)
@@ -59,12 +59,21 @@ class RegisterPrimaryScreenTestingUI {
 
     @Before
     fun reset() = runTest {
-        val userRepo: UserRepository = UsersRepositoryTestingImplementation(users = users)
+        val userRepo: UserRepository = UsersRepositoryTestingImplementation(
+            users = users,
+            employees = listOf(
+                Employee(uid = "TmpEmployee", emergencyContact = "TmpEmergencyContact")
+            ),
+            emergencyContact = listOf(EmergencyContact(uid = "TmpEmergencyContact"))
+        )
         useCases = UserUseCases(
             getUser = GetUser(repository = userRepo),
             upsertUser = UpsertUser(repository = userRepo),
+            getEmployee = GetEmployee(repository = userRepo),
             upsertEmployee = UpsertEmployee(repository = userRepo),
+            getEmergencyContact = GetEmergencyContact(repository = userRepo),
             upsertEmergencyContact = UpsertEmergencyContact(repository = userRepo),
+            updateLocalDatabase = UpdateLocalDatabase(repository = userRepo),
             validateEmail = ValidateEmail(),
             validatePassword = ValidatePassword(),
             validatePhoneNumber = ValidatePhoneNumber(),
@@ -106,7 +115,10 @@ class RegisterPrimaryScreenTestingUI {
 
     @Test
     fun checkPasswordFieldErrors() = runTest {
-        passwordValidation(testRule = testRule)
+        passwordValidation(
+            testRule = testRule,
+            buttonToPress = testRule.activity.getString(R.string.register)
+        )
 
         testRule.onNodeWithTag(testTag = TestTagPasswordField)
             .performTextReplacement(text = validPassword)
@@ -119,7 +131,10 @@ class RegisterPrimaryScreenTestingUI {
 
     @Test
     fun checkPasswordMatchFieldErrors() = runTest {
-        passwordMatchValidation(testRule = testRule)
+        passwordMatchValidation(
+            testRule = testRule,
+            buttonToPress = testRule.activity.getString(R.string.register)
+        )
     }
 
     @Test

@@ -49,6 +49,9 @@
     <string name="passwordBlank">Password cannot be blank</string>
     <string name="passwordDoNotMatch">Passwords do not match</string>
 
+    <!-- Profile -->
+    <string name="save">Save</string>
+
     <!-- Name Errors -->
     <string name="noNameProvided">Please enter a name</string>
 
@@ -68,6 +71,7 @@
 
     <!-- Titles -->
     <string name="profile">Profile</string>
+    <string name="user_information">User Information</string>
 
     <!-- Contract Types -->
     <string name="part_time">Part-Time</string>
@@ -81,4 +85,6 @@
     <string name="fieldVisibility">View Text in Field</string>
     <string name="fieldVisibilityOff">Hide Text in Field</string>
     <string name="logoDescription">JustInTime Application Logo</string>
+
+    <string name="blankValue" />
 </resources>

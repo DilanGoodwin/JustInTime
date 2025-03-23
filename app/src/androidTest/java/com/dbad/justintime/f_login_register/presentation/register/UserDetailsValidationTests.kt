@@ -3,18 +3,23 @@ package com.dbad.justintime.f_login_register.presentation.register
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
+import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextReplacement
 import com.dbad.justintime.R
-import com.dbad.justintime.core.domain.model.User
 import com.dbad.justintime.core.presentation.util.TestTagEmailField
+import com.dbad.justintime.core.presentation.util.TestTagEmergencyContactExpandableField
 import com.dbad.justintime.core.presentation.util.TestTagNameField
 import com.dbad.justintime.core.presentation.util.TestTagPasswordField
 import com.dbad.justintime.core.presentation.util.TestTagPasswordMatchField
 import com.dbad.justintime.core.presentation.util.TestTagPhoneNumberField
+import com.dbad.justintime.f_local_users_db.domain.model.EmergencyContact
+import com.dbad.justintime.f_local_users_db.domain.model.Employee
+import com.dbad.justintime.f_local_users_db.domain.model.User
 import com.dbad.justintime.f_login_register.data.generateUseCase
 import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
 import com.dbad.justintime.f_login_register.presentation.LoginTestingNavController
@@ -45,7 +50,13 @@ class UserDetailsValidationTests {
         ),
         User(uid = User.generateUid(email = validEmail), email = validEmail)
     )
-    private var useCases: UserUseCases = generateUseCase(users = users)
+    private var useCases: UserUseCases = generateUseCase(
+        users = users,
+        employees = listOf(
+            Employee(uid = "TmpEmployee", emergencyContact = "TmpEmergencyContact")
+        ),
+        emergencyContact = listOf(EmergencyContact(uid = "TmpEmergencyContact"))
+    )
 
     private fun fillInDetails(
         name: String = "",
@@ -88,6 +99,8 @@ class UserDetailsValidationTests {
 
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
             .performScrollTo().performClick()
+        testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).performScrollTo()
+            .performClick()
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.noNameProvided))
             .performScrollTo().assertIsDisplayed()
     }
@@ -111,6 +124,9 @@ class UserDetailsValidationTests {
 
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
             .performScrollTo().performClick()
+        testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).performScrollTo()
+            .performClick()
+        testRule.onAllNodesWithTag(testTag = TestTagPhoneNumberField).onFirst().performScrollTo()
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.invalidPhoneNumb))
             .assertIsDisplayed()
     }
@@ -129,6 +145,8 @@ class UserDetailsValidationTests {
 
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
             .performScrollTo().performClick()
+        testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).performScrollTo()
+            .performClick()
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.dobError))
             .performScrollTo().assertIsDisplayed()
     }
@@ -172,6 +190,8 @@ class UserDetailsValidationTests {
 
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
             .performScrollTo().performClick()
+        testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).performScrollTo()
+            .performClick()
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.noNameProvided))
             .performScrollTo().assertIsDisplayed()
     }
@@ -216,6 +236,8 @@ class UserDetailsValidationTests {
 
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
             .performScrollTo().performClick()
+        testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).performScrollTo()
+            .performClick()
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.invalidPhoneNumb))
             .performScrollTo().assertIsDisplayed()
     }
