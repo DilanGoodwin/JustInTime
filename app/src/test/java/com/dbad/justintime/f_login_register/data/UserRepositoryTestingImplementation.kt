@@ -39,6 +39,10 @@ class UserRepositoryTestingImplementation(users: List<User>) : UserRepository {
         _usersList.value = currentUsers.toList()
     }
 
+    override suspend fun getEmployee(employee: Employee): Flow<Employee> {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun upsertEmergencyContact(contact: EmergencyContact) {
         for (existingEmergencyContact in _emergencyContact.value) {
             if ((existingEmergencyContact.uid == contact.uid) && (existingEmergencyContact.email == contact.email)) {
@@ -58,6 +62,14 @@ class UserRepositoryTestingImplementation(users: List<User>) : UserRepository {
                 relation = contact.relation
             )
         )
+    }
+
+    override suspend fun updateLocalDatabase(
+        user: User,
+        employee: Employee,
+        emergencyContact: EmergencyContact
+    ) {
+        TODO("Not yet implemented")
     }
 
     override suspend fun upsertEmployee(employee: Employee) {
@@ -83,5 +95,9 @@ class UserRepositoryTestingImplementation(users: List<User>) : UserRepository {
                 role = employee.role
             )
         )
+    }
+
+    override suspend fun getEmergencyContact(emergencyContact: EmergencyContact): Flow<EmergencyContact> {
+        TODO("Not yet implemented")
     }
 }
