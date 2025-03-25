@@ -110,20 +110,18 @@ fun ProfileScreen(
                 .padding(innerPadding)
         ) {
             Column(
+                verticalArrangement = Arrangement.spacedBy(space = 20.dp),
                 modifier = Modifier
                     .verticalScroll(rememberScrollState())
                     .padding(20.dp)
             ) {
                 UserUpdateFields(state = state, onEvent = userEvent)
-                Spacer(modifier = Modifier.height(20.dp))
 
                 // Emergency Contact Area
                 EmergencyContactArea(state = state, onEvent = emergencyContactEvent)
-                Spacer(modifier = Modifier.height(20.dp))
 
                 // Password Change Field
                 PasswordUpdateFields(state = state, onEvent = passwordEvent)
-                Spacer(modifier = Modifier.height(20.dp))
 
                 // Company Information
                 CompanyInformationArea(state = state, onEvent = companyEvents)
@@ -188,7 +186,10 @@ fun UserUpdateFields(
             showDatePicker = state.showDateOfBirthPicker,
             toggleDatePicker = { onEvent(ProfileUserEvents.ToggleShowDatePicker) },
             dateError = state.dateOfBirthError,
-            saveSelectedDate = { onEvent(ProfileUserEvents.SetDateOfBirth(dateOfBirth = it)) }
+            saveSelectedDate = { onEvent(ProfileUserEvents.SetDateOfBirth(dateOfBirth = it)) },
+            modifier = Modifier
+                .width(width = 400.dp)
+                .height(height = 80.dp)
         )
 
         // Phone Number Field

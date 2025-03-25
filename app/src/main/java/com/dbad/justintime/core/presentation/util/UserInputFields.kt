@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
@@ -33,6 +34,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -51,6 +54,8 @@ import androidx.compose.ui.window.Popup
 import com.dbad.justintime.R
 import com.dbad.justintime.f_local_users_db.domain.model.util.PreferredContactMethod
 import com.dbad.justintime.f_local_users_db.domain.model.util.Relation
+import com.dbad.justintime.ui.theme.JustInTimeTheme
+import java.util.Calendar
 
 @Composable
 fun TextInputField(
@@ -322,7 +327,8 @@ fun DateSelectorField(
     showDatePicker: Boolean,
     toggleDatePicker: () -> Unit,
     dateError: Boolean,
-    saveSelectedDate: (String) -> Unit
+    saveSelectedDate: (String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     TextField(
         value = currentValue,
@@ -357,10 +363,8 @@ fun DateSelectorField(
         },
         readOnly = true,
         singleLine = true,
-        modifier = Modifier
+        modifier = modifier
             .clip(shape = RoundedCornerShape(size = 8.dp))
-            .width(400.dp)
-            .height(80.dp)
     )
 }
 
@@ -388,6 +392,96 @@ fun DateSelectorDropDown(
                 )
             }
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TimeSelectionField(
+    currentValue: String,
+    placeHolderText: String,
+    showTimePicker: Boolean,
+    timeError: Boolean,
+    toggleTimePicker: () -> Unit,
+    timePickerState: TimePickerState,
+    modifier: Modifier = Modifier
+) {
+    TextField(
+        value = currentValue,
+        onValueChange = {},
+        placeholder = {
+            Box(modifier = Modifier.fillMaxSize()) {
+                Text(text = placeHolderText)
+            }
+        },
+        trailingIcon = {
+            IconButton(
+                onClick = { toggleTimePicker() },
+                modifier = Modifier.testTag(tag = "") //TODO
+            ) {
+                Icon(imageVector = Icons.Default.AccessTime, contentDescription = "") //TODO
+                TimeDialPicker(
+                    timePickerState = timePickerState,
+                    showTimePicker = showTimePicker,
+                    saveSelectedTime = toggleTimePicker
+                )
+            }
+        },
+        isError = timeError,
+        supportingText = {
+            if (timeError) {
+                Text(
+                    text = "", //TODO
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        },
+        readOnly = true,
+        singleLine = true,
+        modifier = modifier.clip(shape = RoundedCornerShape(size = 8.dp))
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TimeDialPicker(
+    timePickerState: TimePickerState,
+    showTimePicker: Boolean,
+    saveSelectedTime: () -> Unit
+) {
+    if (showTimePicker) {
+        Popup(
+            onDismissRequest = {}
+        ) {
+            Column(modifier = Modifier.padding(all = 10.dp)) {
+                TimePicker(state = timePickerState)
+                Button(
+                    onClick = { saveSelectedTime() },
+                    modifier = Modifier.align(alignment = Alignment.End)
+                ) {
+                    Text(text = stringResource(R.string.save))
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@ViewingSystemThemes
+@Composable
+fun TimeDialPickerViewer() {
+    val currentTime = Calendar.getInstance()
+    JustInTimeTheme {
+        TimeDialPicker(
+            timePickerState = TimePickerState(
+                initialHour = currentTime.get(Calendar.HOUR_OF_DAY),
+                initialMinute = currentTime.get(Calendar.MINUTE),
+                is24Hour = true
+            ),
+            showTimePicker = true,
+            saveSelectedTime = {}
+        )
     }
 }
 

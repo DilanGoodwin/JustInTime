@@ -61,6 +61,12 @@
     <!-- Date of Birth Errors -->
     <string name="dobError">Please Enter a Valid Date</string>
 
+    <!-- Shift -->
+    <string name="date">Date</string>
+    <string name="time">Time</string>
+    <string name="location">Location</string>
+    <string name="notes">Notes</string>
+
     <!-- Relation Values -->
     <string name="mother">Mother</string>
     <string name="father">Father</string>
