@@ -9,12 +9,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -32,10 +34,11 @@ import java.util.Calendar
 @Composable
 fun DetailedShiftView(modifier: Modifier = Modifier) {
 
+    // Display Bottom Sheet
     if (true) { //TODO
         ModalBottomSheet(
             onDismissRequest = {},
-            shape = RoundedCornerShape(10.dp),
+            shape = RoundedCornerShape(20.dp),
             modifier = modifier.fillMaxSize()
         ) {
             Column(
@@ -94,8 +97,19 @@ fun DetailedShiftView(modifier: Modifier = Modifier) {
                     value = "", //TODO
                     label = { Text(text = stringResource(R.string.notes)) },
                     onValueChange = {}, //TODO
+                    readOnly = true, //TODO
                     modifier = Modifier.fillMaxWidth()
                 )
+
+                // Is user admin, allow editing
+                if (true) { //TODO
+                    Button(
+                        onClick = {}, //TODO
+                        modifier = Modifier.align(alignment = Alignment.End)
+                    ) {
+                        Text(text = stringResource(R.string.edit))
+                    }
+                }
             }
         }
     }
