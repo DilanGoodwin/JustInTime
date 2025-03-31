@@ -18,6 +18,19 @@ import com.dbad.justintime.ui.theme.JustInTimeTheme
 
 // Stateless
 @Composable
+fun ShiftListView() {
+    Box() {
+        Box() {}
+        Column(verticalArrangement = Arrangement.spacedBy(space = 5.dp)) {
+            repeat(times = 5) {
+                IndividualShift()
+            }
+        }
+    }
+}
+
+// Stateless
+@Composable
 fun IndividualShift() {
     Box(
         modifier = Modifier
@@ -66,6 +79,12 @@ fun IndividualShift() {
             }
         }
     }
+}
+
+@ViewingSystemThemes
+@Composable
+fun PreviewShiftListView() {
+    JustInTimeTheme { ShiftListView() }
 }
 
 @ViewingSystemThemes
