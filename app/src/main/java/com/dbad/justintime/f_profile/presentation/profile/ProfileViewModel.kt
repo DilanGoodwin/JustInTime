@@ -57,7 +57,7 @@ class ProfileViewModel(
         viewModelScope.launch {
             _loadingData.value = true
 
-            delay(timeMillis = 5000L) //TODO need a better way of working out how long to wait before loading data
+            delay(timeMillis = 6000L) //TODO need a better way of working out how long to wait before loading data
 
             val loginToken = preferencesDataStore.tokenFlow.first()
             _user.value = useCases.getUser(user = User(uid = loginToken))
@@ -237,18 +237,14 @@ class ProfileViewModel(
      * Update changed status to True
      *
      * @param email Value to change the email to, default value is current state held value.
-     * @param password Value to change the password to, default value is current state held value.
-     * Passed value must be hashed otherwise value will be updated to plaintext
      */
     private fun updateUser(
         email: String = _user.value.email,
-        password: String = _user.value.password
     ) {
         _user.update {
             it.copy(
                 uid = if (email.isBlank()) "" else User.generateUid(email = email),
-                email = email,
-                password = password
+                email = email
             )
         }
         _state.update { it.copy(changeMade = true) }
@@ -359,20 +355,20 @@ class ProfileViewModel(
         }
 
         // Was the user updating their password
-        if (_state.value.oldPassword.isNotBlank()) _state.update {
-            it.copy(
-                oldPasswordShowError = (
-                        _user.value.password != User.hashPassword(password = _state.value.oldPassword))
-            )
-        }
-
-        if (_state.value.oldPassword.isNotBlank() &&
-            _state.value.newPassword.isNotBlank() &&
-            _state.value.newMatchPassword.isNotBlank() &&
-            !_state.value.oldPasswordShowError &&
-            !_state.value.newPasswordShowError &&
-            !_state.value.newMatchPasswordShowError
-        ) updateUser(password = User.hashPassword(password = _state.value.newPassword))
+//        if (_state.value.oldPassword.isNotBlank()) _state.update {
+//            it.copy(
+//                oldPasswordShowError = (
+//                        _user.value.password != User.hashPassword(password = _state.value.oldPassword))
+//            )
+//        }
+//
+//        if (_state.value.oldPassword.isNotBlank() &&
+//            _state.value.newPassword.isNotBlank() &&
+//            _state.value.newMatchPassword.isNotBlank() &&
+//            !_state.value.oldPasswordShowError &&
+//            !_state.value.newPasswordShowError &&
+//            !_state.value.newMatchPasswordShowError
+//        ) updateUser(password = User.hashPassword(password = _state.value.newPassword))
 
         // No User errors - update User info
         if (!(_state.value.userEmailError ||

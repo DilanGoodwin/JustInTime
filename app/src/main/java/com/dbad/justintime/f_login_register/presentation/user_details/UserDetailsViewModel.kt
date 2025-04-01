@@ -229,7 +229,6 @@ class UserDetailsViewModel(
             User(
                 uid = _state.value.userUid,
                 email = user.email,
-                password = user.password,
                 employee = employeeKey
             )
         )

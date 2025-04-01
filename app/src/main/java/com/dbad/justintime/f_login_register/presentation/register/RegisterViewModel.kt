@@ -90,7 +90,7 @@ class RegisterViewModel(private val useCases: UserUseCases) : ViewModel() {
             User(uid = User.generateUid(_state.value.email))
         ).first()
 
-        if (receivedUser.uid.isBlank() || receivedUser.password.isNotBlank()) {
+        if (receivedUser.uid.isBlank()) {
             _state.update { it.copy(showEmailError = true) }
             return
         }
@@ -98,8 +98,7 @@ class RegisterViewModel(private val useCases: UserUseCases) : ViewModel() {
         useCases.upsertUser(
             User(
                 uid = receivedUser.uid,
-                email = _state.value.email,
-                password = _state.value.password
+                email = _state.value.email
             )
         )
 

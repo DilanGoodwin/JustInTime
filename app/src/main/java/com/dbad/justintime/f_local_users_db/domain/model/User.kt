@@ -12,7 +12,6 @@ import javax.crypto.spec.SecretKeySpec
 data class User(
     @PrimaryKey(autoGenerate = false) val uid: String = "",
     val email: String = "",
-    val password: String = "",
     val employee: String = ""
 ) {
     companion object {
@@ -38,7 +37,6 @@ data class User(
             return hashMapOf(
                 "uid" to uid,
                 "email" to email,
-                "password" to password,
                 "employee" to employee
             )
         }
@@ -47,7 +45,6 @@ data class User(
             return User(
                 uid = this["uid"] as String,
                 email = this["email"] as String,
-                password = this["password"] as String,
                 employee = this["employee"] as String
             )
         }
