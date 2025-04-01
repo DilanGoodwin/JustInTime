@@ -93,8 +93,7 @@ class LoginViewModel(
                     }
                 }
             }
-            if (!_state.value.showError) _state.value.onLogin()
-
+            if (!_state.value.showError && (authUser.authState.value != false)) _state.value.onLogin()
         }
     }
 

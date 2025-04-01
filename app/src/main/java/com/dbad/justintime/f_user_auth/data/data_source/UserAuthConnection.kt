@@ -1,5 +1,6 @@
 package com.dbad.justintime.f_user_auth.data.data_source
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseAuth
@@ -17,16 +18,22 @@ class UserAuthConnection {
         _authState.value = auth.currentUser != null
     }
 
+    fun getEmail(): String {
+        return auth.currentUser?.email.toString()
+    }
+
     fun loginUser(email: String, password: String) {
+        Log.d("UserAuth", "Email $email, password $password")
         if (email.isEmpty() || password.isEmpty()) return
 
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
             _authState.value = task.isSuccessful
+            Log.d("UserAuth", "Task completed ${task.isSuccessful}")
         }
     }
 
     fun signUp(email: String, password: String) {
-        
+
     }
 
     fun signOut() {

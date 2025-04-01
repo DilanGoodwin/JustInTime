@@ -36,7 +36,6 @@ import com.dbad.justintime.core.presentation.util.DateSelectorField
 import com.dbad.justintime.core.presentation.util.ExpandableCardArea
 import com.dbad.justintime.core.presentation.util.LabelledTextDropDownFields
 import com.dbad.justintime.core.presentation.util.LabelledTextInputFields
-import com.dbad.justintime.core.presentation.util.PasswordField
 import com.dbad.justintime.core.presentation.util.PreferredContactField
 import com.dbad.justintime.core.presentation.util.RelationField
 import com.dbad.justintime.core.presentation.util.TestTagCompanyInformationCompanyNameField
@@ -47,10 +46,6 @@ import com.dbad.justintime.core.presentation.util.TestTagCompanyInformationRole
 import com.dbad.justintime.core.presentation.util.TestTagEmailField
 import com.dbad.justintime.core.presentation.util.TestTagEmergencyContactExpandableField
 import com.dbad.justintime.core.presentation.util.TestTagNameField
-import com.dbad.justintime.core.presentation.util.TestTagOldPasswordField
-import com.dbad.justintime.core.presentation.util.TestTagPasswordChangeExpandableField
-import com.dbad.justintime.core.presentation.util.TestTagPasswordField
-import com.dbad.justintime.core.presentation.util.TestTagPasswordMatchField
 import com.dbad.justintime.core.presentation.util.TestTagPhoneNumberField
 import com.dbad.justintime.core.presentation.util.TestTagPreferredName
 import com.dbad.justintime.core.presentation.util.TestTagProfileSaveButton
@@ -70,7 +65,6 @@ fun ProfileScreen(viewModel: ProfileViewModel) {
         state = state,
         onEvent = viewModel::onEvent,
         userEvent = viewModel::onUserEvent,
-        passwordEvent = viewModel::onPasswordEvent,
         emergencyContactEvent = viewModel::onEmergencyContactEvent,
         companyEvents = viewModel::onCompanyEvent
     )
@@ -81,7 +75,6 @@ fun ProfileScreen(
     state: ProfileState,
     onEvent: (ProfileEvent) -> Unit,
     userEvent: (ProfileUserEvents) -> Unit,
-    passwordEvent: (ProfilePasswordEvents) -> Unit,
     emergencyContactEvent: (ProfileEmergencyContactEvents) -> Unit,
     companyEvents: (ProfileCompanyEvents) -> Unit
 ) {
@@ -119,9 +112,6 @@ fun ProfileScreen(
 
                 // Emergency Contact Area
                 EmergencyContactArea(state = state, onEvent = emergencyContactEvent)
-
-                // Password Change Field
-                PasswordUpdateFields(state = state, onEvent = passwordEvent)
 
                 // Company Information
                 CompanyInformationArea(state = state, onEvent = companyEvents)
@@ -209,55 +199,6 @@ fun UserUpdateFields(
             expandDropDown = state.expandPrefContactMethod,
             dropDownToggle = { onEvent(ProfileUserEvents.TogglePrefContactDropDown) },
             selectContactMethod = { onEvent(ProfileUserEvents.SetPrefContactMethod(it)) }
-        )
-    }
-}
-
-@Composable
-fun PasswordUpdateFields(
-    state: ProfileState,
-    onEvent: (ProfilePasswordEvents) -> Unit
-) {
-    ExpandableCardArea(
-        isExpanded = state.expandPasswordArea,
-        expandableButtonClick = { onEvent(ProfilePasswordEvents.ToggleExpandableArea) },
-        cardTitle = stringResource(R.string.passwordChangeFields),
-        testTag = TestTagPasswordChangeExpandableField
-    ) {
-        // Old Password
-        PasswordField(
-            currentValue = state.oldPassword,
-            placeHolderText = stringResource(R.string.oldPassword),
-            showPassword = state.oldPasswordView,
-            textFieldError = state.oldPasswordShowError,
-            errorString = stringResource(R.string.passwordDoNotMatch),
-            onValueChange = { onEvent(ProfilePasswordEvents.OldPasswordInput(oldPassword = it)) },
-            visiblePassword = { onEvent(ProfilePasswordEvents.ToggleOldPasswordView) },
-            testingTag = TestTagOldPasswordField
-        )
-
-        // New Password
-        PasswordField(
-            currentValue = state.newPassword,
-            placeHolderText = stringResource(R.string.newPassword),
-            showPassword = state.newPasswordView,
-            textFieldError = state.newPasswordShowError,
-            errorString = stringResource(state.newPasswordErrorString.errorCode),
-            onValueChange = { onEvent(ProfilePasswordEvents.NewPasswordInput(newPassword = it)) },
-            visiblePassword = { onEvent(ProfilePasswordEvents.ToggleNewPasswordView) },
-            testingTag = TestTagPasswordField
-        )
-
-        // New Password Match
-        PasswordField(
-            currentValue = state.newMatchPassword,
-            placeHolderText = stringResource(R.string.reEnterNewPassword),
-            showPassword = state.newMatchPasswordView,
-            textFieldError = state.newMatchPasswordShowError,
-            errorString = stringResource(R.string.passwordDoNotMatch),
-            onValueChange = { onEvent(ProfilePasswordEvents.NewPasswordMatchInput(newPassword = it)) },
-            visiblePassword = { onEvent(ProfilePasswordEvents.ToggleNewPasswordMatchView) },
-            testingTag = TestTagPasswordMatchField
         )
     }
 }
@@ -427,7 +368,6 @@ fun ProfileScreenPreview() {
             state = ProfileState(),
             onEvent = {},
             userEvent = {},
-            passwordEvent = {},
             emergencyContactEvent = {},
             companyEvents = {}
         )
@@ -439,16 +379,6 @@ fun ProfileScreenPreview() {
 fun ProfileScreenUserInformationPreview() {
     JustInTimeTheme {
         UserUpdateFields(state = ProfileState(), onEvent = {})
-    }
-}
-
-@ViewingSystemThemes
-@Composable
-fun ProfileScreenPasswordChangePreview() {
-    JustInTimeTheme {
-        PasswordUpdateFields(
-            state = ProfileState(expandPasswordArea = true),
-            onEvent = {})
     }
 }
 

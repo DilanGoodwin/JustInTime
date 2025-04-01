@@ -1,23 +1,22 @@
 package com.dbad.justintime.f_profile.presentation.profile
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.dbad.justintime.core.presentation.util.DATE_FORMATTER
-import com.dbad.justintime.f_local_datastore.domain.repository.UserPreferencesRepository
 import com.dbad.justintime.f_local_users_db.domain.model.EmergencyContact
 import com.dbad.justintime.f_local_users_db.domain.model.Employee
 import com.dbad.justintime.f_local_users_db.domain.model.User
 import com.dbad.justintime.f_local_users_db.domain.model.util.ContractType
 import com.dbad.justintime.f_local_users_db.domain.model.util.PreferredContactMethod
 import com.dbad.justintime.f_local_users_db.domain.model.util.Relation
-import com.dbad.justintime.f_login_register.domain.util.PasswordErrors
 import com.dbad.justintime.f_profile.domain.use_case.ProfileUseCases
+import com.dbad.justintime.f_user_auth.data.data_source.UserAuthConnection
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -26,7 +25,7 @@ import java.util.Date
 
 class ProfileViewModel(
     private val useCases: ProfileUseCases,
-    private val preferencesDataStore: UserPreferencesRepository
+    private val authUser: UserAuthConnection
 ) : ViewModel() {
 
     // ViewModel State
@@ -56,16 +55,26 @@ class ProfileViewModel(
     fun loadInitialData() {
         viewModelScope.launch {
             _loadingData.value = true
+            var loadAttempts = 0
 
-            delay(timeMillis = 6000L) //TODO need a better way of working out how long to wait before loading data
+            while (loadAttempts < 3) {
+                val userUid = User.generateUid(email = authUser.getEmail())
+                _user.value = useCases.getUser(user = User(uid = userUid))
+                if (_user.value.employee.isEmpty()) continue
+                Log.d("ProfileViewModel", "User information pulled")
 
-            val loginToken = preferencesDataStore.tokenFlow.first()
-            _user.value = useCases.getUser(user = User(uid = loginToken))
-            _employee.value = useCases.getEmployee(employee = Employee(uid = _user.value.employee))
-            _emergencyContact.value =
-                useCases.getEmergencyContact(emergencyContact = EmergencyContact(uid = _employee.value.emergencyContact))
+                _employee.value =
+                    useCases.getEmployee(employee = Employee(uid = _user.value.employee))
+                if (_employee.value.emergencyContact.isEmpty()) continue
+                Log.d("ProfileViewModel", "Employee information pulled")
 
-            _loadingData.value = false
+                _emergencyContact.value =
+                    useCases.getEmergencyContact(emergencyContact = EmergencyContact(uid = _employee.value.emergencyContact))
+                Log.d("ProfileViewModel", "EmergencyContact information pulled")
+
+                loadAttempts++
+                delay(timeMillis = 1000L)
+            }
         }
     }
 
@@ -97,59 +106,6 @@ class ProfileViewModel(
 
             ProfileUserEvents.ToggleShowDatePicker -> _state.update {
                 it.copy(showDateOfBirthPicker = !_state.value.showDateOfBirthPicker)
-            }
-        }
-    }
-
-    fun onPasswordEvent(event: ProfilePasswordEvents) {
-        when (event) {
-            is ProfilePasswordEvents.OldPasswordInput -> {
-                _state.update { it.copy(oldPassword = event.oldPassword) }
-                checkPasswordChanges()
-            }
-
-            is ProfilePasswordEvents.NewPasswordInput -> {
-                // If the password does not meet standards then raise the appropriate error to the
-                // user
-                val passwordError = useCases.validatePassword(password = event.newPassword)
-                val showError = passwordError != PasswordErrors.PASSWORD_NONE
-                _state.update {
-                    it.copy(
-                        newPassword = event.newPassword,
-                        newPasswordErrorString = passwordError,
-                        newPasswordShowError = showError
-                    )
-                }
-
-                checkPasswordChanges()
-            }
-
-            is ProfilePasswordEvents.NewPasswordMatchInput -> {
-                // If the passwords do not match then flag an error to the user
-                val showError = _state.value.newPassword != event.newPassword
-                _state.update {
-                    it.copy(
-                        newMatchPassword = event.newPassword,
-                        newMatchPasswordShowError = showError
-                    )
-                }
-
-                checkPasswordChanges()
-            }
-
-            ProfilePasswordEvents.ToggleExpandableArea ->
-                toggleExpandableAreas(password = !_state.value.expandPasswordArea)
-
-            ProfilePasswordEvents.ToggleOldPasswordView -> _state.update {
-                it.copy(oldPasswordView = !_state.value.oldPasswordView)
-            }
-
-            ProfilePasswordEvents.ToggleNewPasswordView -> _state.update {
-                it.copy(newPasswordView = !_state.value.newPasswordView)
-            }
-
-            ProfilePasswordEvents.ToggleNewPasswordMatchView -> _state.update {
-                it.copy(newMatchPasswordView = !_state.value.newMatchPasswordView)
             }
         }
     }
@@ -354,22 +310,6 @@ class ProfileViewModel(
             )
         }
 
-        // Was the user updating their password
-//        if (_state.value.oldPassword.isNotBlank()) _state.update {
-//            it.copy(
-//                oldPasswordShowError = (
-//                        _user.value.password != User.hashPassword(password = _state.value.oldPassword))
-//            )
-//        }
-//
-//        if (_state.value.oldPassword.isNotBlank() &&
-//            _state.value.newPassword.isNotBlank() &&
-//            _state.value.newMatchPassword.isNotBlank() &&
-//            !_state.value.oldPasswordShowError &&
-//            !_state.value.newPasswordShowError &&
-//            !_state.value.newMatchPasswordShowError
-//        ) updateUser(password = User.hashPassword(password = _state.value.newPassword))
-
         // No User errors - update User info
         if (!(_state.value.userEmailError ||
                     _state.value.oldPasswordShowError ||
@@ -406,13 +346,13 @@ class ProfileViewModel(
     companion object {
         fun generateViewModel(
             useCases: ProfileUseCases,
-            preferencesDataStore: UserPreferencesRepository
+            authUser: UserAuthConnection
         ): ViewModelProvider.Factory {
             return object : ViewModelProvider.Factory {
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
                     return ProfileViewModel(
                         useCases = useCases,
-                        preferencesDataStore = preferencesDataStore
+                        authUser = authUser
                     ) as T
                 }
             }

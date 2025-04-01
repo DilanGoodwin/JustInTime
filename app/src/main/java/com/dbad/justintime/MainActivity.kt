@@ -17,6 +17,8 @@ import com.dbad.justintime.f_login_register.presentation.login.LoginScreen
 import com.dbad.justintime.f_login_register.presentation.login.LoginViewModel
 import com.dbad.justintime.f_login_register.presentation.register.RegisterScreen
 import com.dbad.justintime.f_login_register.presentation.register.RegisterViewModel
+import com.dbad.justintime.f_profile.presentation.profile.ProfileScreen
+import com.dbad.justintime.f_profile.presentation.profile.ProfileViewModel
 import com.dbad.justintime.f_user_auth.data.data_source.UserAuthConnection
 import com.dbad.justintime.ui.theme.JustInTimeTheme
 import kotlinx.serialization.Serializable
@@ -32,8 +34,8 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
 
                     val authenticated = UserAuthConnection()
-                    val startingPosition = LoginNav
-//                    if (authenticated.authState.value!!) ProfileScreen else
+                    val startingPosition =
+                        if (authenticated.authState.value!!) ProfileScreen else LoginNav
 
                     NavHost(navController = navController, startDestination = startingPosition) {
 
@@ -52,7 +54,7 @@ class MainActivity : ComponentActivity() {
 //                                        navController.navigate(route = RegistrationNav)
                                     },
                                     onLogin = {
-//                                        navController.navigate(route = ProfileScreen)
+                                        navController.navigate(route = ProfileScreen)
                                     },
                                     modifier = Modifier.padding(paddingValues = innerPadding)
                                 )
@@ -95,16 +97,16 @@ class MainActivity : ComponentActivity() {
 //                                }
                             }
                         }
-//                        composable<ProfileScreen> { //TODO move to separate nav window
-//                            ProfileScreen(
-//                                viewModel = viewModel<ProfileViewModel>(
-//                                    factory = ProfileViewModel.generateViewModel(
-//                                        useCases = App.profile.useCases,
-//                                        preferencesDataStore = userPreferences
-//                                    )
-//                                )
-//                            )
-//                        }
+                        composable<ProfileScreen> { //TODO move to separate nav window
+                            ProfileScreen(
+                                viewModel = viewModel<ProfileViewModel>(
+                                    factory = ProfileViewModel.generateViewModel(
+                                        useCases = App.profile.useCases,
+                                        authUser = authenticated
+                                    )
+                                )
+                            )
+                        }
 
                     }
                 }
