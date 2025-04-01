@@ -1,10 +1,12 @@
 package com.dbad.justintime.f_login_register.presentation.register
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.dbad.justintime.f_local_users_db.domain.model.User
 import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
 import com.dbad.justintime.f_login_register.domain.util.PasswordErrors
+import com.dbad.justintime.f_user_auth.data.data_source.UserAuthConnection
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.first
@@ -12,7 +14,10 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class RegisterViewModel(private val useCases: UserUseCases) : ViewModel() {
+class RegisterViewModel(
+    private val useCases: UserUseCases,
+    private val authUser: UserAuthConnection
+) : ViewModel() {
     private val _state = MutableStateFlow(RegisterState())
     val state = _state.stateIn(
         viewModelScope,
@@ -31,7 +36,7 @@ class RegisterViewModel(private val useCases: UserUseCases) : ViewModel() {
                 if (!(_state.value.showEmailError ||
                             _state.value.showPasswordError ||
                             _state.value.showMatchPasswordError)
-                ) viewModelScope.launch { verifyUser() }
+                ) verifyUser()
 
             }
 
@@ -85,23 +90,45 @@ class RegisterViewModel(private val useCases: UserUseCases) : ViewModel() {
         _state.update { it.copy(showMatchPasswordError = passwordError) }
     }
 
-    private suspend fun verifyUser() {
-        val receivedUser = useCases.getUser(
-            User(uid = User.generateUid(_state.value.email))
-        ).first()
+    private fun verifyUser() {
+        val userUid = User.generateUid(email = _state.value.email)
 
-        if (receivedUser.uid.isBlank()) {
-            _state.update { it.copy(showEmailError = true) }
-            return
+        viewModelScope.launch {
+            val receivedUser = useCases.getUser(
+                User(uid = userUid)
+            ).first()
+
+            if (receivedUser.uid.isBlank()) {
+                _state.update { it.copy(showEmailError = true) }
+            }
+
+            if (!state.value.showEmailError) useCases.upsertUser(
+                User(
+                    uid = receivedUser.uid,
+                    email = _state.value.email
+                )
+            )
         }
 
-        useCases.upsertUser(
-            User(
-                uid = receivedUser.uid,
-                email = _state.value.email
-            )
-        )
+        if (!state.value.showEmailError) {
+            authUser.signUp(email = state.value.email, password = state.value.password)
+            _state.value.onRegistration(userUid)
+        }
+    }
 
-        _state.value.onRegistration(receivedUser.uid)
+    companion object {
+        fun generateViewModel(
+            useCases: UserUseCases,
+            authUser: UserAuthConnection
+        ): ViewModelProvider.Factory {
+            return object : ViewModelProvider.Factory {
+                override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                    return RegisterViewModel(
+                        useCases = useCases,
+                        authUser = authUser
+                    ) as T
+                }
+            }
+        }
     }
 }
