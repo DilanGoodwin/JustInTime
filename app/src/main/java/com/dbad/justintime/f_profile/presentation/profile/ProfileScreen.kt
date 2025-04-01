@@ -13,11 +13,15 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
@@ -79,7 +83,7 @@ fun ProfileScreen(
     companyEvents: (ProfileCompanyEvents) -> Unit
 ) {
     Scaffold(
-        topBar = { ProfileTopBar() },
+        topBar = { ProfileTopBar(onEvent = onEvent) },
         floatingActionButton = {
             if (state.changeMade) {
                 SmallFloatingActionButton(
@@ -122,9 +126,19 @@ fun ProfileScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileTopBar() {
+fun ProfileTopBar(onEvent: (ProfileEvent) -> Unit) {
     CenterAlignedTopAppBar(
         title = { Text(text = stringResource(R.string.profile)) },
+        actions = {
+            IconButton(
+                onClick = { onEvent(ProfileEvent.SignOut) }
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Cancel,
+                    contentDescription = ""//TODO
+                )
+            }
+        },
         modifier = Modifier.fillMaxWidth()
     )
 }

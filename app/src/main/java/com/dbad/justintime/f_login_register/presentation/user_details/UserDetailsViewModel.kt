@@ -113,7 +113,11 @@ class UserDetailsViewModel(private val useCases: UserUseCases) : ViewModel() {
             }
 
             // Buttons
-            UserDetailsEvents.CancelEvent -> _state.value.cancelEvent()
+            UserDetailsEvents.CancelEvent -> {
+                // TODO delete auth token from remote server as information not completed
+                _state.value.cancelEvent()
+            }
+
             UserDetailsEvents.RegisterEvent -> {
                 if (_state.value.name.isBlank()) _state.update { it.copy(showNameFieldError = true) }
                 if (_state.value.emergencyContactName.isBlank()) _state.update {
@@ -132,7 +136,6 @@ class UserDetailsViewModel(private val useCases: UserUseCases) : ViewModel() {
                             _state.value.showEmergencyContactEmailError)
                 ) {
                     createUser()
-                    _state.value.registerEvent()
                 }
             }
         }
@@ -186,7 +189,9 @@ class UserDetailsViewModel(private val useCases: UserUseCases) : ViewModel() {
             email = _state.value.emergencyContactEmail,
             employeeUid = employeeKey
         )
+
         val emergencyContact = EmergencyContact(
+            uid = emergencyContactKey,
             name = _state.value.emergencyContactName,
             preferredName = _state.value.emergencyContactPrefName,
             email = _state.value.emergencyContactEmail,
@@ -232,6 +237,8 @@ class UserDetailsViewModel(private val useCases: UserUseCases) : ViewModel() {
                 )
             )
         }
+
+        _state.value.registerEvent()
     }
 
     companion object {

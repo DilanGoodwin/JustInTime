@@ -30,7 +30,6 @@ class ProfileViewModel(
 
     // ViewModel State
     private val _state = MutableStateFlow(ProfileState())
-    private val _loadingData = MutableStateFlow(false)
 
     // User, Employee & EmergencyContact State
     private val _user = MutableStateFlow(User())
@@ -54,23 +53,25 @@ class ProfileViewModel(
      */
     fun loadInitialData() {
         viewModelScope.launch {
-            _loadingData.value = true
             var loadAttempts = 0
 
             while (loadAttempts < 3) {
                 val userUid = User.generateUid(email = authUser.getEmail())
                 _user.value = useCases.getUser(user = User(uid = userUid))
-                if (_user.value.employee.isEmpty()) continue
-                Log.d("ProfileViewModel", "User information pulled")
-
-                _employee.value =
-                    useCases.getEmployee(employee = Employee(uid = _user.value.employee))
-                if (_employee.value.emergencyContact.isEmpty()) continue
-                Log.d("ProfileViewModel", "Employee information pulled")
-
-                _emergencyContact.value =
-                    useCases.getEmergencyContact(emergencyContact = EmergencyContact(uid = _employee.value.emergencyContact))
-                Log.d("ProfileViewModel", "EmergencyContact information pulled")
+                try {
+                    if (_user.value.uid.isNotEmpty() && _user.value.employee.isNotEmpty()) {
+                        Log.d("ViewModel", "Employee UID ${_user.value.employee}")
+                        _employee.value =
+                            useCases.getEmployee(employee = Employee(uid = _user.value.employee))
+                        if (_employee.value.emergencyContact.isNotEmpty()) {
+                            _emergencyContact.value = useCases.getEmergencyContact(
+                                emergencyContact = EmergencyContact(uid = _employee.value.emergencyContact)
+                            )
+                        }
+                    }
+                } catch (e: NullPointerException) {
+                    Log.d("ProfileViewModel", "Error reading user \n Error: ${e.message}")
+                }
 
                 loadAttempts++
                 delay(timeMillis = 1000L)
@@ -81,6 +82,7 @@ class ProfileViewModel(
     fun onEvent(event: ProfileEvent) {
         when (event) {
             ProfileEvent.SaveButton -> saveData()
+            ProfileEvent.SignOut -> signOut()
         }
     }
 
@@ -341,6 +343,10 @@ class ProfileViewModel(
         _state.update { it.copy(changeMade = false) }
 
         //TODO start background operation to sync to remote database
+    }
+
+    private fun signOut() {
+        // TODO delete local database items
     }
 
     companion object {

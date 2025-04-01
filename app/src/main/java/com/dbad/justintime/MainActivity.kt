@@ -37,6 +37,7 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
 
                     val authenticated = UserAuthConnection()
+//                    authenticated.signOut()
                     val startingPosition =
                         if (authenticated.authState.value!!) ProfileScreen else LoginNav
 
