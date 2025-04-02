@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.dbad.justintime.f_local_users_db.domain.model.User
 import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
 import com.dbad.justintime.f_login_register.domain.util.PasswordErrors
-import com.dbad.justintime.f_user_auth.data.data_source.UserAuthConnection
+import com.dbad.justintime.f_user_auth.domain.repository.AuthRepo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.first
@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 
 class RegisterViewModel(
     private val useCases: UserUseCases,
-    private val authUser: UserAuthConnection
+    private val authUser: AuthRepo
 ) : ViewModel() {
     private val _state = MutableStateFlow(RegisterState())
     val state = _state.stateIn(
@@ -119,7 +119,7 @@ class RegisterViewModel(
     companion object {
         fun generateViewModel(
             useCases: UserUseCases,
-            authUser: UserAuthConnection
+            authUser: AuthRepo
         ): ViewModelProvider.Factory {
             return object : ViewModelProvider.Factory {
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {

@@ -23,6 +23,7 @@ import com.dbad.justintime.f_login_register.presentation.user_details.UserDetail
 import com.dbad.justintime.f_profile.presentation.profile.ProfileScreen
 import com.dbad.justintime.f_profile.presentation.profile.ProfileViewModel
 import com.dbad.justintime.f_user_auth.data.data_source.UserAuthConnection
+import com.dbad.justintime.f_user_auth.domain.repository.AuthRepo
 import com.dbad.justintime.ui.theme.JustInTimeTheme
 import kotlinx.serialization.Serializable
 
@@ -36,7 +37,7 @@ class MainActivity : ComponentActivity() {
 
                     val navController = rememberNavController()
 
-                    val authenticated = UserAuthConnection()
+                    val authenticated: AuthRepo = UserAuthConnection()
 //                    authenticated.signOut()
                     val startingPosition =
                         if (authenticated.authState.value!!) ProfileScreen else LoginNav

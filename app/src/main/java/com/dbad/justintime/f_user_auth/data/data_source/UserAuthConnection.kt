@@ -2,12 +2,14 @@ package com.dbad.justintime.f_user_auth.data.data_source
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.dbad.justintime.f_user_auth.domain.repository.AuthRepo
 import com.google.firebase.auth.FirebaseAuth
 
-class UserAuthConnection {
+class UserAuthConnection : AuthRepo {
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
     private val _authState = MutableLiveData<Boolean>()
-    val authState: LiveData<Boolean> = _authState
+    override val authState: LiveData<Boolean> = _authState
+    override val testingMode = false
 
     init {
         isAuthenticated()
@@ -17,11 +19,11 @@ class UserAuthConnection {
         _authState.value = auth.currentUser != null
     }
 
-    fun getEmail(): String {
+    override fun getEmail(): String {
         return auth.currentUser?.email.toString()
     }
 
-    fun loginUser(email: String, password: String) {
+    override fun loginUser(email: String, password: String) {
         if (email.isEmpty() || password.isEmpty()) return
 
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
@@ -29,13 +31,13 @@ class UserAuthConnection {
         }
     }
 
-    fun signUp(email: String, password: String) {
+    override fun signUp(email: String, password: String) {
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
             _authState.value = task.isSuccessful
         }
     }
 
-    fun signOut() {
+    override fun signOut() {
         auth.signOut()
         _authState.value = false
     }

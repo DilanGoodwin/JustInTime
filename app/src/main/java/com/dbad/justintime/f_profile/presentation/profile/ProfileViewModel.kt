@@ -12,7 +12,7 @@ import com.dbad.justintime.f_local_users_db.domain.model.util.ContractType
 import com.dbad.justintime.f_local_users_db.domain.model.util.PreferredContactMethod
 import com.dbad.justintime.f_local_users_db.domain.model.util.Relation
 import com.dbad.justintime.f_profile.domain.use_case.ProfileUseCases
-import com.dbad.justintime.f_user_auth.data.data_source.UserAuthConnection
+import com.dbad.justintime.f_user_auth.domain.repository.AuthRepo
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -25,7 +25,7 @@ import java.util.Date
 
 class ProfileViewModel(
     private val useCases: ProfileUseCases,
-    private val authUser: UserAuthConnection
+    private val authUser: AuthRepo
 ) : ViewModel() {
 
     // ViewModel State
@@ -56,8 +56,20 @@ class ProfileViewModel(
             var loadAttempts = 0
 
             while (loadAttempts < 3) {
-                val userUid = User.generateUid(email = authUser.getEmail())
+                delay(timeMillis = 1000L)
+
+                /**
+                 * During AndroidTests the SecretKeySpec fails due to not being part of the API
+                 * Implementation to stop the tests crashing
+                 */
+                val userUid = if (!authUser.testingMode) {
+                    User.generateUid(email = authUser.getEmail())
+                } else {
+                    "rL7Zg5ur9L8iYeq4U3KnF4X8BHX7EYaCQcEYTJI1rU="
+                }
+
                 _user.value = useCases.getUser(user = User(uid = userUid))
+
                 try {
                     if (_user.value.uid.isNotEmpty() && _user.value.employee.isNotEmpty()) {
                         Log.d("ViewModel", "Employee UID ${_user.value.employee}")
@@ -74,7 +86,6 @@ class ProfileViewModel(
                 }
 
                 loadAttempts++
-                delay(timeMillis = 1000L)
             }
         }
     }
@@ -352,7 +363,7 @@ class ProfileViewModel(
     companion object {
         fun generateViewModel(
             useCases: ProfileUseCases,
-            authUser: UserAuthConnection
+            authUser: AuthRepo
         ): ViewModelProvider.Factory {
             return object : ViewModelProvider.Factory {
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
