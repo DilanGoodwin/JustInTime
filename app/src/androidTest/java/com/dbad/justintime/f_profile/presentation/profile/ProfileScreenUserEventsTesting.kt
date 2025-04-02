@@ -17,6 +17,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextReplacement
 import com.dbad.justintime.R
+import com.dbad.justintime.core.AuthTestingRepo
 import com.dbad.justintime.core.domain.use_case.ValidateDate
 import com.dbad.justintime.core.domain.use_case.ValidateEmail
 import com.dbad.justintime.core.domain.use_case.ValidatePassword
@@ -26,14 +27,13 @@ import com.dbad.justintime.core.presentation.util.TestTagEmailField
 import com.dbad.justintime.core.presentation.util.TestTagEmergencyContactExpandableField
 import com.dbad.justintime.core.presentation.util.TestTagMainPreferredContactMethodField
 import com.dbad.justintime.core.presentation.util.TestTagNameField
-import com.dbad.justintime.core.presentation.util.TestTagPasswordChangeExpandableField
 import com.dbad.justintime.core.presentation.util.TestTagPhoneNumberField
 import com.dbad.justintime.core.presentation.util.TestTagPreferredContactMethodField
 import com.dbad.justintime.core.presentation.util.TestTagPreferredName
 import com.dbad.justintime.core.presentation.util.TestTagProfileSaveButton
 import com.dbad.justintime.core.presentation.util.TestTagUserInformationExpandableField
+import com.dbad.justintime.f_local_users_db.domain.model.User
 import com.dbad.justintime.f_local_users_db.domain.model.util.PreferredContactMethod
-import com.dbad.justintime.f_profile.data.ProfileRepositoryTestingImplementation
 import com.dbad.justintime.f_profile.data.ProfileRepositoryTestingImplementation.Companion.generateProfileTestRepo
 import com.dbad.justintime.f_profile.domain.repository.ProfileRepository
 import com.dbad.justintime.f_profile.domain.use_case.GetEmergencyContact
@@ -44,7 +44,6 @@ import com.dbad.justintime.f_profile.domain.use_case.UpsertEmergencyContact
 import com.dbad.justintime.f_profile.domain.use_case.UpsertEmployee
 import com.dbad.justintime.f_profile.domain.use_case.UpsertUser
 import com.dbad.justintime.f_profile.presentation.ProfileTestingNavController
-import com.dbad.justintime.util.UserPreferencesTestingImplementation
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
@@ -81,9 +80,7 @@ class ProfileScreenUserEventsTesting {
         testRule.setContent {
             ProfileTestingNavController(
                 useCases = useCases,
-                userPreferencesStore = UserPreferencesTestingImplementation(
-                    passedState = ProfileRepositoryTestingImplementation.userUid
-                )
+                authUser = AuthTestingRepo(user = User(), loggedIn = true)
             )
         }
     }
@@ -111,8 +108,6 @@ class ProfileScreenUserEventsTesting {
         testRule.onNodeWithTag(testTag = TestTagUserInformationExpandableField).performClick()
             .assertIsDisplayed()
         testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).performClick()
-            .assertIsDisplayed()
-        testRule.onNodeWithTag(testTag = TestTagPasswordChangeExpandableField).performClick()
             .assertIsDisplayed()
         testRule.onNodeWithTag(testTag = TestTagCompanyInformationExpandableField).performClick()
             .assertIsDisplayed()

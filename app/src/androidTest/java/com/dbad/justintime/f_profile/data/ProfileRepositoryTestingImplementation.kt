@@ -36,8 +36,7 @@ class ProfileRepositoryTestingImplementation(
         currentUsers.add(
             User(
                 uid = user.uid,
-                email = user.email,
-                password = user.password
+                email = user.email
             )
         )
         _usersList.value = currentUsers.toList()
@@ -151,7 +150,6 @@ class ProfileRepositoryTestingImplementation(
             User(
                 uid = userUid,
                 email = "cassandra.negrete@justintime.com",
-                password = User.hashPassword(password = "C@55@ndr@P4ssword"),
                 employee = employeeUid
             )
         )

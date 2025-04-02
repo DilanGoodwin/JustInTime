@@ -9,6 +9,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextReplacement
 import com.dbad.justintime.R
+import com.dbad.justintime.core.AuthTestingRepo
 import com.dbad.justintime.core.domain.use_case.ValidateDate
 import com.dbad.justintime.core.domain.use_case.ValidateEmail
 import com.dbad.justintime.core.domain.use_case.ValidatePassword
@@ -41,17 +42,19 @@ import org.junit.Test
 
 class RegisterPrimaryScreenTestingUI {
 
-    private val validEmail: String = "test@test.com"
+    private val validUser: User = User(
+        uid = User.generateUid(email = "testing@test.com"),
+        email = "testing@test.com"
+    )
     private val validPassword: String = "MyP@ssw0rds"
 
     private lateinit var useCases: UserUseCases
     private val users: List<User> = listOf(
         User(
             uid = User.generateUid(email = "test.test@test.com"),
-            email = "test.test@test.com",
-            password = User.hashPassword(validPassword)
+            email = "test.test@test.com"
         ),
-        User(uid = User.generateUid(email = validEmail), email = validEmail)
+        validUser
     )
 
     @get:Rule
@@ -80,7 +83,12 @@ class RegisterPrimaryScreenTestingUI {
             validateDate = ValidateDate()
         )
 
-        testRule.setContent { LoginTestingNavController(useCases = useCases) }
+        testRule.setContent {
+            LoginTestingNavController(
+                useCases = useCases,
+                authUser = AuthTestingRepo(user = validUser)
+            )
+        }
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
             .performClick()
     }
@@ -109,7 +117,7 @@ class RegisterPrimaryScreenTestingUI {
         )
 
         testRule.onNodeWithTag(testTag = TestTagEmailField)
-            .performTextReplacement(text = validEmail)
+            .performTextReplacement(text = validUser.email)
         testRule.onNodeWithTag(testTag = TestTagErrorNotifier).assertIsNotDisplayed()
     }
 
@@ -140,7 +148,7 @@ class RegisterPrimaryScreenTestingUI {
     @Test
     fun checkCancelButton() = runTest {
         testRule.onNodeWithTag(testTag = TestTagEmailField)
-            .performTextReplacement(text = validEmail)
+            .performTextReplacement(text = validUser.email)
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.cancel)).performClick()
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.login))
             .assertIsDisplayed()
@@ -149,7 +157,7 @@ class RegisterPrimaryScreenTestingUI {
     @Test
     fun checkRegisterButton() = runTest {
         testRule.onNodeWithTag(testTag = TestTagEmailField)
-            .performTextReplacement(text = validEmail)
+            .performTextReplacement(text = validUser.email)
         testRule.onNodeWithTag(testTag = TestTagPasswordField)
             .performTextReplacement(text = validPassword)
         testRule.onNodeWithTag(testTag = TestTagPasswordMatchField)
@@ -187,7 +195,7 @@ class RegisterPrimaryScreenTestingUI {
     @Test
     fun checkInvalidRegistrationAttempt_NoPassword() = runTest {
         testRule.onNodeWithTag(testTag = TestTagEmailField)
-            .performTextReplacement(text = validEmail)
+            .performTextReplacement(text = validUser.email)
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
             .performClick()
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.enterPassword))
@@ -197,7 +205,7 @@ class RegisterPrimaryScreenTestingUI {
     @Test
     fun checkInvalidRegistrationAttempt_NoMatchingPassword() = runTest {
         testRule.onNodeWithTag(testTag = TestTagEmailField)
-            .performTextReplacement(text = validEmail)
+            .performTextReplacement(text = validUser.email)
         testRule.onNodeWithTag(testTag = TestTagPasswordField)
             .performTextReplacement(text = validPassword)
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
