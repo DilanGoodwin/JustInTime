@@ -11,6 +11,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextReplacement
 import com.dbad.justintime.R
+import com.dbad.justintime.core.AuthTestingRepo
 import com.dbad.justintime.core.domain.use_case.ValidateDate
 import com.dbad.justintime.core.domain.use_case.ValidateEmail
 import com.dbad.justintime.core.domain.use_case.ValidatePassword
@@ -39,21 +40,19 @@ import org.junit.Test
 
 class LoginScreenTestingUI {
 
-    private val validEmail: String = "testing@testing.com"
+    private val validUser: User = User(
+        uid = User.generateUid(email = "testing@justintime.com"),
+        email = "testing@justintime.com",
+        employee = "TmpEmployee"
+    )
     private val validPassword: String = "MyP@ssw0rds"
 
     private lateinit var useCases: UserUseCases
     private val users: List<User> = listOf(
-        User(
-            uid = User.generateUid(email = validEmail),
-            email = validEmail,
-            password = User.hashPassword(validPassword),
-            employee = "TmpEmployee"
-        ),
+        validUser,
         User(
             uid = User.generateUid(email = "test.test@test.com"),
-            email = "test.test@test.com",
-            password = User.hashPassword(validPassword)
+            email = "test.test@test.com"
         ),
         User(
             uid = User.generateUid(email = "something@something.com"),
@@ -88,7 +87,10 @@ class LoginScreenTestingUI {
         )
 
         testRule.setContent {
-            LoginTestingNavController(useCases = useCases)
+            LoginTestingNavController(
+                useCases = useCases,
+                authUser = AuthTestingRepo(user = validUser)
+            )
         }
     }
 
@@ -116,7 +118,7 @@ class LoginScreenTestingUI {
         )
 
         testRule.onNodeWithTag(testTag = TestTagEmailField)
-            .performTextReplacement(text = validEmail)
+            .performTextReplacement(text = validUser.email)
     }
 
     @Test
@@ -139,7 +141,7 @@ class LoginScreenTestingUI {
     @Test
     fun checkValidLoginAttempt() = runTest {
         testRule.onNodeWithTag(testTag = TestTagEmailField)
-            .performTextReplacement(text = validEmail)
+            .performTextReplacement(text = validUser.email)
         testRule.onNodeWithTag(testTag = TestTagPasswordField)
             .performTextReplacement(text = validPassword)
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.login)).performClick()

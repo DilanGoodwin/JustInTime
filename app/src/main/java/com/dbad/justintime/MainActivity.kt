@@ -14,7 +14,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.dbad.justintime.f_local_datastore.data.repository.UserPreferencesRepositoryImplementation
 import com.dbad.justintime.f_login_register.presentation.login.LoginScreen
 import com.dbad.justintime.f_login_register.presentation.login.LoginViewModel
 import com.dbad.justintime.f_login_register.presentation.register.RegisterScreen
@@ -23,9 +22,9 @@ import com.dbad.justintime.f_login_register.presentation.user_details.ExtraRegis
 import com.dbad.justintime.f_login_register.presentation.user_details.UserDetailsViewModel
 import com.dbad.justintime.f_profile.presentation.profile.ProfileScreen
 import com.dbad.justintime.f_profile.presentation.profile.ProfileViewModel
+import com.dbad.justintime.f_user_auth.data.data_source.UserAuthConnection
+import com.dbad.justintime.f_user_auth.domain.repository.AuthRepo
 import com.dbad.justintime.ui.theme.JustInTimeTheme
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
 
 class MainActivity : ComponentActivity() {
@@ -38,14 +37,10 @@ class MainActivity : ComponentActivity() {
 
                     val navController = rememberNavController()
 
-                    val userPreferences = UserPreferencesRepositoryImplementation(this)
-
-                    val storedLoginState = userPreferences.tokenFlow
+                    val authenticated: AuthRepo = UserAuthConnection()
+//                    authenticated.signOut()
                     val startingPosition =
-                        runBlocking {
-//                            userPreferences.clearLoginToken()
-                            if (storedLoginState.first() != "") ProfileScreen else LoginNav
-                        }
+                        if (authenticated.authState.value!!) ProfileScreen else LoginNav
 
                     NavHost(navController = navController, startDestination = startingPosition) {
 
@@ -57,13 +52,15 @@ class MainActivity : ComponentActivity() {
                                     viewModel = viewModel<LoginViewModel>(
                                         factory = LoginViewModel.generateViewModel(
                                             useCases = loginRegisterUseCases,
-                                            preferencesDataStore = userPreferences
+                                            authUser = authenticated
                                         )
                                     ),
                                     onRegistration = {
                                         navController.navigate(route = RegistrationNav)
                                     },
-                                    onLogin = { navController.navigate(route = ProfileScreen) },
+                                    onLogin = {
+                                        navController.navigate(route = ProfileScreen)
+                                    },
                                     modifier = Modifier.padding(paddingValues = innerPadding)
                                 )
                             }
@@ -71,7 +68,12 @@ class MainActivity : ComponentActivity() {
                             navigation<RegistrationNav>(startDestination = RegisterScreen) {
                                 composable<RegisterScreen> {
                                     RegisterScreen(
-                                        viewModel = RegisterViewModel(useCases = loginRegisterUseCases),
+                                        viewModel = viewModel<RegisterViewModel>(
+                                            factory = RegisterViewModel.generateViewModel(
+                                                useCases = loginRegisterUseCases,
+                                                authUser = authenticated
+                                            )
+                                        ),
                                         onCancelRegistration = {
                                             navController.navigate(route = LoginScreen)
                                         },
@@ -87,9 +89,10 @@ class MainActivity : ComponentActivity() {
                                 composable<UserDetailsInformation> {
                                     val args = it.toRoute<UserDetailsInformation>()
                                     ExtraRegistrationDetails(
-                                        viewModel = UserDetailsViewModel(
-                                            useCases = loginRegisterUseCases,
-                                            preferencesDataStore = userPreferences
+                                        viewModel = viewModel<UserDetailsViewModel>(
+                                            factory = UserDetailsViewModel.generateViewModel(
+                                                useCases = loginRegisterUseCases
+                                            )
                                         ),
                                         onCancelUserDetails = {
                                             navController.navigate(route = LoginNav)
@@ -110,7 +113,7 @@ class MainActivity : ComponentActivity() {
                                 viewModel = viewModel<ProfileViewModel>(
                                     factory = ProfileViewModel.generateViewModel(
                                         useCases = App.profile.useCases,
-                                        preferencesDataStore = userPreferences
+                                        authUser = authenticated
                                     )
                                 )
                             )

@@ -11,6 +11,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextReplacement
 import com.dbad.justintime.R
+import com.dbad.justintime.core.AuthTestingRepo
 import com.dbad.justintime.core.presentation.util.TestTagEmailField
 import com.dbad.justintime.core.presentation.util.TestTagEmergencyContactExpandableField
 import com.dbad.justintime.core.presentation.util.TestTagNameField
@@ -38,8 +39,11 @@ class RegisterSecondaryScreenTestingUI {
     @get:Rule
     val testRule = createAndroidComposeRule<ComponentActivity>()
 
+    private val validUser: User = User(
+        uid = User.generateUid(email = "daniel@justintime.com"),
+        email = "daniel@justintime.com"
+    )
     private val name: String = "Daniel"
-    private val validEmail: String = "daniel@justintime.com"
     private val validPassword: String = "MyP@ssw0rds"
     private val validPhoneNumb: String = "07665599200"
     private val emergencyContactTests: EmergencyContactAreaTests =
@@ -49,22 +53,20 @@ class RegisterSecondaryScreenTestingUI {
     private val users: List<User> = listOf(
         User(
             uid = User.generateUid(email = "testing@testing.com"),
-            email = "testing@testing.com",
-            password = User.hashPassword(validPassword)
+            email = "testing@testing.com"
         ),
         User(
             uid = User.generateUid(email = "test.test@test.com"),
-            email = "test.test@test.com",
-            password = User.hashPassword(validPassword)
+            email = "test.test@test.com"
         ),
-        User(uid = User.generateUid(email = validEmail), email = validEmail)
+        validUser
     )
 
     private fun navigateToUserDetails() {
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
             .performClick()
         testRule.onNodeWithTag(testTag = TestTagEmailField)
-            .performTextReplacement(text = validEmail)
+            .performTextReplacement(text = validUser.email)
         testRule.onNodeWithTag(testTag = TestTagPasswordField)
             .performTextReplacement(text = validPassword)
         testRule.onNodeWithTag(testTag = TestTagPasswordMatchField)
@@ -82,7 +84,12 @@ class RegisterSecondaryScreenTestingUI {
             ),
             emergencyContact = listOf(EmergencyContact(uid = "TmpEmergencyContact"))
         )
-        testRule.setContent { LoginTestingNavController(useCases = useCases) }
+        testRule.setContent {
+            LoginTestingNavController(
+                useCases = useCases,
+                authUser = AuthTestingRepo(user = validUser)
+            )
+        }
         navigateToUserDetails()
     }
 
@@ -118,7 +125,7 @@ class RegisterSecondaryScreenTestingUI {
             testRule = testRule,
             name = name,
             phone = validPhoneNumb,
-            email = validEmail
+            email = validUser.email
         )
 
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.cancel))

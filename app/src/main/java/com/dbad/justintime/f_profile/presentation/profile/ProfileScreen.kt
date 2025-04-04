@@ -13,11 +13,15 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
@@ -36,7 +40,6 @@ import com.dbad.justintime.core.presentation.util.DateSelectorField
 import com.dbad.justintime.core.presentation.util.ExpandableCardArea
 import com.dbad.justintime.core.presentation.util.LabelledTextDropDownFields
 import com.dbad.justintime.core.presentation.util.LabelledTextInputFields
-import com.dbad.justintime.core.presentation.util.PasswordField
 import com.dbad.justintime.core.presentation.util.PreferredContactField
 import com.dbad.justintime.core.presentation.util.RelationField
 import com.dbad.justintime.core.presentation.util.TestTagCompanyInformationCompanyNameField
@@ -47,10 +50,6 @@ import com.dbad.justintime.core.presentation.util.TestTagCompanyInformationRole
 import com.dbad.justintime.core.presentation.util.TestTagEmailField
 import com.dbad.justintime.core.presentation.util.TestTagEmergencyContactExpandableField
 import com.dbad.justintime.core.presentation.util.TestTagNameField
-import com.dbad.justintime.core.presentation.util.TestTagOldPasswordField
-import com.dbad.justintime.core.presentation.util.TestTagPasswordChangeExpandableField
-import com.dbad.justintime.core.presentation.util.TestTagPasswordField
-import com.dbad.justintime.core.presentation.util.TestTagPasswordMatchField
 import com.dbad.justintime.core.presentation.util.TestTagPhoneNumberField
 import com.dbad.justintime.core.presentation.util.TestTagPreferredName
 import com.dbad.justintime.core.presentation.util.TestTagProfileSaveButton
@@ -70,7 +69,6 @@ fun ProfileScreen(viewModel: ProfileViewModel) {
         state = state,
         onEvent = viewModel::onEvent,
         userEvent = viewModel::onUserEvent,
-        passwordEvent = viewModel::onPasswordEvent,
         emergencyContactEvent = viewModel::onEmergencyContactEvent,
         companyEvents = viewModel::onCompanyEvent
     )
@@ -81,12 +79,11 @@ fun ProfileScreen(
     state: ProfileState,
     onEvent: (ProfileEvent) -> Unit,
     userEvent: (ProfileUserEvents) -> Unit,
-    passwordEvent: (ProfilePasswordEvents) -> Unit,
     emergencyContactEvent: (ProfileEmergencyContactEvents) -> Unit,
     companyEvents: (ProfileCompanyEvents) -> Unit
 ) {
     Scaffold(
-        topBar = { ProfileTopBar() },
+        topBar = { ProfileTopBar(onEvent = onEvent) },
         floatingActionButton = {
             if (state.changeMade) {
                 SmallFloatingActionButton(
@@ -120,9 +117,6 @@ fun ProfileScreen(
                 // Emergency Contact Area
                 EmergencyContactArea(state = state, onEvent = emergencyContactEvent)
 
-                // Password Change Field
-                PasswordUpdateFields(state = state, onEvent = passwordEvent)
-
                 // Company Information
                 CompanyInformationArea(state = state, onEvent = companyEvents)
             }
@@ -132,9 +126,19 @@ fun ProfileScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileTopBar() {
+fun ProfileTopBar(onEvent: (ProfileEvent) -> Unit) {
     CenterAlignedTopAppBar(
         title = { Text(text = stringResource(R.string.profile)) },
+        actions = {
+            IconButton(
+                onClick = { onEvent(ProfileEvent.SignOut) }
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Cancel,
+                    contentDescription = ""//TODO
+                )
+            }
+        },
         modifier = Modifier.fillMaxWidth()
     )
 }
@@ -209,55 +213,6 @@ fun UserUpdateFields(
             expandDropDown = state.expandPrefContactMethod,
             dropDownToggle = { onEvent(ProfileUserEvents.TogglePrefContactDropDown) },
             selectContactMethod = { onEvent(ProfileUserEvents.SetPrefContactMethod(it)) }
-        )
-    }
-}
-
-@Composable
-fun PasswordUpdateFields(
-    state: ProfileState,
-    onEvent: (ProfilePasswordEvents) -> Unit
-) {
-    ExpandableCardArea(
-        isExpanded = state.expandPasswordArea,
-        expandableButtonClick = { onEvent(ProfilePasswordEvents.ToggleExpandableArea) },
-        cardTitle = stringResource(R.string.passwordChangeFields),
-        testTag = TestTagPasswordChangeExpandableField
-    ) {
-        // Old Password
-        PasswordField(
-            currentValue = state.oldPassword,
-            placeHolderText = stringResource(R.string.oldPassword),
-            showPassword = state.oldPasswordView,
-            textFieldError = state.oldPasswordShowError,
-            errorString = stringResource(R.string.passwordDoNotMatch),
-            onValueChange = { onEvent(ProfilePasswordEvents.OldPasswordInput(oldPassword = it)) },
-            visiblePassword = { onEvent(ProfilePasswordEvents.ToggleOldPasswordView) },
-            testingTag = TestTagOldPasswordField
-        )
-
-        // New Password
-        PasswordField(
-            currentValue = state.newPassword,
-            placeHolderText = stringResource(R.string.newPassword),
-            showPassword = state.newPasswordView,
-            textFieldError = state.newPasswordShowError,
-            errorString = stringResource(state.newPasswordErrorString.errorCode),
-            onValueChange = { onEvent(ProfilePasswordEvents.NewPasswordInput(newPassword = it)) },
-            visiblePassword = { onEvent(ProfilePasswordEvents.ToggleNewPasswordView) },
-            testingTag = TestTagPasswordField
-        )
-
-        // New Password Match
-        PasswordField(
-            currentValue = state.newMatchPassword,
-            placeHolderText = stringResource(R.string.reEnterNewPassword),
-            showPassword = state.newMatchPasswordView,
-            textFieldError = state.newMatchPasswordShowError,
-            errorString = stringResource(R.string.passwordDoNotMatch),
-            onValueChange = { onEvent(ProfilePasswordEvents.NewPasswordMatchInput(newPassword = it)) },
-            visiblePassword = { onEvent(ProfilePasswordEvents.ToggleNewPasswordMatchView) },
-            testingTag = TestTagPasswordMatchField
         )
     }
 }
@@ -427,7 +382,6 @@ fun ProfileScreenPreview() {
             state = ProfileState(),
             onEvent = {},
             userEvent = {},
-            passwordEvent = {},
             emergencyContactEvent = {},
             companyEvents = {}
         )
@@ -439,16 +393,6 @@ fun ProfileScreenPreview() {
 fun ProfileScreenUserInformationPreview() {
     JustInTimeTheme {
         UserUpdateFields(state = ProfileState(), onEvent = {})
-    }
-}
-
-@ViewingSystemThemes
-@Composable
-fun ProfileScreenPasswordChangePreview() {
-    JustInTimeTheme {
-        PasswordUpdateFields(
-            state = ProfileState(expandPasswordArea = true),
-            onEvent = {})
     }
 }
 

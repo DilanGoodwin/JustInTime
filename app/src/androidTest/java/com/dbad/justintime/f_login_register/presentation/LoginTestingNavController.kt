@@ -13,7 +13,6 @@ import com.dbad.justintime.core.domain.use_case.ValidateDate
 import com.dbad.justintime.core.domain.use_case.ValidateEmail
 import com.dbad.justintime.core.domain.use_case.ValidatePassword
 import com.dbad.justintime.core.domain.use_case.ValidatePhoneNumber
-import com.dbad.justintime.f_local_datastore.domain.repository.UserPreferencesRepository
 import com.dbad.justintime.f_login_register.data.ProfileRepositoryTestingImplementation
 import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
 import com.dbad.justintime.f_login_register.presentation.login.LoginScreen
@@ -32,12 +31,12 @@ import com.dbad.justintime.f_profile.domain.use_case.UpsertEmployee
 import com.dbad.justintime.f_profile.domain.use_case.UpsertUser
 import com.dbad.justintime.f_profile.presentation.profile.ProfileScreen
 import com.dbad.justintime.f_profile.presentation.profile.ProfileViewModel
-import com.dbad.justintime.util.UserPreferencesTestingImplementation
+import com.dbad.justintime.f_user_auth.domain.repository.AuthRepo
 
 @Composable
 fun LoginTestingNavController(
+    authUser: AuthRepo,
     useCases: UserUseCases,
-    userPreferencesStore: UserPreferencesRepository = UserPreferencesTestingImplementation(),
     dateOfBirth: String = ""
 ) {
     val navControl = rememberNavController()
@@ -47,7 +46,7 @@ fun LoginTestingNavController(
             LoginScreen(
                 viewModel = LoginViewModel(
                     useCases = useCases,
-                    preferencesDataStore = userPreferencesStore
+                    authUser = authUser
                 ),
                 onRegistration = {
                     navControl.navigate(route = RegisterScreenRoute)
@@ -56,7 +55,10 @@ fun LoginTestingNavController(
             )
         }
         composable<RegisterScreenRoute> {
-            val registerViewModel = RegisterViewModel(useCases = useCases)
+            val registerViewModel = RegisterViewModel(
+                useCases = useCases,
+                authUser = authUser
+            )
             RegisterScreen(
                 viewModel = registerViewModel,
                 onCancelRegistration = { navControl.navigate(route = LoginScreenRoute) },
@@ -68,8 +70,7 @@ fun LoginTestingNavController(
         composable<UserDetailsRoute> {
             val args = it.toRoute<UserDetailsRoute>()
             val viewModel = UserDetailsViewModel(
-                useCases = useCases,
-                preferencesDataStore = userPreferencesStore
+                useCases = useCases
             )
 
             viewModel.onEvent(UserDetailsEvents.SetDateOfBirth(dateOfBirth = dateOfBirth))
@@ -102,7 +103,7 @@ fun LoginTestingNavController(
             ProfileScreen(
                 viewModel = ProfileViewModel(
                     useCases = profileUseCases,
-                    preferencesDataStore = userPreferencesStore
+                    authUser = authUser
                 )
             )
         }

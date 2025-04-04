@@ -2,9 +2,9 @@ package com.dbad.justintime.f_login_register.presentation.user_details
 
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.dbad.justintime.core.presentation.util.DATE_FORMATTER
-import com.dbad.justintime.f_local_datastore.domain.repository.UserPreferencesRepository
 import com.dbad.justintime.f_local_users_db.domain.model.EmergencyContact
 import com.dbad.justintime.f_local_users_db.domain.model.Employee
 import com.dbad.justintime.f_local_users_db.domain.model.User
@@ -19,10 +19,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Date
 
-class UserDetailsViewModel(
-    private val useCases: UserUseCases,
-    private val preferencesDataStore: UserPreferencesRepository
-) : ViewModel() {
+class UserDetailsViewModel(private val useCases: UserUseCases) : ViewModel() {
     private val _state = MutableStateFlow(UserDetailsState())
     val state = _state.stateIn(
         viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000L),
@@ -116,7 +113,11 @@ class UserDetailsViewModel(
             }
 
             // Buttons
-            UserDetailsEvents.CancelEvent -> _state.value.cancelEvent()
+            UserDetailsEvents.CancelEvent -> {
+                // TODO delete auth token from remote server as information not completed
+                _state.value.cancelEvent()
+            }
+
             UserDetailsEvents.RegisterEvent -> {
                 if (_state.value.name.isBlank()) _state.update { it.copy(showNameFieldError = true) }
                 if (_state.value.emergencyContactName.isBlank()) _state.update {
@@ -134,8 +135,7 @@ class UserDetailsViewModel(
                             _state.value.showEmergencyContactPhoneError ||
                             _state.value.showEmergencyContactEmailError)
                 ) {
-                    viewModelScope.launch { createUser() }
-                    _state.value.registerEvent()
+                    createUser()
                 }
             }
         }
@@ -177,7 +177,7 @@ class UserDetailsViewModel(
         _state.update { it.copy(showEmergencyContactPhoneError = error) }
     }
 
-    private suspend fun createUser() {
+    private fun createUser() {
         val employeeKey = Employee.generateUid(
             userUid = _state.value.userUid,
             name = _state.value.name,
@@ -189,7 +189,9 @@ class UserDetailsViewModel(
             email = _state.value.emergencyContactEmail,
             employeeUid = employeeKey
         )
+
         val emergencyContact = EmergencyContact(
+            uid = emergencyContactKey,
             name = _state.value.emergencyContactName,
             preferredName = _state.value.emergencyContactPrefName,
             email = _state.value.emergencyContactEmail,
@@ -205,7 +207,6 @@ class UserDetailsViewModel(
                 _state.value.emergencyContactRelation
             }
         )
-        useCases.upsertEmergencyContact(emergencyContact = emergencyContact)
 
         // Create Employee Store
         val employee = Employee(
@@ -221,20 +222,34 @@ class UserDetailsViewModel(
             dateOfBirth = _state.value.userDateOfBirth,
             emergencyContact = emergencyContactKey
         )
-        useCases.upsertEmployee(employee = employee)
 
-        // Grab User Information & Update
-        val user = useCases.getUser(User(uid = _state.value.userUid)).first()
-        useCases.upsertUser(
-            User(
-                uid = _state.value.userUid,
-                email = user.email,
-                password = user.password,
-                employee = employeeKey
+        viewModelScope.launch {
+            useCases.upsertEmergencyContact(emergencyContact = emergencyContact)
+            useCases.upsertEmployee(employee = employee)
+
+            // Grab User Information & Update
+            val user = useCases.getUser(User(uid = _state.value.userUid)).first()
+            useCases.upsertUser(
+                User(
+                    uid = _state.value.userUid,
+                    email = user.email,
+                    employee = employeeKey
+                )
             )
-        )
+        }
 
-        // Store the generated uid within the local datastore on device
-        preferencesDataStore.updateLoginToken(token = _state.value.userUid)
+        _state.value.registerEvent()
+    }
+
+    companion object {
+        fun generateViewModel(
+            useCases: UserUseCases
+        ): ViewModelProvider.Factory {
+            return object : ViewModelProvider.Factory {
+                override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                    return UserDetailsViewModel(useCases = useCases) as T
+                }
+            }
+        }
     }
 }

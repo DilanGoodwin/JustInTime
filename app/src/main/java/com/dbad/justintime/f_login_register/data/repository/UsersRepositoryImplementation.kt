@@ -18,8 +18,8 @@ class UsersRepositoryImplementation(
     }
 
     override suspend fun upsertUser(user: User) {
-        dataStore.upsertUser(user = user)
         localDatabase.upsertUser(user = user)
+        dataStore.upsertUser(user = user)
     }
 
     override suspend fun getEmployee(employee: Employee): Flow<Employee> {
@@ -27,8 +27,8 @@ class UsersRepositoryImplementation(
     }
 
     override suspend fun upsertEmployee(employee: Employee) {
-        dataStore.upsertEmployee(employee = employee)
         localDatabase.upsertEmployee(employee = employee)
+        dataStore.upsertEmployee(employee = employee)
     }
 
     override suspend fun getEmergencyContact(emergencyContact: EmergencyContact): Flow<EmergencyContact> {
@@ -36,8 +36,8 @@ class UsersRepositoryImplementation(
     }
 
     override suspend fun upsertEmergencyContact(contact: EmergencyContact) {
-        dataStore.upsertEmergencyContact(emergencyContact = contact)
         localDatabase.upsertEmergencyContact(emergencyContact = contact)
+        dataStore.upsertEmergencyContact(emergencyContact = contact)
     }
 
     override suspend fun updateLocalDatabase(

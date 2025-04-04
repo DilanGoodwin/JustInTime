@@ -37,8 +37,7 @@ class UsersRepositoryTestingImplementation(
         currentUsers.add(
             User(
                 uid = user.uid,
-                email = user.email,
-                password = user.password
+                email = user.email
             )
         )
         _usersList.value = currentUsers.toList()
