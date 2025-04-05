@@ -14,7 +14,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Approval
 import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -22,6 +24,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
@@ -62,12 +66,20 @@ import com.dbad.justintime.f_local_users_db.domain.model.util.Relation
 import com.dbad.justintime.ui.theme.JustInTimeTheme
 
 @Composable
-fun ProfileScreen(viewModel: ProfileViewModel) {
+fun ProfileScreen(
+    viewModel: ProfileViewModel,
+    onSignOut: () -> Unit,
+    onNavShiftView: () -> Unit
+) {
     val state by viewModel.state.collectAsState()
+
+    val event = viewModel::onEvent
+    event(ProfileEvent.SetSignOutEvent(onSignOut))
+    event(ProfileEvent.SetShiftNavEvent(onNavShiftView))
 
     ProfileScreen(
         state = state,
-        onEvent = viewModel::onEvent,
+        onEvent = event,
         userEvent = viewModel::onUserEvent,
         emergencyContactEvent = viewModel::onEmergencyContactEvent,
         companyEvents = viewModel::onCompanyEvent
@@ -84,6 +96,7 @@ fun ProfileScreen(
 ) {
     Scaffold(
         topBar = { ProfileTopBar(onEvent = onEvent) },
+        bottomBar = { BottomNavBar(onEvent = onEvent) },
         floatingActionButton = {
             if (state.changeMade) {
                 SmallFloatingActionButton(
@@ -121,6 +134,24 @@ fun ProfileScreen(
                 CompanyInformationArea(state = state, onEvent = companyEvents)
             }
         }
+    }
+}
+
+@Composable
+fun BottomNavBar(onEvent: (ProfileEvent) -> Unit) {
+    NavigationBar() {
+        NavigationBarItem(
+            selected = false,
+            onClick = { onEvent(ProfileEvent.NavigateToShiftView) },
+            icon = { Icon(imageVector = Icons.Filled.DateRange, contentDescription = "") },
+            label = {}
+        )
+        NavigationBarItem(
+            selected = true,
+            onClick = {},
+            icon = { Icon(imageVector = Icons.Filled.Approval, contentDescription = "") },
+            label = {}
+        )
     }
 }
 

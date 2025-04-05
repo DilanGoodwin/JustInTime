@@ -59,7 +59,7 @@ class MainActivity : ComponentActivity() {
                                         navController.navigate(route = RegistrationNav)
                                     },
                                     onLogin = {
-                                        navController.navigate(route = ProfileScreen)
+                                        navController.navigate(route = ProfileNav)
                                     },
                                     modifier = Modifier.padding(paddingValues = innerPadding)
                                 )
@@ -98,7 +98,7 @@ class MainActivity : ComponentActivity() {
                                             navController.navigate(route = LoginNav)
                                         },
                                         onRegister = {
-                                            navController.navigate(route = ProfileScreen)
+                                            navController.navigate(route = ProfileNav)
                                         },
                                         userUid = args.userUid,
                                         modifier = Modifier.padding(
@@ -108,17 +108,21 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                         }
-                        composable<ProfileScreen> { //TODO move to separate nav window
-                            ProfileScreen(
-                                viewModel = viewModel<ProfileViewModel>(
-                                    factory = ProfileViewModel.generateViewModel(
-                                        useCases = App.profile.useCases,
-                                        authUser = authenticated
-                                    )
-                                )
-                            )
-                        }
 
+                        navigation<ProfileNav>(startDestination = ProfileScreen) {
+                            composable<ProfileScreen> {
+                                ProfileScreen(
+                                    viewModel = viewModel<ProfileViewModel>(
+                                        factory = ProfileViewModel.generateViewModel(
+                                            useCases = App.profile.useCases,
+                                            authUser = authenticated
+                                        )
+                                    ),
+                                    onSignOut = { navController.navigate(route = LoginNav) },
+                                    onNavShiftView = {}
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -135,9 +139,6 @@ object LoginNav
 object RegistrationNav
 
 @Serializable
-object MainApplication
-
-@Serializable
 object LoginScreen
 
 @Serializable
@@ -145,6 +146,9 @@ object RegisterScreen
 
 @Serializable
 data class UserDetailsInformation(val userUid: String)
+
+@Serializable
+object ProfileNav
 
 @Serializable
 object ProfileScreen

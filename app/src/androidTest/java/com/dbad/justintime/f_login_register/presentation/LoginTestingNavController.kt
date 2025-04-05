@@ -104,7 +104,9 @@ fun LoginTestingNavController(
                 viewModel = ProfileViewModel(
                     useCases = profileUseCases,
                     authUser = authUser
-                )
+                ),
+                onSignOut = {},
+                onNavShiftView = {}
             )
         }
     }

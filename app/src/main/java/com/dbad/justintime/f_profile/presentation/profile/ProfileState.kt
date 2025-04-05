@@ -6,6 +6,8 @@ import com.dbad.justintime.f_local_users_db.domain.model.User
 import com.dbad.justintime.f_login_register.domain.util.PasswordErrors
 
 data class ProfileState(
+    val onSignOut: () -> Unit = {},
+    val onShiftNav: () -> Unit = {},
     val changeMade: Boolean = false,
 
     // User Name States

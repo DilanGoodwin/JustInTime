@@ -52,27 +52,26 @@ class ProfileViewModel(
      * Helper function pulling data from the local database into the ViewModel on start
      */
     fun loadInitialData() {
-        viewModelScope.launch {
-            var loadAttempts = 0
+        var loadAttempts = 0
 
+        /**
+         * During AndroidTests the SecretKeySpec fails due to not being part of the API
+         * Implementation to stop the tests crashing
+         */
+        val userUid = if (!authUser.testingMode) {
+            User.generateUid(email = authUser.getEmail())
+        } else {
+            "rL7Zg5ur9L8iYeq4U3KnF4X8BHX7EYaCQcEYTJI1rU="
+        }
+
+        viewModelScope.launch {
             while (loadAttempts < 3) {
                 delay(timeMillis = 1000L)
-
-                /**
-                 * During AndroidTests the SecretKeySpec fails due to not being part of the API
-                 * Implementation to stop the tests crashing
-                 */
-                val userUid = if (!authUser.testingMode) {
-                    User.generateUid(email = authUser.getEmail())
-                } else {
-                    "rL7Zg5ur9L8iYeq4U3KnF4X8BHX7EYaCQcEYTJI1rU="
-                }
 
                 _user.value = useCases.getUser(user = User(uid = userUid))
 
                 try {
                     if (_user.value.uid.isNotEmpty() && _user.value.employee.isNotEmpty()) {
-                        Log.d("ViewModel", "Employee UID ${_user.value.employee}")
                         _employee.value =
                             useCases.getEmployee(employee = Employee(uid = _user.value.employee))
                         if (_employee.value.emergencyContact.isNotEmpty()) {
@@ -88,10 +87,15 @@ class ProfileViewModel(
                 loadAttempts++
             }
         }
+
+        if (loadAttempts >= 3) signOut()
     }
 
     fun onEvent(event: ProfileEvent) {
         when (event) {
+            is ProfileEvent.SetSignOutEvent -> _state.update { it.copy(onSignOut = event.signOut) }
+            is ProfileEvent.SetShiftNavEvent -> _state.update { it.copy(onShiftNav = event.shiftNav) }
+            ProfileEvent.NavigateToShiftView -> state.value.onShiftNav()
             ProfileEvent.SaveButton -> saveData()
             ProfileEvent.SignOut -> signOut()
         }
@@ -290,18 +294,6 @@ class ProfileViewModel(
         _state.update { it.copy(changeMade = true) }
     }
 
-    /**
-     * Check that the expected fields have been filled in before allowing the user to save the
-     * changes made to their password.
-     */
-    private fun checkPasswordChanges() {
-        if (_state.value.oldPassword.isNotBlank() &&
-            _state.value.newPassword.isNotBlank() &&
-            !_state.value.newPasswordShowError &&
-            !_state.value.newMatchPasswordShowError
-        ) _state.update { it.copy(changeMade = true) }
-    }
-
     private fun saveData() {
         _state.update {
             it.copy(
@@ -343,13 +335,21 @@ class ProfileViewModel(
         if (!(_state.value.userNameError ||
                     _state.value.userPhoneError ||
                     _state.value.dateOfBirthError)
-        ) viewModelScope.launch { useCases.upsertEmployee(employee = _employee.value) }
+        ) {
+            viewModelScope.launch { useCases.upsertEmployee(employee = _employee.value) }
+        } else {
+            toggleExpandableAreas(userInformation = true)
+        }
 
         // No EmergencyContact errors - update EmergencyContact info
         if (!(_state.value.emergencyContactNameError ||
                     _state.value.emergencyContactEmailError ||
                     _state.value.emergencyContactPhoneError)
-        ) viewModelScope.launch { useCases.upsertEmergencyContact(emergencyContact = _emergencyContact.value) }
+        ) {
+            viewModelScope.launch { useCases.upsertEmergencyContact(emergencyContact = _emergencyContact.value) }
+        } else {
+            toggleExpandableAreas(emergencyContact = true)
+        }
 
         _state.update { it.copy(changeMade = false) }
 
@@ -358,6 +358,9 @@ class ProfileViewModel(
 
     private fun signOut() {
         // TODO delete local database items
+
+        authUser.signOut()
+        state.value.onSignOut()
     }
 
     companion object {
