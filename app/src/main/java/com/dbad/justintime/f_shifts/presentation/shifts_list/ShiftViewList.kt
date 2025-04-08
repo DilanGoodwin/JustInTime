@@ -10,15 +10,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.dbad.justintime.R
 import com.dbad.justintime.core.presentation.util.LabelledTextInputFields
 import com.dbad.justintime.core.presentation.util.ViewingSystemThemes
 import com.dbad.justintime.ui.theme.JustInTimeTheme
@@ -29,10 +31,11 @@ fun ShiftListView() {
     Column() {
         Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
             Text(
-                text = "Events",
+                text = "Events", //TODO
                 textAlign = TextAlign.Center,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.SemiBold
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.primary,
             )
         }
         Column(
@@ -62,15 +65,15 @@ fun IndividualShift() {
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(space = 10.dp)) {
                 LabelledTextInputFields(
-                    currentValue = "",
-                    placeHolderText = "Location",
+                    currentValue = "", //TODO
+                    placeHolderText = stringResource(R.string.location),
                     onValueChange = {},
                     readOnly = true,
                     modifier = Modifier.fillMaxWidth(fraction = 0.5f)
                 )
                 LabelledTextInputFields(
-                    currentValue = "",
-                    placeHolderText = "Role",
+                    currentValue = "", //TODO
+                    placeHolderText = stringResource(R.string.role),
                     onValueChange = {},
                     readOnly = true,
                     modifier = Modifier.fillMaxWidth(fraction = 0.5f)
@@ -79,15 +82,15 @@ fun IndividualShift() {
 
             Column(verticalArrangement = Arrangement.spacedBy(space = 10.dp)) {
                 LabelledTextInputFields(
-                    currentValue = "",
-                    placeHolderText = "Date",
+                    currentValue = "", //TODO
+                    placeHolderText = stringResource(R.string.date),
                     onValueChange = {},
                     readOnly = true,
                     modifier = Modifier.fillMaxWidth()
                 )
                 LabelledTextInputFields(
-                    currentValue = "",
-                    placeHolderText = "Time",
+                    currentValue = "", //TODO
+                    placeHolderText = stringResource(R.string.time),
                     onValueChange = {},
                     readOnly = true,
                     modifier = Modifier.fillMaxWidth()
