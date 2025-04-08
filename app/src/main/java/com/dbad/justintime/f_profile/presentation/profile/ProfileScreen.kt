@@ -144,13 +144,13 @@ fun BottomNavBar(onEvent: (ProfileEvent) -> Unit) {
             selected = false,
             onClick = { onEvent(ProfileEvent.NavigateToShiftView) },
             icon = { Icon(imageVector = Icons.Filled.DateRange, contentDescription = "") },
-            label = {}
+            label = {} //TODO
         )
         NavigationBarItem(
             selected = true,
             onClick = {},
             icon = { Icon(imageVector = Icons.Filled.Approval, contentDescription = "") },
-            label = {}
+            label = { Text(text= stringResource(R.string.profile)) }
         )
     }
 }
@@ -160,7 +160,7 @@ fun BottomNavBar(onEvent: (ProfileEvent) -> Unit) {
 fun ProfileTopBar(onEvent: (ProfileEvent) -> Unit) {
     CenterAlignedTopAppBar(
         title = { Text(text = stringResource(R.string.profile)) },
-        actions = {
+        navigationIcon = {
             IconButton(
                 onClick = { onEvent(ProfileEvent.SignOut) }
             ) {
