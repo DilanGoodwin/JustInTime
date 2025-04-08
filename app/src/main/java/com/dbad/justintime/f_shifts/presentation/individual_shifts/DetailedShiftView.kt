@@ -1,4 +1,4 @@
-package com.dbad.justintime.f_shifts.presentation.shifts_list
+package com.dbad.justintime.f_shifts.presentation.individual_shifts
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
