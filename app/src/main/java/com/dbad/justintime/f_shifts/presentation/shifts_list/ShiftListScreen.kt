@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -22,6 +21,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DateRangePicker
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -43,6 +43,9 @@ import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -56,32 +59,59 @@ import com.dbad.justintime.core.presentation.util.BackgroundOutlineWithButtons
 import com.dbad.justintime.core.presentation.util.DateSelectorField
 import com.dbad.justintime.core.presentation.util.LabelledTextDropDownFields
 import com.dbad.justintime.core.presentation.util.ViewingSystemThemes
+import com.dbad.justintime.core.presentation.util.formatDateToString
 import com.dbad.justintime.f_shifts.domain.model.ShiftEventTypes
+import com.dbad.justintime.f_shifts.presentation.calendar.CalendarView
+import com.dbad.justintime.f_shifts.presentation.individual_shifts.ShiftListView
 import com.dbad.justintime.ui.theme.JustInTimeTheme
-import java.util.Calendar
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+
+// Stateful
+@Composable
+fun ShiftListScreen(
+    viewModel: CalendarMainScreenViewModel,
+    onNavProfile: () -> Unit
+) {
+    val state by viewModel.state.collectAsState()
+
+    val event = viewModel::onEvent
+    event(CalendarMainScreenEvent.SetProfileNavMainScreenEvent(onNavProfile))
+
+    ShiftListScreen(state = state, onEvent = event)
+}
 
 // Stateless
 @Composable
-fun ShiftListScreen(state: CalendarState) {
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed) // TODO move into state
+fun ShiftListScreen(
+    state: CalendarMainScreenState,
+    onEvent: (CalendarMainScreenEvent) -> Unit
+) {
+    /*
+    This is so that the side draw can be opened and closed with an animation, when trying to do this
+    within the ViewModelScope the application crashes as the viewModel is attempting to change the
+    front-end without a recompilation being triggered.
+     */
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
 
     ModalNavigationDrawer(
-        drawerContent = { FilterDraw() },
+        drawerContent = { FilterDraw(state = state, onEvent = onEvent) },
         drawerState = drawerState,
-        gesturesEnabled = false
+        gesturesEnabled = true
     ) {
         Scaffold(
-            topBar = { ShiftTopAppBar() },
-            bottomBar = { ShiftBottomNavBar() },
+            topBar = { ShiftTopAppBar(scope = scope, drawerState = drawerState) },
+            bottomBar = { ShiftBottomNavBar(state = state) },
             floatingActionButton = {
-                SmallFloatingActionButton(onClick = {}) { //TODO
+                SmallFloatingActionButton(onClick = { onEvent(CalendarMainScreenEvent.ToggleNewMainScreenEventDialog) }) { //TODO
                     Icon(imageVector = Icons.Filled.Add, contentDescription = "")//TODO
+                    NewShiftEventDialogWindow(state = state, onEvent = onEvent)
                 }
             },
             floatingActionButtonPosition = FabPosition.End
         ) { innerPadding ->
             Column(modifier = Modifier.padding(innerPadding)) {
-                MonthTitleCard()
                 CalendarView()
                 Spacer(modifier = Modifier.height(height = 10.dp))
                 ShiftListView()
@@ -92,12 +122,15 @@ fun ShiftListScreen(state: CalendarState) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShiftTopAppBar() {
+fun ShiftTopAppBar(
+    scope: CoroutineScope,
+    drawerState: DrawerState
+) {
     CenterAlignedTopAppBar(
-        title = { Text(text = "Calendar") },
+        title = { Text(text = stringResource(R.string.calendar)) },
         navigationIcon = {
             // Side Menu for filters
-            IconButton(onClick = {}) { //TODO toggle draw open or close value
+            IconButton(onClick = { scope.launch { drawerState.open() } }) {
                 Icon(imageVector = Icons.Filled.Menu, contentDescription = "") //TODO
             }
         },
@@ -106,7 +139,7 @@ fun ShiftTopAppBar() {
 }
 
 @Composable
-fun ShiftBottomNavBar() {
+fun ShiftBottomNavBar(state: CalendarMainScreenState) {
     NavigationBar {
         // Calendar Page
         NavigationBarItem(
@@ -119,7 +152,7 @@ fun ShiftBottomNavBar() {
         // Profile Page
         NavigationBarItem(
             selected = false,
-            onClick = {}, //TODO
+            onClick = { state.navProfilePage() },
             icon = { Icon(imageVector = Icons.Filled.Approval, contentDescription = "") }, //TODO
             label = { Text(text = stringResource(R.string.profile)) }
         )
@@ -128,142 +161,202 @@ fun ShiftBottomNavBar() {
 
 // Side sheet for users to change what is being displayed on the screen
 @Composable
-fun FilterDraw() {
+fun FilterDraw(
+    state: CalendarMainScreenState,
+    onEvent: (CalendarMainScreenEvent) -> Unit
+) {
     ModalDrawerSheet {
         Column(
             modifier = Modifier
                 .padding(all = 10.dp)
                 .verticalScroll(state = rememberScrollState())
         ) {
-            Text(text = "Filters") // TODO possible filters should be an enum that we can iterate through
-            CreateCheckBox(checkVal = true, checkName = "Shifts") //TODO
-            CreateCheckBox(checkVal = true, checkName = "Holiday") //TODO
-            CreateCheckBox(checkVal = true, checkName = "Unavailability") //TODO
+            Text(text = stringResource(R.string.filters))
+            CreateCheckBox(
+                checkVal = state.shiftsCheck,
+                checkName = R.string.shifts,
+                onChange = { onEvent(CalendarMainScreenEvent.ToggleFilters(R.string.shifts)) })
+            CreateCheckBox(
+                checkVal = state.holidayCheck,
+                checkName = R.string.holiday,
+                onChange = { onEvent(CalendarMainScreenEvent.ToggleFilters(R.string.holiday)) })
+            CreateCheckBox(
+                checkVal = state.unavailabilityCheck,
+                checkName = R.string.unavailability,
+                onChange = { onEvent(CalendarMainScreenEvent.ToggleFilters(R.string.unavailability)) })
         }
     }
 }
 
 @Composable
-fun CreateCheckBox(checkVal: Boolean, checkName: String) {
+fun CreateCheckBox(
+    checkVal: Boolean,
+    checkName: Int,
+    onChange: () -> Unit
+) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        Checkbox(checked = checkVal, onCheckedChange = {}) //TODO
-        Text(text = checkName)
+        Checkbox(checked = checkVal, onCheckedChange = { onChange() })
+        Text(text = stringResource(checkName))
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NewShiftEventDialogWindow(state: CalendarState) {
-    Dialog(onDismissRequest = {}) { //TODO
-        Card(
-            shape = RoundedCornerShape(size = 8.dp),
-            modifier = Modifier
-                .width(width = 500.dp)
-                .height(height = 300.dp)
-        ) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(space = 5.dp),
-                modifier = Modifier.padding(all = 5.dp)
+fun NewShiftEventDialogWindow(
+    state: CalendarMainScreenState,
+    onEvent: (CalendarMainScreenEvent) -> Unit
+) {
+    if (state.showNewShiftEventDialog) {
+        Dialog(onDismissRequest = { onEvent(CalendarMainScreenEvent.ToggleNewMainScreenEventDialog) }) {
+            BackgroundOutlineWithButtons(
+                confirmButton = { onEvent(CalendarMainScreenEvent.ConfirmNewMainScreenEventDialog) },
+                cancelButton = { onEvent(CalendarMainScreenEvent.CancelNewMainScreenEventDialog) }
             ) {
-                LabelledTextDropDownFields(
-                    currentValue = stringResource(state.requestType.stringVal),
-                    placeHolderText = "Request Type",
-                    expandedDropDown = state.expandRequestTypeDropDown, //TODO
-                    dropDownToggle = {} //TODO
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(space = 5.dp),
+                    modifier = Modifier.padding(all = 5.dp)
                 ) {
-                    DropdownMenu(
-                        expanded = state.expandRequestTypeDropDown, //TODO
-                        onDismissRequest = {} //TODO
+                    Spacer(modifier = Modifier.height(height = 10.dp))
+
+                    LabelledTextDropDownFields(
+                        currentValue = stringResource(state.requestType.stringVal),
+                        placeHolderText = stringResource(R.string.request_type),
+                        expandedDropDown = state.expandRequestTypeDropDown,
+                        dropDownToggle = { onEvent(CalendarMainScreenEvent.ToggleRequestTypeDropDown) }
                     ) {
-                        for (type in ShiftEventTypes.entries) {
-                            DropdownMenuItem(
-                                text = { Text(text = stringResource(type.stringVal)) },
-                                onClick = {} //TODO
-                            )
+                        DropdownMenu(
+                            expanded = state.expandRequestTypeDropDown,
+                            onDismissRequest = { onEvent(CalendarMainScreenEvent.ToggleRequestTypeDropDown) }
+                        ) {
+                            for (type in ShiftEventTypes.entries) {
+                                if (type == ShiftEventTypes.SHIFTS) continue
+                                DropdownMenuItem(
+                                    text = { Text(text = stringResource(type.stringVal)) },
+                                    onClick = {
+                                        onEvent(
+                                            CalendarMainScreenEvent.SetRequestType(
+                                                requestType = type
+                                            )
+                                        )
+                                    }
+                                )
+                            }
                         }
                     }
-                }
 
-                DateSelectorField(
-                    currentValue = "", //TODO
-                    placeHolderText = "Date Range",
-                    toggleDatePicker = {}, //TODO
-                    dateError = false, //TODO
-                    modifier = Modifier
-                        .width(width = 400.dp)
-                        .height(height = 80.dp)
-                ) {
-                    DateTimeRangeSelectorDropDown(state = state)
-                }
+                    Spacer(modifier = Modifier.height(height = 10.dp))
 
-                TextField(
-                    value = "",
-                    placeholder = { Text(text = "Notes") }, //TODO
-                    onValueChange = {},
-                    maxLines = 5,
-                    modifier = Modifier
-                        .width(width = 400.dp)
-                        .height(height = 80.dp)
-                )
+                    DateSelectorField(
+                        currentValue = state.datePickerHeadlineVal,
+                        placeHolderText = stringResource(R.string.date_range),
+                        toggleDatePicker = { onEvent(CalendarMainScreenEvent.ToggleDateSelectorDropDown) },
+                        dateError = state.datePickerError,
+                        modifier = Modifier
+                            .width(width = 400.dp)
+                            .height(height = 80.dp)
+                    ) {
+                        DateTimeRangeSelectorDropDown(state = state, onEvent = onEvent)
+                    }
+
+                    TextField(
+                        value = state.newEventNotes,
+                        placeholder = { Text(text = stringResource(R.string.notes)) },
+                        onValueChange = { onEvent(CalendarMainScreenEvent.UpdateNotes(notes = it)) },
+                        maxLines = 5,
+                        modifier = Modifier
+                            .width(width = 400.dp)
+                            .height(height = 80.dp)
+                    )
+                }
             }
         }
     }
 }
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DateTimeRangeSelectorDropDown(state: CalendarState) {
+fun DateTimeRangeSelectorDropDown(
+    state: CalendarMainScreenState,
+    onEvent: (CalendarMainScreenEvent) -> Unit
+) {
     val dateState = rememberDateRangePickerState()
 
 
     if (state.showDateTimeRangePickers) {
         Popup(
-            onDismissRequest = {},
+            onDismissRequest = { onEvent(CalendarMainScreenEvent.ToggleDateSelectorDropDown) },
             alignment = Alignment.Center
         ) {
-            Card() {
+            Card {
+
+                // Selecting the date range the user is interested in submitting their request for
                 if (state.dateTimePickerState == 0) {
                     BackgroundOutlineWithButtons(
-                        confirmButton = {}, //TODO
-                        cancelButton = {} //TODO
+                        confirmButton = {
+                            onEvent(
+                                CalendarMainScreenEvent.ConfirmRangeDateSelector(
+                                    startDate = formatDateToString(dateLong = dateState.selectedStartDateMillis),
+                                    endDate = formatDateToString(dateLong = dateState.selectedEndDateMillis)
+                                )
+                            )
+                        },
+                        cancelButton = { onEvent(CalendarMainScreenEvent.CancelDateSelectorDialog) }
                     ) {
                         DateRangePicker(
                             state = dateState,
-                            title = {},
-                            headline = { Text(text = stringResource(state.datePickerHeadlineVal)) }
+                            title = {}, // Want the title to be left blank but has a default value if not specified
+                            headline = { Text(text = state.datePickerHeadlineVal) }
                         )
                     }
                 }
 
+                // Selecting start time user submitted request
                 if (state.dateTimePickerState == 1) {
+                    val startTimePickerState = TimePickerState(
+                        initialHour = state.timeRequestStartHour,
+                        initialMinute = state.timeRequestStartMinute,
+                        is24Hour = true
+                    )
+
                     BackgroundOutlineWithButtons(
-                        confirmButton = {}, //TODO
-                        cancelButton = {} //TODO
+                        confirmButton = {
+                            onEvent(
+                                CalendarMainScreenEvent.ConfirmStartTimeSelector(
+                                    hour = startTimePickerState.hour,
+                                    minute = startTimePickerState.minute
+                                )
+                            )
+                        },
+                        cancelButton = { onEvent(CalendarMainScreenEvent.CancelDateSelectorDialog) }
                     ) {
                         TimeDialPicker(
                             title = stringResource(R.string.start_time),
-                            timeState = TimePickerState( //TODO
-                                initialHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY),
-                                initialMinute = Calendar.getInstance().get(Calendar.MINUTE),
-                                is24Hour = true
-                            )
+                            timeState = startTimePickerState
                         )
                     }
                 }
 
+                // Selecting end time user submitted request
                 if (state.dateTimePickerState == 2) {
+                    val endTimePickerState = TimePickerState(
+                        initialHour = state.timeRequestEndHour,
+                        initialMinute = state.timeRequestEndMinute,
+                        is24Hour = true
+                    )
                     BackgroundOutlineWithButtons(
-                        confirmButton = {}, //TODO
-                        cancelButton = {} //TODO
+                        confirmButton = {
+                            onEvent(
+                                CalendarMainScreenEvent.ConfirmEndTimeSelector(
+                                    hour = endTimePickerState.hour,
+                                    minute = endTimePickerState.minute
+                                )
+                            )
+                        },
+                        cancelButton = { onEvent(CalendarMainScreenEvent.CancelDateSelectorDialog) }
                     ) {
                         TimeDialPicker(
                             title = stringResource(R.string.end_time),
-                            timeState = TimePickerState( //TODO
-                                initialHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY),
-                                initialMinute = Calendar.getInstance().get(Calendar.MINUTE),
-                                is24Hour = true
-                            )
+                            timeState = endTimePickerState
                         )
                     }
                 }
@@ -299,22 +392,36 @@ fun TimeDialPicker(
     }
 }
 
+/*
+    Previews ---------------------------
+ */
+
 @ViewingSystemThemes
 @Composable
 fun PreviewShiftListScreen() {
-    JustInTimeTheme { ShiftListScreen(state = CalendarState()) }
+    JustInTimeTheme { ShiftListScreen(state = CalendarMainScreenState(), onEvent = {}) }
 }
 
 @ViewingSystemThemes
 @Composable
 fun PreviewNewShiftEvent() {
-    JustInTimeTheme { NewShiftEventDialogWindow(state = CalendarState()) }
+    JustInTimeTheme {
+        NewShiftEventDialogWindow(
+            state = CalendarMainScreenState(),
+            onEvent = {}
+        )
+    }
 }
 
 @ViewingSystemThemes
 @Composable
 fun PreviewNewShiftEvent_DatePicker() {
-    JustInTimeTheme { NewShiftEventDialogWindow(state = CalendarState(showDateTimeRangePickers = true)) }
+    JustInTimeTheme {
+        NewShiftEventDialogWindow(
+            state = CalendarMainScreenState(showDateTimeRangePickers = true),
+            onEvent = {}
+        )
+    }
 }
 
 @ViewingSystemThemes
@@ -322,10 +429,11 @@ fun PreviewNewShiftEvent_DatePicker() {
 fun PreviewNewShiftEvent_TimePicker() {
     JustInTimeTheme {
         NewShiftEventDialogWindow(
-            state = CalendarState(
+            state = CalendarMainScreenState(
                 showDateTimeRangePickers = true,
                 dateTimePickerState = 1
-            )
+            ),
+            onEvent = {}
         )
     }
 }

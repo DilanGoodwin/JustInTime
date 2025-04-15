@@ -22,6 +22,8 @@ import com.dbad.justintime.f_login_register.presentation.user_details.ExtraRegis
 import com.dbad.justintime.f_login_register.presentation.user_details.UserDetailsViewModel
 import com.dbad.justintime.f_profile.presentation.profile.ProfileScreen
 import com.dbad.justintime.f_profile.presentation.profile.ProfileViewModel
+import com.dbad.justintime.f_shifts.presentation.shifts_list.CalendarMainScreenViewModel
+import com.dbad.justintime.f_shifts.presentation.shifts_list.ShiftListScreen
 import com.dbad.justintime.f_user_auth.data.data_source.UserAuthConnection
 import com.dbad.justintime.f_user_auth.domain.repository.AuthRepo
 import com.dbad.justintime.ui.theme.JustInTimeTheme
@@ -40,7 +42,7 @@ class MainActivity : ComponentActivity() {
                     val authenticated: AuthRepo = UserAuthConnection()
 //                    authenticated.signOut()
                     val startingPosition =
-                        if (authenticated.authState.value!!) ProfileScreen else LoginNav
+                        if (authenticated.authState.value!!) ProfileNav else LoginNav
 
                     NavHost(navController = navController, startDestination = startingPosition) {
 
@@ -119,7 +121,18 @@ class MainActivity : ComponentActivity() {
                                         )
                                     ),
                                     onSignOut = { navController.navigate(route = LoginNav) },
-                                    onNavShiftView = {}
+                                    onNavShiftView = { navController.navigate(route = ShiftNav) }
+                                )
+                            }
+                        }
+
+                        navigation<ShiftNav>(startDestination = ShiftScreen) {
+                            composable<ShiftScreen> {
+                                ShiftListScreen(
+                                    viewModel = viewModel<CalendarMainScreenViewModel>(
+                                        factory = CalendarMainScreenViewModel.generateViewModel()
+                                    ),
+                                    onNavProfile = { navController.navigate(route = ProfileNav) }
                                 )
                             }
                         }
@@ -152,3 +165,9 @@ object ProfileNav
 
 @Serializable
 object ProfileScreen
+
+@Serializable
+object ShiftNav
+
+@Serializable
+object ShiftScreen

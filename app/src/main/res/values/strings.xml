@@ -87,11 +87,26 @@
     <string name="salary">Salary</string>
     <string name="contractor">Contractor</string>
 
+    <string name="calendar">Calendar</string>
+    <string name="request_type">Request Type</string>
+    <string name="date_range">Date Range</string>
+    <string name="filters">Filters</string>
+
     <!-- Shift Event Types -->
     <string name="holiday">Holiday</string>
     <string name="bereavement_leave">Bereavement Leave</string>
     <string name="unpaid_time_off">UnPaid Time Off</string>
     <string name="unavailability">Unavailability</string>
+    <string name="shifts">Shifts</string>
+
+    <!-- Days -->
+    <string name="mon">Mon</string>
+    <string name="tue">Tue</string>
+    <string name="wed">Wed</string>
+    <string name="thu">Thu</string>
+    <string name="fri">Fri</string>
+    <string name="sat">Sat</string>
+    <string name="sun">Sun</string>
 
     <string name="selectDate">Select A Date</string>
 
