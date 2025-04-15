@@ -26,6 +26,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,6 +34,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TimePickerState
@@ -122,8 +124,8 @@ fun LabelledTextDropDownFields(
     modifier: Modifier = Modifier,
     currentValue: String,
     placeHolderText: String,
-    testTag: String,
-    readOnly: Boolean,
+    testTag: String = "",
+    readOnly: Boolean = false,
     expandedDropDown: Boolean,
     dropDownToggle: () -> Unit,
     menu: @Composable () -> Unit
@@ -324,11 +326,10 @@ fun DropDownField(
 fun DateSelectorField(
     currentValue: String,
     placeHolderText: String,
-    showDatePicker: Boolean,
     toggleDatePicker: () -> Unit,
     dateError: Boolean,
-    saveSelectedDate: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    datePicker: @Composable () -> Unit,
 ) {
     TextField(
         value = currentValue,
@@ -345,10 +346,7 @@ fun DateSelectorField(
             ) {
                 Icon(imageVector = Icons.Default.DateRange, contentDescription = "")
                 //TODO - provide content description
-                DateSelectorDropDown(
-                    showDatePicker = showDatePicker,
-                    saveSelectedDate = saveSelectedDate
-                )
+                datePicker()
             }
         },
         isError = dateError,
@@ -538,6 +536,32 @@ fun ExpandableCardArea(
                 }
             }
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BackgroundOutlineWithButtons(
+    confirmButton: () -> Unit,
+    cancelButton: () -> Unit,
+    content: @Composable () -> Unit
+) {
+    /*
+    We are utilising the DatePickerDialog here as it creates its own outline area that we can
+    just place other items within. This prevents us from needing to create an entire card view
+    structure every single time we want to display something that does not have its own backing.
+
+    Currently wrapped within a secondary function as this is an experimental feature that may
+    be removed in a future release of the Material3 API. Wrapping in a secondary function allows
+    for all instances of the function to be updated at once should the API implementation change
+    affecting the application.
+     */
+    DatePickerDialog(
+        onDismissRequest = { cancelButton() },
+        confirmButton = { TextButton(onClick = { confirmButton() }) { Text(text = "Confirm") } },
+        dismissButton = { TextButton(onClick = { cancelButton() }) { Text(text = "Cancel") } }
+    ) {
+        content()
     }
 }
 

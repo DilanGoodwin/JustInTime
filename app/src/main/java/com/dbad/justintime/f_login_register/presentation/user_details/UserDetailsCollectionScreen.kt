@@ -21,6 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.dbad.justintime.R
+import com.dbad.justintime.core.presentation.util.DateSelectorDropDown
 import com.dbad.justintime.core.presentation.util.DateSelectorField
 import com.dbad.justintime.core.presentation.util.DualButtonFields
 import com.dbad.justintime.core.presentation.util.ExpandableCardArea
@@ -99,14 +100,17 @@ fun ExtraRegistrationDetails(
                     DateSelectorField(
                         currentValue = state.userDateOfBirth,
                         placeHolderText = stringResource(R.string.dateOfBirth),
-                        showDatePicker = state.showDatePicker,
                         toggleDatePicker = { onEvent(UserDetailsEvents.ToggleDatePicker) },
                         dateError = state.showDatePickerError,
-                        saveSelectedDate = { onEvent(UserDetailsEvents.SetDateOfBirth(it)) },
                         modifier = Modifier
                             .width(width = 400.dp)
                             .height(height = 80.dp)
-                    )
+                    ) {
+                        DateSelectorDropDown(
+                            showDatePicker = state.showDatePicker,
+                            saveSelectedDate = { onEvent(UserDetailsEvents.SetDateOfBirth(it)) }
+                        )
+                    }
 
                     // Phone Number Field
                     TextInputField(

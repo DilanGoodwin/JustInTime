@@ -40,6 +40,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.dbad.justintime.R
+import com.dbad.justintime.core.presentation.util.DateSelectorDropDown
 import com.dbad.justintime.core.presentation.util.DateSelectorField
 import com.dbad.justintime.core.presentation.util.ExpandableCardArea
 import com.dbad.justintime.core.presentation.util.LabelledTextDropDownFields
@@ -150,7 +151,7 @@ fun BottomNavBar(onEvent: (ProfileEvent) -> Unit) {
             selected = true,
             onClick = {},
             icon = { Icon(imageVector = Icons.Filled.Approval, contentDescription = "") },
-            label = { Text(text= stringResource(R.string.profile)) }
+            label = { Text(text = stringResource(R.string.profile)) }
         )
     }
 }
@@ -218,14 +219,17 @@ fun UserUpdateFields(
         DateSelectorField(
             currentValue = state.employee.dateOfBirth,
             placeHolderText = stringResource(R.string.dateOfBirth),
-            showDatePicker = state.showDateOfBirthPicker,
             toggleDatePicker = { onEvent(ProfileUserEvents.ToggleShowDatePicker) },
             dateError = state.dateOfBirthError,
-            saveSelectedDate = { onEvent(ProfileUserEvents.SetDateOfBirth(dateOfBirth = it)) },
             modifier = Modifier
                 .width(width = 400.dp)
                 .height(height = 80.dp)
-        )
+        ) {
+            DateSelectorDropDown(
+                showDatePicker = state.showDateOfBirthPicker,
+                saveSelectedDate = { onEvent(ProfileUserEvents.SetDateOfBirth(dateOfBirth = it)) }
+            )
+        }
 
         // Phone Number Field
         TextInputField(
