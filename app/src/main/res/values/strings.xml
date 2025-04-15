@@ -67,6 +67,8 @@
     <string name="location">Location</string>
     <string name="notes">Notes</string>
     <string name="edit">Edit</string>
+    <string name="start_time">Start Time</string>
+    <string name="end_time">End Time</string>
 
     <!-- Relation Values -->
     <string name="mother">Mother</string>
@@ -84,6 +86,14 @@
     <string name="part_time">Part-Time</string>
     <string name="salary">Salary</string>
     <string name="contractor">Contractor</string>
+
+    <!-- Shift Event Types -->
+    <string name="holiday">Holiday</string>
+    <string name="bereavement_leave">Bereavement Leave</string>
+    <string name="unpaid_time_off">UnPaid Time Off</string>
+    <string name="unavailability">Unavailability</string>
+
+    <string name="selectDate">Select A Date</string>
 
     <!-- Messages -->
     <string name="savingMessage">Saving Changes</string>

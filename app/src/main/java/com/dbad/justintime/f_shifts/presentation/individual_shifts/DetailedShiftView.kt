@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.dbad.justintime.R
+import com.dbad.justintime.core.presentation.util.DateSelectorDropDown
 import com.dbad.justintime.core.presentation.util.DateSelectorField
 import com.dbad.justintime.core.presentation.util.LabelledTextInputFields
 import com.dbad.justintime.core.presentation.util.TestTagCompanyInformationRole
@@ -66,14 +67,17 @@ fun DetailedShiftView(modifier: Modifier = Modifier) {
                     DateSelectorField(
                         currentValue = "", //TODO
                         placeHolderText = stringResource(R.string.date),
-                        showDatePicker = false, //TODO
                         toggleDatePicker = {}, //TODO
                         dateError = false, //TODO
-                        saveSelectedDate = {}, //TODO
                         modifier = Modifier
                             .width(width = 195.dp)
                             .height(height = 80.dp)
-                    )
+                    ) {
+                        DateSelectorDropDown(
+                            showDatePicker = false, //TODO
+                            saveSelectedDate = {} //TODO
+                        )
+                    }
 
                     TimeSelectionField(
                         currentValue = "", //TODO
