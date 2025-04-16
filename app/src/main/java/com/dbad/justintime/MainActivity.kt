@@ -22,7 +22,7 @@ import com.dbad.justintime.f_login_register.presentation.user_details.ExtraRegis
 import com.dbad.justintime.f_login_register.presentation.user_details.UserDetailsViewModel
 import com.dbad.justintime.f_profile.presentation.profile.ProfileScreen
 import com.dbad.justintime.f_profile.presentation.profile.ProfileViewModel
-import com.dbad.justintime.f_shifts.presentation.shifts_list.CalendarMainScreenViewModel
+import com.dbad.justintime.f_shifts.presentation.ShiftsViewModel
 import com.dbad.justintime.f_shifts.presentation.shifts_list.ShiftListScreen
 import com.dbad.justintime.f_user_auth.data.data_source.UserAuthConnection
 import com.dbad.justintime.f_user_auth.domain.repository.AuthRepo
@@ -42,7 +42,7 @@ class MainActivity : ComponentActivity() {
                     val authenticated: AuthRepo = UserAuthConnection()
 //                    authenticated.signOut()
                     val startingPosition =
-                        if (authenticated.authState.value!!) ProfileNav else LoginNav
+                        if (authenticated.authState.value!!) ShiftNav else LoginNav
 
                     NavHost(navController = navController, startDestination = startingPosition) {
 
@@ -129,8 +129,8 @@ class MainActivity : ComponentActivity() {
                         navigation<ShiftNav>(startDestination = ShiftScreen) {
                             composable<ShiftScreen> {
                                 ShiftListScreen(
-                                    viewModel = viewModel<CalendarMainScreenViewModel>(
-                                        factory = CalendarMainScreenViewModel.generateViewModel()
+                                    viewModel = viewModel<ShiftsViewModel>(
+                                        factory = ShiftsViewModel.generateViewModel()
                                     ),
                                     onNavProfile = { navController.navigate(route = ProfileNav) }
                                 )

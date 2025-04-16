@@ -2,7 +2,7 @@ package com.dbad.justintime.f_shifts.presentation.shifts_list
 
 import com.dbad.justintime.f_shifts.domain.model.ShiftEventTypes
 
-data class CalendarMainScreenState(
+data class ShiftsMainScreenState(
     val navProfilePage: () -> Unit = {},
 
     // Side Draw CheckBoxes

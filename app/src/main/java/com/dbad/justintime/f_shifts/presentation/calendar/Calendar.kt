@@ -1,6 +1,7 @@
 package com.dbad.justintime.f_shifts.presentation.calendar
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,21 +21,23 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.dbad.justintime.core.presentation.util.ViewingSystemThemes
-import com.dbad.justintime.f_shifts.domain.model.Days
 import com.dbad.justintime.ui.theme.JustInTimeTheme
+import java.time.DayOfWeek
+import java.time.Month
+import java.time.format.TextStyle
+import java.util.Locale
 
 @Composable
-fun CalendarView() {
+fun CalendarView(calendarState: CalendarState, calendarEvents: (CalendarEvents) -> Unit) {
     Column {
         // Month Title Section & Controls
         Row {
             // Go back a month
-            IconButton(onClick = {}) { //TODO
+            IconButton(onClick = { calendarEvents(CalendarEvents.MonthGoBack) }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                     contentDescription = "" //TODO
@@ -42,8 +45,14 @@ fun CalendarView() {
             }
 
             // Current Month
+            val currentMonthTextString = Month.of(calendarState.currentMonth)
+                .getDisplayName(
+                    TextStyle.FULL,
+                    Locale.getDefault()
+                ) + " ${calendarState.currentYear}"
+
             Text(
-                text = "Month", //TODO
+                text = currentMonthTextString,
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.SemiBold,
@@ -51,33 +60,50 @@ fun CalendarView() {
                 modifier = Modifier
                     .weight(weight = 1f)
                     .align(alignment = Alignment.CenterVertically)
+                    .clickable(onClick = { calendarEvents(CalendarEvents.ReturnCurrentMonth) })
             )
 
             // Go forward a month
-            IconButton(onClick = {}) { //TODO
+            IconButton(onClick = { calendarEvents(CalendarEvents.MonthGoForward) }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                     contentDescription = "" //TODO
                 )
             }
         }
+
         // Generate Heading for Days of Week
         Row {
-            for (day in Days.entries) {
+            for (day in DayOfWeek.entries) {
                 Box(modifier = Modifier.weight(weight = 1f)) {
-                    CalendarIndividualDays(day = stringResource(day.stringVal), enabled = false)
+                    CalendarIndividualDays(
+                        day = day.getDisplayName(
+                            TextStyle.SHORT,
+                            Locale.getDefault()
+                        ), enabled = false
+                    )
                 }
             }
         }
 
         // Generate Dates within Month
         Column {
-            repeat(times = 6) { // Weeks
+            var iterator = 0
+            while (iterator < calendarState.daysWithinMonth.size) { // Weeks
                 Row {
-                    repeat(times = 7) { // Days
+                    for (i in 1..7) { // Days
                         Box(modifier = Modifier.weight(weight = 1f)) {
-                            CalendarIndividualDays(day = "1", onClick = {}) //TODO
+                            if (calendarState.daysWithinMonth.size <= iterator || calendarState.daysWithinMonth[iterator] == 0) {
+                                CalendarIndividualDays(day = "", enabled = false)
+                            } else {
+                                CalendarIndividualDays(
+                                    day = calendarState.daysWithinMonth[iterator].toString(),
+                                    daySelected = (calendarState.daysWithinMonth[iterator] == calendarState.selectedDate),
+                                    onClick = { calendarEvents(CalendarEvents.SelectADay(day = it)) }
+                                )
+                            }
                         }
+                        iterator++
                     }
                 }
             }
@@ -88,7 +114,7 @@ fun CalendarView() {
 @Composable
 fun CalendarIndividualDays(
     day: String,
-    onClick: (String) -> Unit = {},
+    onClick: (Int) -> Unit = {},
     enabled: Boolean = true,
     daySelected: Boolean = false
 ) {
@@ -102,7 +128,7 @@ fun CalendarIndividualDays(
     // Generate date item
     Box(modifier = Modifier.fillMaxWidth()) {
         TextButton(
-            onClick = { onClick(day) },
+            onClick = { onClick(day.toInt()) },
             shape = CircleShape,
             colors = ButtonColors(
                 containerColor = backgroundColor,
@@ -115,7 +141,7 @@ fun CalendarIndividualDays(
             Text(
                 text = day,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.primary,
+                color = if (daySelected) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.primary,
                 modifier = Modifier
                     .background(color = backgroundColor, shape = CircleShape)
                     .padding(all = 5.dp)
@@ -127,5 +153,5 @@ fun CalendarIndividualDays(
 @ViewingSystemThemes
 @Composable
 fun PreviewCalendarView() {
-    JustInTimeTheme { CalendarView() }
+    JustInTimeTheme { CalendarView(calendarState = CalendarState(), calendarEvents = {}) }
 }

@@ -8,13 +8,16 @@ enum class ShiftEventTypes(@StringRes val stringVal: Int) {
     HOLIDAY(stringVal = R.string.holiday),
     BEREAVEMENT_LEAVE(stringVal = R.string.bereavement_leave),
     UNPAID_TIME_OFF(stringVal = R.string.unpaid_time_off),
-    UNAVAILABILITY(stringVal = R.string.unavailability)
+    UNAVAILABILITY(stringVal = R.string.unavailability);
+
+    companion object {
+        fun Long.toShiftEventTypes(): ShiftEventTypes {
+            return ShiftEventTypes.entries[this.toInt()]
+        }
+
+        fun ShiftEventTypes.toLong(): Long {
+            return this.ordinal.toLong()
+        }
+    }
 }
 
-fun Long.toShiftEventTypes(): ShiftEventTypes {
-    return ShiftEventTypes.entries[this.toInt()]
-}
-
-fun ShiftEventTypes.toLong(): Long {
-    return this.ordinal.toLong()
-}

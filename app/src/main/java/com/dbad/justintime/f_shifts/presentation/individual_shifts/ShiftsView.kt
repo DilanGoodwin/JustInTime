@@ -28,7 +28,7 @@ import com.dbad.justintime.ui.theme.JustInTimeTheme
 // Stateless
 @Composable
 fun ShiftListView() {
-    Column() {
+    Column {
         Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
             Text(
                 text = "Events", //TODO

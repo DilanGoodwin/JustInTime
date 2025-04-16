@@ -4,6 +4,7 @@ import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -275,7 +276,7 @@ class UserDetailsValidationTests {
 
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
             .performScrollTo().performClick()
-        testRule.onNodeWithText(text = testRule.activity.getString(R.string.profile))
+        testRule.onAllNodesWithText(text = testRule.activity.getString(R.string.profile)).onFirst()
             .assertIsDisplayed()
     }
 }
