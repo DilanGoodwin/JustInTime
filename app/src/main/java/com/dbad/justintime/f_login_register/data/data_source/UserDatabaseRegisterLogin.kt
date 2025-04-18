@@ -1,15 +1,15 @@
 package com.dbad.justintime.f_login_register.data.data_source
 
 import android.util.Log
-import com.dbad.justintime.f_local_users_db.domain.model.EmergencyContact
-import com.dbad.justintime.f_local_users_db.domain.model.EmergencyContact.Companion.toEmergencyContact
-import com.dbad.justintime.f_local_users_db.domain.model.EmergencyContact.Companion.toHashMap
-import com.dbad.justintime.f_local_users_db.domain.model.Employee
-import com.dbad.justintime.f_local_users_db.domain.model.Employee.Companion.toEmployee
-import com.dbad.justintime.f_local_users_db.domain.model.Employee.Companion.toHashMap
-import com.dbad.justintime.f_local_users_db.domain.model.User
-import com.dbad.justintime.f_local_users_db.domain.model.User.Companion.toHashMap
-import com.dbad.justintime.f_local_users_db.domain.model.User.Companion.toUser
+import com.dbad.justintime.f_local_db.domain.model.EmergencyContact
+import com.dbad.justintime.f_local_db.domain.model.EmergencyContact.Companion.toEmergencyContact
+import com.dbad.justintime.f_local_db.domain.model.EmergencyContact.Companion.toHashMap
+import com.dbad.justintime.f_local_db.domain.model.Employee
+import com.dbad.justintime.f_local_db.domain.model.Employee.Companion.toEmployee
+import com.dbad.justintime.f_local_db.domain.model.Employee.Companion.toHashMap
+import com.dbad.justintime.f_local_db.domain.model.User
+import com.dbad.justintime.f_local_db.domain.model.User.Companion.toHashMap
+import com.dbad.justintime.f_local_db.domain.model.User.Companion.toUser
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore

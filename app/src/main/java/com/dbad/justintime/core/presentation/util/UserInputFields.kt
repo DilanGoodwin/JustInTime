@@ -54,8 +54,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import com.dbad.justintime.R
-import com.dbad.justintime.f_local_users_db.domain.model.util.PreferredContactMethod
-import com.dbad.justintime.f_local_users_db.domain.model.util.Relation
+import com.dbad.justintime.f_local_db.domain.model.util.PreferredContactMethod
+import com.dbad.justintime.f_local_db.domain.model.util.Relation
 import com.dbad.justintime.ui.theme.JustInTimeTheme
 import java.util.Calendar
 
@@ -99,6 +99,8 @@ fun LabelledTextInputFields(
     currentValue: String,
     placeHolderText: String,
     onValueChange: (String) -> Unit,
+    textFieldError: Boolean = false,
+    errorString: String = "",
     readOnly: Boolean = false,
     keyboardOptions: KeyboardOptions = KeyboardOptions(),
     testingTag: String = ""
@@ -108,13 +110,23 @@ fun LabelledTextInputFields(
         onValueChange = { onValueChange(it) },
         placeholder = { Text(text = placeHolderText) },
         label = { Text(text = placeHolderText) },
+        isError = textFieldError,
+        supportingText = {
+            if (textFieldError) {
+                Text(
+                    text = errorString,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        },
         readOnly = readOnly,
         keyboardOptions = keyboardOptions,
         singleLine = true,
         modifier = modifier
             .clip(shape = RoundedCornerShape(size = 8.dp))
             .width(400.dp)
-            .height(60.dp)
+            .height(80.dp)
             .testTag(tag = testingTag)
     )
 }

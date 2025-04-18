@@ -1,9 +1,9 @@
 package com.dbad.justintime.f_login_register.data.repository
 
-import com.dbad.justintime.f_local_users_db.domain.model.EmergencyContact
-import com.dbad.justintime.f_local_users_db.domain.model.Employee
-import com.dbad.justintime.f_local_users_db.domain.model.User
-import com.dbad.justintime.f_local_users_db.domain.use_case.LocalDatabaseUseCases
+import com.dbad.justintime.f_local_db.domain.model.EmergencyContact
+import com.dbad.justintime.f_local_db.domain.model.Employee
+import com.dbad.justintime.f_local_db.domain.model.User
+import com.dbad.justintime.f_local_db.domain.use_case.LocalDatabaseUseCases
 import com.dbad.justintime.f_login_register.data.data_source.UserDatabaseRegisterLogin
 import com.dbad.justintime.f_login_register.domain.repository.UserRepository
 import kotlinx.coroutines.flow.Flow

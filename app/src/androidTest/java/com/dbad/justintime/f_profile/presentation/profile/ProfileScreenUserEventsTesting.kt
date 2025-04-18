@@ -32,8 +32,8 @@ import com.dbad.justintime.core.presentation.util.TestTagPreferredContactMethodF
 import com.dbad.justintime.core.presentation.util.TestTagPreferredName
 import com.dbad.justintime.core.presentation.util.TestTagProfileSaveButton
 import com.dbad.justintime.core.presentation.util.TestTagUserInformationExpandableField
-import com.dbad.justintime.f_local_users_db.domain.model.User
-import com.dbad.justintime.f_local_users_db.domain.model.util.PreferredContactMethod
+import com.dbad.justintime.f_local_db.domain.model.User
+import com.dbad.justintime.f_local_db.domain.model.util.PreferredContactMethod
 import com.dbad.justintime.f_profile.data.ProfileRepositoryTestingImplementation.Companion.generateProfileTestRepo
 import com.dbad.justintime.f_profile.domain.repository.ProfileRepository
 import com.dbad.justintime.f_profile.domain.use_case.GetEmergencyContact

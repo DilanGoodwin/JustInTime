@@ -18,9 +18,9 @@ import com.dbad.justintime.core.domain.use_case.ValidatePassword
 import com.dbad.justintime.core.domain.use_case.ValidatePhoneNumber
 import com.dbad.justintime.core.presentation.util.TestTagEmailField
 import com.dbad.justintime.core.presentation.util.TestTagPasswordField
-import com.dbad.justintime.f_local_users_db.domain.model.EmergencyContact
-import com.dbad.justintime.f_local_users_db.domain.model.Employee
-import com.dbad.justintime.f_local_users_db.domain.model.User
+import com.dbad.justintime.f_local_db.domain.model.EmergencyContact
+import com.dbad.justintime.f_local_db.domain.model.Employee
+import com.dbad.justintime.f_local_db.domain.model.User
 import com.dbad.justintime.f_login_register.data.UsersRepositoryTestingImplementation
 import com.dbad.justintime.f_login_register.domain.repository.UserRepository
 import com.dbad.justintime.f_login_register.domain.use_case.GetEmergencyContact

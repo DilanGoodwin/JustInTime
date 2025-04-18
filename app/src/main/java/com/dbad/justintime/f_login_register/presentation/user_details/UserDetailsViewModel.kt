@@ -5,11 +5,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.dbad.justintime.core.presentation.util.DATE_FORMATTER
-import com.dbad.justintime.f_local_users_db.domain.model.EmergencyContact
-import com.dbad.justintime.f_local_users_db.domain.model.Employee
-import com.dbad.justintime.f_local_users_db.domain.model.User
-import com.dbad.justintime.f_local_users_db.domain.model.util.PreferredContactMethod
-import com.dbad.justintime.f_local_users_db.domain.model.util.Relation
+import com.dbad.justintime.f_local_db.domain.model.EmergencyContact
+import com.dbad.justintime.f_local_db.domain.model.Employee
+import com.dbad.justintime.f_local_db.domain.model.User
+import com.dbad.justintime.f_local_db.domain.model.util.PreferredContactMethod
+import com.dbad.justintime.f_local_db.domain.model.util.Relation
 import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

@@ -1,6 +1,6 @@
 package com.dbad.justintime.f_profile.presentation.profile
 
-import com.dbad.justintime.f_local_users_db.domain.model.util.ContractType
+import com.dbad.justintime.f_local_db.domain.model.util.ContractType
 
 interface ProfileCompanyEvents {
 

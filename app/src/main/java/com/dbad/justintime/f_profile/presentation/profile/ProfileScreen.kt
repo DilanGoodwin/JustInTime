@@ -61,9 +61,9 @@ import com.dbad.justintime.core.presentation.util.TestTagProfileSaveButton
 import com.dbad.justintime.core.presentation.util.TestTagUserInformationExpandableField
 import com.dbad.justintime.core.presentation.util.TextInputField
 import com.dbad.justintime.core.presentation.util.ViewingSystemThemes
-import com.dbad.justintime.f_local_users_db.domain.model.util.ContractType
-import com.dbad.justintime.f_local_users_db.domain.model.util.PreferredContactMethod
-import com.dbad.justintime.f_local_users_db.domain.model.util.Relation
+import com.dbad.justintime.f_local_db.domain.model.util.ContractType
+import com.dbad.justintime.f_local_db.domain.model.util.PreferredContactMethod
+import com.dbad.justintime.f_local_db.domain.model.util.Relation
 import com.dbad.justintime.ui.theme.JustInTimeTheme
 
 @Composable

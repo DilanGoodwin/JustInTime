@@ -2,7 +2,7 @@ package com.dbad.justintime.core
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.dbad.justintime.f_local_users_db.domain.model.User
+import com.dbad.justintime.f_local_db.domain.model.User
 import com.dbad.justintime.f_user_auth.domain.repository.AuthRepo
 
 class AuthTestingRepo(private val user: User, loggedIn: Boolean = false) : AuthRepo {

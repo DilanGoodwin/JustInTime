@@ -91,11 +91,10 @@
     <string name="request_type">Request Type</string>
     <string name="date_range">Date Range</string>
     <string name="filters">Filters</string>
+    <string name="onlyAdminShifts">My Events</string>
 
     <!-- Shift Event Types -->
     <string name="holiday">Holiday</string>
-    <string name="bereavement_leave">Bereavement Leave</string>
-    <string name="unpaid_time_off">UnPaid Time Off</string>
     <string name="unavailability">Unavailability</string>
     <string name="shifts">Shifts</string>
 
@@ -107,20 +106,6 @@
     <string name="fri">Fri</string>
     <string name="sat">Sat</string>
     <string name="sun">Sun</string>
-
-    <!-- Months -->
-    <string name="january">January</string>
-    <string name="february">February</string>
-    <string name="march">March</string>
-    <string name="april">April</string>
-    <string name="may">May</string>
-    <string name="june">June</string>
-    <string name="july">July</string>
-    <string name="august">August</string>
-    <string name="september">September</string>
-    <string name="october">October</string>
-    <string name="november">November</string>
-    <string name="december">December</string>
 
     <string name="selectDate">Select A Date</string>
 

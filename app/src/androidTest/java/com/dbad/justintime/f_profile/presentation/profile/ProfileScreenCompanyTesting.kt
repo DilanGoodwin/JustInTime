@@ -21,8 +21,8 @@ import com.dbad.justintime.core.presentation.util.TestTagCompanyInformationCompa
 import com.dbad.justintime.core.presentation.util.TestTagCompanyInformationExpandableField
 import com.dbad.justintime.core.presentation.util.TestTagCompanyInformationManagerNameField
 import com.dbad.justintime.core.presentation.util.TestTagCompanyInformationRole
-import com.dbad.justintime.f_local_users_db.domain.model.User
-import com.dbad.justintime.f_local_users_db.domain.model.util.ContractType
+import com.dbad.justintime.f_local_db.domain.model.User
+import com.dbad.justintime.f_local_db.domain.model.util.ContractType
 import com.dbad.justintime.f_profile.data.ProfileRepositoryTestingImplementation.Companion.generateProfileTestRepo
 import com.dbad.justintime.f_profile.domain.repository.ProfileRepository
 import com.dbad.justintime.f_profile.domain.use_case.GetEmergencyContact

@@ -1,15 +1,16 @@
 package com.dbad.justintime.f_shifts.presentation.individual_shifts
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,11 +24,12 @@ import androidx.compose.ui.unit.dp
 import com.dbad.justintime.R
 import com.dbad.justintime.core.presentation.util.LabelledTextInputFields
 import com.dbad.justintime.core.presentation.util.ViewingSystemThemes
+import com.dbad.justintime.f_local_db.domain.model.Event
 import com.dbad.justintime.ui.theme.JustInTimeTheme
 
 // Stateless
 @Composable
-fun ShiftListView() {
+fun ShiftListView(state: ShiftState) {
     Column {
         Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
             Text(
@@ -38,11 +40,18 @@ fun ShiftListView() {
                 color = MaterialTheme.colorScheme.primary,
             )
         }
-        Column(
-            modifier = Modifier.verticalScroll(rememberScrollState())
-        ) {
-            repeat(times = 5) {
-                IndividualShift()
+        LazyColumn {
+            items(state.shifts) { event ->
+                IndividualShift(event = event)
+            }
+            items(state.holiday + state.unavailability) { event ->
+                var personRequest = ""
+                for (person in state.people) {
+                    if (person.employeeUid in Event.convertStringEmployees(employees = event.employees)) {
+                        personRequest = person.name
+                    }
+                }
+                IndividualEvents(event = event, person = personRequest)
             }
         }
     }
@@ -51,17 +60,18 @@ fun ShiftListView() {
 @ViewingSystemThemes
 @Composable
 fun PreviewShiftListView() {
-    JustInTimeTheme { ShiftListView() }
+    JustInTimeTheme { ShiftListView(state = ShiftState()) }
 }
 
 // Stateless
 @Composable
-fun IndividualShift() {
+fun IndividualShift(event: Event) {
     Box(
         modifier = Modifier
             .padding(all = 5.dp)
             .fillMaxWidth()
             .border(width = 1.dp, color = Color.LightGray, shape = RoundedCornerShape(size = 5.dp))
+            .clickable(onClick = {})
     ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(space = 20.dp),
@@ -71,14 +81,14 @@ fun IndividualShift() {
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(space = 10.dp)) {
                 LabelledTextInputFields(
-                    currentValue = "", //TODO
+                    currentValue = event.location,
                     placeHolderText = stringResource(R.string.location),
                     onValueChange = {},
                     readOnly = true,
                     modifier = Modifier.fillMaxWidth(fraction = 0.5f)
                 )
                 LabelledTextInputFields(
-                    currentValue = "", //TODO
+                    currentValue = event.rolePosition,
                     placeHolderText = stringResource(R.string.role),
                     onValueChange = {},
                     readOnly = true,
@@ -87,15 +97,17 @@ fun IndividualShift() {
             }
 
             Column(verticalArrangement = Arrangement.spacedBy(space = 10.dp)) {
+
                 LabelledTextInputFields(
-                    currentValue = "", //TODO
+                    currentValue = event.startDate,
                     placeHolderText = stringResource(R.string.date),
                     onValueChange = {},
                     readOnly = true,
                     modifier = Modifier.fillMaxWidth()
                 )
+
                 LabelledTextInputFields(
-                    currentValue = "", //TODO
+                    currentValue = "${event.startTime} - ${event.endTime}",
                     placeHolderText = stringResource(R.string.time),
                     onValueChange = {},
                     readOnly = true,
@@ -106,8 +118,46 @@ fun IndividualShift() {
     }
 }
 
+// Stateless
+@Composable
+fun IndividualEvents(event: Event, person: String) {
+    Box(
+        modifier = Modifier
+            .padding(all = 5.dp)
+            .fillMaxWidth()
+            .border(width = 1.dp, color = Color.LightGray, shape = RoundedCornerShape(size = 5.dp))
+            .clickable(onClick = {})
+    ) {
+        Column(modifier = Modifier.padding(all = 5.dp)) {
+            LabelledTextInputFields(
+                currentValue = stringResource(event.type.stringVal),
+                placeHolderText = stringResource(R.string.request_type),
+                onValueChange = {},
+                readOnly = true,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            LabelledTextInputFields(
+                currentValue = person,
+                placeHolderText = "Person",
+                onValueChange = {},
+                readOnly = true,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            LabelledTextInputFields(
+                currentValue = "${event.startDate} - ${event.endDate}",
+                placeHolderText = stringResource(R.string.date),
+                onValueChange = {},
+                readOnly = true,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
+}
+
 @ViewingSystemThemes
 @Composable
 fun PreviewIndividualShift() {
-    JustInTimeTheme { IndividualShift() }
+    JustInTimeTheme { IndividualShift(event = Event()) }
 }

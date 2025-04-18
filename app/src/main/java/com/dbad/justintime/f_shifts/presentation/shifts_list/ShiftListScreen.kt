@@ -59,11 +59,12 @@ import com.dbad.justintime.R
 import com.dbad.justintime.core.presentation.util.BackgroundOutlineWithButtons
 import com.dbad.justintime.core.presentation.util.DateSelectorField
 import com.dbad.justintime.core.presentation.util.LabelledTextDropDownFields
+import com.dbad.justintime.core.presentation.util.LabelledTextInputFields
+import com.dbad.justintime.core.presentation.util.TestTagCompanyInformationRole
+import com.dbad.justintime.core.presentation.util.TestTagShiftLocation
 import com.dbad.justintime.core.presentation.util.ViewingSystemThemes
 import com.dbad.justintime.core.presentation.util.formatDateToString
-import com.dbad.justintime.f_shifts.domain.model.ShiftEventTypes
-import com.dbad.justintime.f_shifts.presentation.ShiftsMasterState
-import com.dbad.justintime.f_shifts.presentation.ShiftsViewModel
+import com.dbad.justintime.f_local_db.domain.model.util.ShiftEventTypes
 import com.dbad.justintime.f_shifts.presentation.calendar.CalendarEvents
 import com.dbad.justintime.f_shifts.presentation.calendar.CalendarView
 import com.dbad.justintime.f_shifts.presentation.individual_shifts.ShiftListView
@@ -79,21 +80,21 @@ fun ShiftListScreen(
 ) {
     val state by viewModel.state.collectAsState()
 
-    val event = viewModel::mainScreenEvents
-    event(ShiftsMainScreenEvents.SetProfileNavMainScreenEvents(onNavProfile))
+    val event = viewModel::onShiftListEvents
+    event(ShiftListEvents.SetProfileNavMainScreenEvents(onNavProfile))
 
     ShiftListScreen(
         state = state,
         onEvent = event,
-        calendarEvents = viewModel::calendarEvents
+        calendarEvents = viewModel::onCalendarEvents
     )
 }
 
 // Stateless
 @Composable
 fun ShiftListScreen(
-    state: ShiftsMasterState,
-    onEvent: (ShiftsMainScreenEvents) -> Unit,
+    state: ShiftListState,
+    onEvent: (ShiftListEvents) -> Unit,
     calendarEvents: (CalendarEvents) -> Unit
 ) {
     /*
@@ -105,17 +106,17 @@ fun ShiftListScreen(
     val scope = rememberCoroutineScope()
 
     ModalNavigationDrawer(
-        drawerContent = { FilterDraw(state = state.mainScreenState, onEvent = onEvent) },
+        drawerContent = { FilterDraw(state = state, onEvent = onEvent) },
         drawerState = drawerState,
         gesturesEnabled = true
     ) {
         Scaffold(
             topBar = { ShiftTopAppBar(scope = scope, drawerState = drawerState) },
-            bottomBar = { ShiftBottomNavBar(state = state.mainScreenState) },
+            bottomBar = { ShiftBottomNavBar(state = state) },
             floatingActionButton = {
-                SmallFloatingActionButton(onClick = { onEvent(ShiftsMainScreenEvents.ToggleNewMainScreenEventsDialog) }) {
+                SmallFloatingActionButton(onClick = { onEvent(ShiftListEvents.ToggleNewMainScreenEventsDialog) }) {
                     Icon(imageVector = Icons.Filled.Add, contentDescription = "")//TODO
-                    NewShiftEventDialogWindow(state = state.mainScreenState, onEvent = onEvent)
+                    NewShiftEventDialogWindow(state = state, onEvent = onEvent)
                 }
             },
             floatingActionButtonPosition = FabPosition.End
@@ -136,7 +137,8 @@ fun ShiftListScreen(
                     )
 
                     Spacer(modifier = Modifier.height(height = 10.dp))
-                    ShiftListView()
+
+                    ShiftListView(state = state.shiftState)
                 }
             }
         }
@@ -162,7 +164,7 @@ fun ShiftTopAppBar(
 }
 
 @Composable
-fun ShiftBottomNavBar(state: ShiftsMainScreenState) {
+fun ShiftBottomNavBar(state: ShiftListState) {
     NavigationBar {
         // Calendar Page
         NavigationBarItem(
@@ -185,8 +187,8 @@ fun ShiftBottomNavBar(state: ShiftsMainScreenState) {
 // Side sheet for users to change what is being displayed on the screen
 @Composable
 fun FilterDraw(
-    state: ShiftsMainScreenState,
-    onEvent: (ShiftsMainScreenEvents) -> Unit
+    state: ShiftListState,
+    onEvent: (ShiftListEvents) -> Unit
 ) {
     ModalDrawerSheet {
         Column(
@@ -196,17 +198,24 @@ fun FilterDraw(
         ) {
             Text(text = stringResource(R.string.filters))
             CreateCheckBox(
-                checkVal = state.shiftsCheck,
+                checkVal = state.shiftState.shiftsCheck,
                 checkName = R.string.shifts,
-                onChange = { onEvent(ShiftsMainScreenEvents.ToggleFilters(R.string.shifts)) })
+                onChange = { onEvent(ShiftListEvents.ToggleFilters(R.string.shifts)) })
             CreateCheckBox(
-                checkVal = state.holidayCheck,
+                checkVal = state.shiftState.holidayCheck,
                 checkName = R.string.holiday,
-                onChange = { onEvent(ShiftsMainScreenEvents.ToggleFilters(R.string.holiday)) })
+                onChange = { onEvent(ShiftListEvents.ToggleFilters(R.string.holiday)) })
             CreateCheckBox(
-                checkVal = state.unavailabilityCheck,
+                checkVal = state.shiftState.unavailabilityCheck,
                 checkName = R.string.unavailability,
-                onChange = { onEvent(ShiftsMainScreenEvents.ToggleFilters(R.string.unavailability)) })
+                onChange = { onEvent(ShiftListEvents.ToggleFilters(R.string.unavailability)) })
+
+            Spacer(modifier = Modifier.height(height = 10.dp))
+            Text(text = "Admin") //TODO
+            CreateCheckBox(
+                checkVal = state.onlyAdminShifts,
+                checkName = R.string.onlyAdminShifts,
+                onChange = { onEvent(ShiftListEvents.ToggleFilters(R.string.onlyAdminShifts)) })
         }
     }
 }
@@ -226,17 +235,17 @@ fun CreateCheckBox(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewShiftEventDialogWindow(
-    state: ShiftsMainScreenState,
-    onEvent: (ShiftsMainScreenEvents) -> Unit
+    state: ShiftListState,
+    onEvent: (ShiftListEvents) -> Unit
 ) {
     if (state.showNewShiftEventDialog) {
-        Dialog(onDismissRequest = { onEvent(ShiftsMainScreenEvents.ToggleNewMainScreenEventsDialog) }) {
+        Dialog(onDismissRequest = { onEvent(ShiftListEvents.ToggleNewMainScreenEventsDialog) }) {
             BackgroundOutlineWithButtons(
-                confirmButton = { onEvent(ShiftsMainScreenEvents.ConfirmNewMainScreenEventsDialog) },
-                cancelButton = { onEvent(ShiftsMainScreenEvents.CancelNewMainScreenEventsDialog) }
+                confirmButton = { onEvent(ShiftListEvents.ConfirmNewMainScreenEventsDialog) },
+                cancelButton = { onEvent(ShiftListEvents.CancelNewMainScreenEventsDialog) }
             ) {
                 Column(
-                    verticalArrangement = Arrangement.spacedBy(space = 5.dp),
+                    verticalArrangement = Arrangement.spacedBy(space = 10.dp),
                     modifier = Modifier.padding(all = 5.dp)
                 ) {
                     Spacer(modifier = Modifier.height(height = 10.dp))
@@ -245,19 +254,19 @@ fun NewShiftEventDialogWindow(
                         currentValue = stringResource(state.requestType.stringVal),
                         placeHolderText = stringResource(R.string.request_type),
                         expandedDropDown = state.expandRequestTypeDropDown,
-                        dropDownToggle = { onEvent(ShiftsMainScreenEvents.ToggleRequestTypeDropDown) }
+                        dropDownToggle = { onEvent(ShiftListEvents.ToggleRequestTypeDropDown) }
                     ) {
                         DropdownMenu(
                             expanded = state.expandRequestTypeDropDown,
-                            onDismissRequest = { onEvent(ShiftsMainScreenEvents.ToggleRequestTypeDropDown) }
+                            onDismissRequest = { onEvent(ShiftListEvents.ToggleRequestTypeDropDown) }
                         ) {
                             for (type in ShiftEventTypes.entries) {
-                                if (type == ShiftEventTypes.SHIFTS) continue
+                                if (type == ShiftEventTypes.SHIFTS && !state.isAdmin) continue
                                 DropdownMenuItem(
                                     text = { Text(text = stringResource(type.stringVal)) },
                                     onClick = {
                                         onEvent(
-                                            ShiftsMainScreenEvents.SetRequestType(
+                                            ShiftListEvents.SetRequestType(
                                                 requestType = type
                                             )
                                         )
@@ -267,12 +276,10 @@ fun NewShiftEventDialogWindow(
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(height = 10.dp))
-
                     DateSelectorField(
                         currentValue = state.datePickerHeadlineVal,
                         placeHolderText = stringResource(R.string.date_range),
-                        toggleDatePicker = { onEvent(ShiftsMainScreenEvents.ToggleDateSelectorDropDown) },
+                        toggleDatePicker = { onEvent(ShiftListEvents.ToggleDateSelectorDropDown) },
                         dateError = state.datePickerError,
                         modifier = Modifier
                             .width(width = 400.dp)
@@ -281,15 +288,57 @@ fun NewShiftEventDialogWindow(
                         DateTimeRangeSelectorDropDown(state = state, onEvent = onEvent)
                     }
 
+                    if (state.requestType == ShiftEventTypes.SHIFTS && state.isAdmin) {
+                        LabelledTextDropDownFields(
+                            currentValue = state.selectedPeopleString,
+                            placeHolderText = "Employees", //TODO
+                            expandedDropDown = state.selectedPeopleExpanded,
+                            dropDownToggle = { onEvent(ShiftListEvents.ToggleSelectedPeopleDropDown) }
+                        ) {
+                            DropdownMenu(
+                                expanded = state.selectedPeopleExpanded,
+                                onDismissRequest = { onEvent(ShiftListEvents.ToggleSelectedPeopleDropDown) }
+                            ) {
+                                for (person in state.shiftState.people) {
+                                    if (person.employeeUid !in state.selectedPeople) {
+                                        DropdownMenuItem(
+                                            text = { Text(text = person.name) },
+                                            onClick = { onEvent(ShiftListEvents.AddEmployee(person = person.employeeUid)) }
+                                        )
+                                    }
+                                }
+                            }
+                        }
+
+                        LabelledTextInputFields(
+                            currentValue = state.role,
+                            placeHolderText = stringResource(R.string.role),
+                            onValueChange = { onEvent(ShiftListEvents.SetRole(role = it)) },
+                            textFieldError = state.roleError,
+                            errorString = "Please enter a role", //TODO
+                            testingTag = TestTagCompanyInformationRole
+                        )
+
+                        LabelledTextInputFields(
+                            currentValue = state.location,
+                            placeHolderText = stringResource(R.string.location),
+                            onValueChange = { onEvent(ShiftListEvents.SetLocation(location = it)) },
+                            textFieldError = state.locationError,
+                            errorString = "Please enter a location", //TODO
+                            testingTag = TestTagShiftLocation
+                        )
+                    }
+
                     TextField(
                         value = state.newEventNotes,
                         placeholder = { Text(text = stringResource(R.string.notes)) },
-                        onValueChange = { onEvent(ShiftsMainScreenEvents.UpdateNotes(notes = it)) },
+                        onValueChange = { onEvent(ShiftListEvents.UpdateNotes(notes = it)) },
                         maxLines = 5,
                         modifier = Modifier
                             .width(width = 400.dp)
                             .height(height = 80.dp)
                     )
+
                 }
             }
         }
@@ -299,15 +348,15 @@ fun NewShiftEventDialogWindow(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DateTimeRangeSelectorDropDown(
-    state: ShiftsMainScreenState,
-    onEvent: (ShiftsMainScreenEvents) -> Unit
+    state: ShiftListState,
+    onEvent: (ShiftListEvents) -> Unit
 ) {
     val dateState = rememberDateRangePickerState()
 
 
     if (state.showDateTimeRangePickers) {
         Popup(
-            onDismissRequest = { onEvent(ShiftsMainScreenEvents.ToggleDateSelectorDropDown) },
+            onDismissRequest = { onEvent(ShiftListEvents.ToggleDateSelectorDropDown) },
             alignment = Alignment.Center
         ) {
             Card {
@@ -317,13 +366,13 @@ fun DateTimeRangeSelectorDropDown(
                     BackgroundOutlineWithButtons(
                         confirmButton = {
                             onEvent(
-                                ShiftsMainScreenEvents.ConfirmRangeDateSelector(
+                                ShiftListEvents.ConfirmRangeDateSelector(
                                     startDate = formatDateToString(dateLong = dateState.selectedStartDateMillis),
                                     endDate = formatDateToString(dateLong = dateState.selectedEndDateMillis)
                                 )
                             )
                         },
-                        cancelButton = { onEvent(ShiftsMainScreenEvents.CancelDateSelectorDialog) }
+                        cancelButton = { onEvent(ShiftListEvents.CancelDateSelectorDialog) }
                     ) {
                         DateRangePicker(
                             state = dateState,
@@ -344,13 +393,13 @@ fun DateTimeRangeSelectorDropDown(
                     BackgroundOutlineWithButtons(
                         confirmButton = {
                             onEvent(
-                                ShiftsMainScreenEvents.ConfirmStartTimeSelector(
+                                ShiftListEvents.ConfirmStartTimeSelector(
                                     hour = startTimePickerState.hour,
                                     minute = startTimePickerState.minute
                                 )
                             )
                         },
-                        cancelButton = { onEvent(ShiftsMainScreenEvents.CancelDateSelectorDialog) }
+                        cancelButton = { onEvent(ShiftListEvents.CancelDateSelectorDialog) }
                     ) {
                         TimeDialPicker(
                             title = stringResource(R.string.start_time),
@@ -369,13 +418,13 @@ fun DateTimeRangeSelectorDropDown(
                     BackgroundOutlineWithButtons(
                         confirmButton = {
                             onEvent(
-                                ShiftsMainScreenEvents.ConfirmEndTimeSelector(
+                                ShiftListEvents.ConfirmEndTimeSelector(
                                     hour = endTimePickerState.hour,
                                     minute = endTimePickerState.minute
                                 )
                             )
                         },
-                        cancelButton = { onEvent(ShiftsMainScreenEvents.CancelDateSelectorDialog) }
+                        cancelButton = { onEvent(ShiftListEvents.CancelDateSelectorDialog) }
                     ) {
                         TimeDialPicker(
                             title = stringResource(R.string.end_time),
@@ -424,7 +473,7 @@ fun TimeDialPicker(
 fun PreviewShiftListScreen() {
     JustInTimeTheme {
         ShiftListScreen(
-            state = ShiftsMasterState(),
+            state = ShiftListState(),
             onEvent = {},
             calendarEvents = {})
     }
@@ -435,7 +484,7 @@ fun PreviewShiftListScreen() {
 fun PreviewNewShiftEvent() {
     JustInTimeTheme {
         NewShiftEventDialogWindow(
-            state = ShiftsMainScreenState(),
+            state = ShiftListState(),
             onEvent = {}
         )
     }
@@ -446,7 +495,7 @@ fun PreviewNewShiftEvent() {
 fun PreviewNewShiftEvent_DatePicker() {
     JustInTimeTheme {
         NewShiftEventDialogWindow(
-            state = ShiftsMainScreenState(showDateTimeRangePickers = true),
+            state = ShiftListState(showDateTimeRangePickers = true),
             onEvent = {}
         )
     }
@@ -457,7 +506,7 @@ fun PreviewNewShiftEvent_DatePicker() {
 fun PreviewNewShiftEvent_TimePicker() {
     JustInTimeTheme {
         NewShiftEventDialogWindow(
-            state = ShiftsMainScreenState(
+            state = ShiftListState(
                 showDateTimeRangePickers = true,
                 dateTimePickerState = 1
             ),

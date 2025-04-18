@@ -1,7 +1,7 @@
 package com.dbad.justintime.f_login_register.presentation.user_details
 
-import com.dbad.justintime.f_local_users_db.domain.model.util.PreferredContactMethod
-import com.dbad.justintime.f_local_users_db.domain.model.util.Relation
+import com.dbad.justintime.f_local_db.domain.model.util.PreferredContactMethod
+import com.dbad.justintime.f_local_db.domain.model.util.Relation
 
 data class UserDetailsState(
     // Nav Events

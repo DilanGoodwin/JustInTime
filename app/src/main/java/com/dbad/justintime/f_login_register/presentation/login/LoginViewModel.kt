@@ -3,9 +3,9 @@ package com.dbad.justintime.f_login_register.presentation.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.dbad.justintime.f_local_users_db.domain.model.EmergencyContact
-import com.dbad.justintime.f_local_users_db.domain.model.Employee
-import com.dbad.justintime.f_local_users_db.domain.model.User
+import com.dbad.justintime.f_local_db.domain.model.EmergencyContact
+import com.dbad.justintime.f_local_db.domain.model.Employee
+import com.dbad.justintime.f_local_db.domain.model.User
 import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
 import com.dbad.justintime.f_login_register.domain.util.PasswordErrors
 import com.dbad.justintime.f_user_auth.domain.repository.AuthRepo

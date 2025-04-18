@@ -5,12 +5,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.dbad.justintime.core.presentation.util.DATE_FORMATTER
-import com.dbad.justintime.f_local_users_db.domain.model.EmergencyContact
-import com.dbad.justintime.f_local_users_db.domain.model.Employee
-import com.dbad.justintime.f_local_users_db.domain.model.User
-import com.dbad.justintime.f_local_users_db.domain.model.util.ContractType
-import com.dbad.justintime.f_local_users_db.domain.model.util.PreferredContactMethod
-import com.dbad.justintime.f_local_users_db.domain.model.util.Relation
+import com.dbad.justintime.f_local_db.domain.model.EmergencyContact
+import com.dbad.justintime.f_local_db.domain.model.Employee
+import com.dbad.justintime.f_local_db.domain.model.User
+import com.dbad.justintime.f_local_db.domain.model.util.ContractType
+import com.dbad.justintime.f_local_db.domain.model.util.PreferredContactMethod
+import com.dbad.justintime.f_local_db.domain.model.util.Relation
 import com.dbad.justintime.f_profile.domain.use_case.ProfileUseCases
 import com.dbad.justintime.f_user_auth.domain.repository.AuthRepo
 import kotlinx.coroutines.delay
@@ -54,9 +54,9 @@ class ProfileViewModel(
     fun loadInitialData() {
         var loadAttempts = 0
 
-        /**
-         * During AndroidTests the SecretKeySpec fails due to not being part of the API
-         * Implementation to stop the tests crashing
+        /*
+         During AndroidTests the SecretKeySpec fails due to not being part of the API
+         Implementation to stop the tests crashing
          */
         val userUid = if (!authUser.testingMode) {
             User.generateUid(email = authUser.getEmail())
@@ -66,8 +66,6 @@ class ProfileViewModel(
 
         viewModelScope.launch {
             while (loadAttempts < 3) {
-                delay(timeMillis = 1000L)
-
                 _user.value = useCases.getUser(user = User(uid = userUid))
 
                 try {
@@ -85,8 +83,11 @@ class ProfileViewModel(
                 }
 
                 loadAttempts++
+                delay(timeMillis = 1000L)
             }
         }
+
+        //TODO error message to user
 
         if (loadAttempts >= 3) signOut()
     }

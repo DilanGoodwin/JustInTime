@@ -4,7 +4,7 @@ import com.dbad.justintime.core.domain.use_case.ValidateDate
 import com.dbad.justintime.core.domain.use_case.ValidateEmail
 import com.dbad.justintime.core.domain.use_case.ValidatePassword
 import com.dbad.justintime.core.domain.use_case.ValidatePhoneNumber
-import com.dbad.justintime.f_local_users_db.domain.use_case.LocalDatabaseUseCases
+import com.dbad.justintime.f_local_db.domain.use_case.LocalDatabaseUseCases
 import com.dbad.justintime.f_login_register.data.data_source.UserDatabaseRegisterLogin
 import com.dbad.justintime.f_login_register.data.repository.UsersRepositoryImplementation
 import com.dbad.justintime.f_login_register.domain.repository.UserRepository
