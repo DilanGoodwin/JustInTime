@@ -1,11 +1,13 @@
 package com.dbad.justintime.f_profile.presentation.profile
 
-import com.dbad.justintime.f_local_users_db.domain.model.EmergencyContact
-import com.dbad.justintime.f_local_users_db.domain.model.Employee
-import com.dbad.justintime.f_local_users_db.domain.model.User
+import com.dbad.justintime.f_local_db.domain.model.EmergencyContact
+import com.dbad.justintime.f_local_db.domain.model.Employee
+import com.dbad.justintime.f_local_db.domain.model.User
 import com.dbad.justintime.f_login_register.domain.util.PasswordErrors
 
 data class ProfileState(
+    val onSignOut: () -> Unit = {},
+    val onShiftNav: () -> Unit = {},
     val changeMade: Boolean = false,
 
     // User Name States

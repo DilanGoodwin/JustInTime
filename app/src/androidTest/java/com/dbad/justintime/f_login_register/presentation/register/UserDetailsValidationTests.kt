@@ -4,6 +4,7 @@ import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -11,15 +12,16 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextReplacement
 import com.dbad.justintime.R
+import com.dbad.justintime.core.AuthTestingRepo
 import com.dbad.justintime.core.presentation.util.TestTagEmailField
 import com.dbad.justintime.core.presentation.util.TestTagEmergencyContactExpandableField
 import com.dbad.justintime.core.presentation.util.TestTagNameField
 import com.dbad.justintime.core.presentation.util.TestTagPasswordField
 import com.dbad.justintime.core.presentation.util.TestTagPasswordMatchField
 import com.dbad.justintime.core.presentation.util.TestTagPhoneNumberField
-import com.dbad.justintime.f_local_users_db.domain.model.EmergencyContact
-import com.dbad.justintime.f_local_users_db.domain.model.Employee
-import com.dbad.justintime.f_local_users_db.domain.model.User
+import com.dbad.justintime.f_local_db.domain.model.EmergencyContact
+import com.dbad.justintime.f_local_db.domain.model.Employee
+import com.dbad.justintime.f_local_db.domain.model.User
 import com.dbad.justintime.f_login_register.data.generateUseCase
 import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
 import com.dbad.justintime.f_login_register.presentation.LoginTestingNavController
@@ -32,23 +34,24 @@ class UserDetailsValidationTests {
     @get:Rule
     val testRule = createAndroidComposeRule<ComponentActivity>()
 
+    private val validUser: User = User(
+        uid = User.generateUid(email = "daniel@justintime.com"),
+        email = "daniel@justintime.com"
+    )
     private val name: String = "Daniel"
-    private val validEmail: String = "daniel@justintime.com"
     private val validPassword: String = "MyP@ssw0rds"
     private val validPhoneNumb: String = "07665599200"
 
     private val users: List<User> = listOf(
         User(
             uid = User.generateUid(email = "testing@testing.com"),
-            email = "testing@testing.com",
-            password = User.hashPassword(validPassword)
+            email = "testing@testing.com"
         ),
         User(
             uid = User.generateUid(email = "test.test@test.com"),
-            email = "test.test@test.com",
-            password = User.hashPassword(validPassword)
+            email = "test.test@test.com"
         ),
-        User(uid = User.generateUid(email = validEmail), email = validEmail)
+        validUser
     )
     private var useCases: UserUseCases = generateUseCase(
         users = users,
@@ -71,7 +74,7 @@ class UserDetailsValidationTests {
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
             .performClick()
         testRule.onNodeWithTag(testTag = TestTagEmailField)
-            .performTextReplacement(text = validEmail)
+            .performTextReplacement(text = validUser.email)
         testRule.onNodeWithTag(testTag = TestTagPasswordField)
             .performTextReplacement(text = validPassword)
         testRule.onNodeWithTag(testTag = TestTagPasswordMatchField)
@@ -85,6 +88,7 @@ class UserDetailsValidationTests {
         testRule.setContent {
             LoginTestingNavController(
                 useCases = useCases,
+                authUser = AuthTestingRepo(user = validUser),
                 dateOfBirth = "20/04/2008"
             )
         }
@@ -94,7 +98,7 @@ class UserDetailsValidationTests {
             testRule = testRule,
             name = name,
             phone = validPhoneNumb,
-            email = validEmail
+            email = validUser.email
         )
 
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
@@ -110,6 +114,7 @@ class UserDetailsValidationTests {
         testRule.setContent {
             LoginTestingNavController(
                 useCases = useCases,
+                authUser = AuthTestingRepo(user = validUser),
                 dateOfBirth = "20/04/2008"
             )
         }
@@ -119,7 +124,7 @@ class UserDetailsValidationTests {
             testRule = testRule,
             name = name,
             phone = validPhoneNumb,
-            email = validEmail
+            email = validUser.email
         )
 
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
@@ -133,14 +138,19 @@ class UserDetailsValidationTests {
 
     @Test
     fun invalidRegistrationAttempt_NoDateOfBirth() = runTest {
-        testRule.setContent { LoginTestingNavController(useCases = useCases) }
+        testRule.setContent {
+            LoginTestingNavController(
+                useCases = useCases,
+                authUser = AuthTestingRepo(user = validUser)
+            )
+        }
         navigateToUserDetails()
         fillInDetails(name = name, phone = validPhoneNumb)
         EmergencyContactAreaTests.fillInEmergencyContact(
             testRule = testRule,
             name = name,
             phone = validPhoneNumb,
-            email = validEmail
+            email = validUser.email
         )
 
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
@@ -156,6 +166,7 @@ class UserDetailsValidationTests {
         testRule.setContent {
             LoginTestingNavController(
                 useCases = useCases,
+                authUser = AuthTestingRepo(user = validUser),
                 dateOfBirth = "20/04/2008"
             )
         }
@@ -177,6 +188,7 @@ class UserDetailsValidationTests {
         testRule.setContent {
             LoginTestingNavController(
                 useCases = useCases,
+                authUser = AuthTestingRepo(user = validUser),
                 dateOfBirth = "20/04/2008"
             )
         }
@@ -185,7 +197,7 @@ class UserDetailsValidationTests {
         EmergencyContactAreaTests.fillInEmergencyContact(
             testRule = testRule,
             phone = validPhoneNumb,
-            email = validEmail
+            email = validUser.email
         )
 
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
@@ -201,6 +213,7 @@ class UserDetailsValidationTests {
         testRule.setContent {
             LoginTestingNavController(
                 useCases = useCases,
+                authUser = AuthTestingRepo(user = validUser),
                 dateOfBirth = "20/04/2008"
             )
         }
@@ -223,6 +236,7 @@ class UserDetailsValidationTests {
         testRule.setContent {
             LoginTestingNavController(
                 useCases = useCases,
+                authUser = AuthTestingRepo(user = validUser),
                 dateOfBirth = "20/04/2008"
             )
         }
@@ -231,7 +245,7 @@ class UserDetailsValidationTests {
         EmergencyContactAreaTests.fillInEmergencyContact(
             testRule = testRule,
             name = name,
-            email = validEmail
+            email = validUser.email
         )
 
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
@@ -247,6 +261,7 @@ class UserDetailsValidationTests {
         testRule.setContent {
             LoginTestingNavController(
                 useCases = useCases,
+                authUser = AuthTestingRepo(user = validUser),
                 dateOfBirth = "20/04/2008"
             )
         }
@@ -256,12 +271,12 @@ class UserDetailsValidationTests {
             testRule = testRule,
             name = name,
             phone = validPhoneNumb,
-            email = validEmail
+            email = validUser.email
         )
 
         testRule.onNodeWithText(text = testRule.activity.getString(R.string.register))
             .performScrollTo().performClick()
-        testRule.onNodeWithText(text = testRule.activity.getString(R.string.profile))
+        testRule.onAllNodesWithText(text = testRule.activity.getString(R.string.profile)).onFirst()
             .assertIsDisplayed()
     }
 }

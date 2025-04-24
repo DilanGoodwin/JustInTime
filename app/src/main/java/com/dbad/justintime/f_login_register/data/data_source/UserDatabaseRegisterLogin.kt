@@ -1,14 +1,15 @@
 package com.dbad.justintime.f_login_register.data.data_source
 
-import com.dbad.justintime.f_local_users_db.domain.model.EmergencyContact
-import com.dbad.justintime.f_local_users_db.domain.model.EmergencyContact.Companion.toEmergencyContact
-import com.dbad.justintime.f_local_users_db.domain.model.EmergencyContact.Companion.toHashMap
-import com.dbad.justintime.f_local_users_db.domain.model.Employee
-import com.dbad.justintime.f_local_users_db.domain.model.Employee.Companion.toEmployee
-import com.dbad.justintime.f_local_users_db.domain.model.Employee.Companion.toHashMap
-import com.dbad.justintime.f_local_users_db.domain.model.User
-import com.dbad.justintime.f_local_users_db.domain.model.User.Companion.toHashMap
-import com.dbad.justintime.f_local_users_db.domain.model.User.Companion.toUser
+import android.util.Log
+import com.dbad.justintime.f_local_db.domain.model.EmergencyContact
+import com.dbad.justintime.f_local_db.domain.model.EmergencyContact.Companion.toEmergencyContact
+import com.dbad.justintime.f_local_db.domain.model.EmergencyContact.Companion.toHashMap
+import com.dbad.justintime.f_local_db.domain.model.Employee
+import com.dbad.justintime.f_local_db.domain.model.Employee.Companion.toEmployee
+import com.dbad.justintime.f_local_db.domain.model.Employee.Companion.toHashMap
+import com.dbad.justintime.f_local_db.domain.model.User
+import com.dbad.justintime.f_local_db.domain.model.User.Companion.toHashMap
+import com.dbad.justintime.f_local_db.domain.model.User.Companion.toUser
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
@@ -22,10 +23,6 @@ class UserDatabaseRegisterLogin() {
     private val userCollection = "user"
     private val emergencyContactCollection = "emergencyContact"
     private val employeeCollection = "employee"
-
-    init {
-//        dataStore.useEmulator("10.0.2.2", 8080)
-    }
 
     fun getUser(user: User): Flow<User> {
         return callbackFlow {
@@ -44,16 +41,14 @@ class UserDatabaseRegisterLogin() {
         }
     }
 
-    fun upsertUser(user: User): Flow<Boolean> {
-        return callbackFlow {
-            dataStore.collection(userCollection).document(user.uid).set(user.toHashMap())
-                .addOnFailureListener {
-                    trySend(false)
-                }.addOnSuccessListener {
-                    trySend(true)
-                }
-            awaitClose()
-        }
+    fun upsertUser(user: User) {
+        dataStore.collection(userCollection).document(user.uid)
+            .set(user.toHashMap())
+            .addOnSuccessListener {
+                Log.d("RemoteDatabase", "User data successfully uploaded")
+            }.addOnFailureListener {
+                Log.d("RemoteDatabase", "User data failed Upload")
+            }
     }
 
     fun getEmployee(employee: Employee): Flow<Employee> {
@@ -73,16 +68,14 @@ class UserDatabaseRegisterLogin() {
         }
     }
 
-    fun upsertEmployee(employee: Employee): Flow<Boolean> {
-        return callbackFlow {
-            dataStore.collection(employeeCollection).document(employee.uid)
-                .set(employee.toHashMap()).addOnFailureListener {
-                    trySend(false)
-                }.addOnSuccessListener {
-                    trySend(true)
-                }
-            awaitClose()
-        }
+    fun upsertEmployee(employee: Employee) {
+        dataStore.collection(employeeCollection).document(employee.uid)
+            .set(employee.toHashMap())
+            .addOnSuccessListener {
+                Log.d("RemoteDatabase", "Employee data successfully uploaded")
+            }.addOnFailureListener {
+                Log.d("RemoteDatabase", "Employee data failed Upload")
+            }
     }
 
     fun getEmergencyContact(emergencyContact: EmergencyContact): Flow<EmergencyContact> {
@@ -100,15 +93,13 @@ class UserDatabaseRegisterLogin() {
         }
     }
 
-    fun upsertEmergencyContact(emergencyContact: EmergencyContact): Flow<Boolean> {
-        return callbackFlow {
-            dataStore.collection(emergencyContactCollection).document(emergencyContact.uid)
-                .set(emergencyContact.toHashMap()).addOnFailureListener { error ->
-                    trySend(false)
-                }.addOnSuccessListener {
-                    trySend(true)
-                }
-            awaitClose()
-        }
+    fun upsertEmergencyContact(emergencyContact: EmergencyContact) {
+        dataStore.collection(emergencyContactCollection).document(emergencyContact.uid)
+            .set(emergencyContact.toHashMap())
+            .addOnSuccessListener {
+                Log.d("RemoteDatabase", "EmergencyContact data successfully uploaded")
+            }.addOnFailureListener {
+                Log.d("RemoteDatabase", "EmergencyContact data failed Upload")
+            }
     }
 }

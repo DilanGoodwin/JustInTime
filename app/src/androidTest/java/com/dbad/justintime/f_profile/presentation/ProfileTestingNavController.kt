@@ -5,15 +5,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.dbad.justintime.core.ProfileScreen
-import com.dbad.justintime.f_local_datastore.domain.repository.UserPreferencesRepository
 import com.dbad.justintime.f_profile.domain.use_case.ProfileUseCases
 import com.dbad.justintime.f_profile.presentation.profile.ProfileScreen
 import com.dbad.justintime.f_profile.presentation.profile.ProfileViewModel
+import com.dbad.justintime.f_user_auth.domain.repository.AuthRepo
 
 @Composable
 fun ProfileTestingNavController(
     useCases: ProfileUseCases,
-    userPreferencesStore: UserPreferencesRepository
+    authUser: AuthRepo
 ) {
     val navControl = rememberNavController()
 
@@ -22,8 +22,10 @@ fun ProfileTestingNavController(
             ProfileScreen(
                 viewModel = ProfileViewModel(
                     useCases = useCases,
-                    preferencesDataStore = userPreferencesStore
-                )
+                    authUser = authUser
+                ),
+                onSignOut = {},
+                onNavShiftView = {}
             )
         }
     }

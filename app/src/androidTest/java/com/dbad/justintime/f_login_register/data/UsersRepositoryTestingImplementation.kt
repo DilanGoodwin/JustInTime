@@ -1,8 +1,8 @@
 package com.dbad.justintime.f_login_register.data
 
-import com.dbad.justintime.f_local_users_db.domain.model.EmergencyContact
-import com.dbad.justintime.f_local_users_db.domain.model.Employee
-import com.dbad.justintime.f_local_users_db.domain.model.User
+import com.dbad.justintime.f_local_db.domain.model.EmergencyContact
+import com.dbad.justintime.f_local_db.domain.model.Employee
+import com.dbad.justintime.f_local_db.domain.model.User
 import com.dbad.justintime.f_login_register.domain.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,8 +37,7 @@ class UsersRepositoryTestingImplementation(
         currentUsers.add(
             User(
                 uid = user.uid,
-                email = user.email,
-                password = user.password
+                email = user.email
             )
         )
         _usersList.value = currentUsers.toList()

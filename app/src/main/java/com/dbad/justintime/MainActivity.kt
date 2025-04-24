@@ -14,7 +14,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.dbad.justintime.f_local_datastore.data.repository.UserPreferencesRepositoryImplementation
 import com.dbad.justintime.f_login_register.presentation.login.LoginScreen
 import com.dbad.justintime.f_login_register.presentation.login.LoginViewModel
 import com.dbad.justintime.f_login_register.presentation.register.RegisterScreen
@@ -23,10 +22,9 @@ import com.dbad.justintime.f_login_register.presentation.user_details.ExtraRegis
 import com.dbad.justintime.f_login_register.presentation.user_details.UserDetailsViewModel
 import com.dbad.justintime.f_profile.presentation.profile.ProfileScreen
 import com.dbad.justintime.f_profile.presentation.profile.ProfileViewModel
+import com.dbad.justintime.f_shifts.presentation.shifts_list.ShiftListScreen
+import com.dbad.justintime.f_shifts.presentation.shifts_list.ShiftsViewModel
 import com.dbad.justintime.ui.theme.JustInTimeTheme
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.Serializable
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,14 +36,11 @@ class MainActivity : ComponentActivity() {
 
                     val navController = rememberNavController()
 
-                    val userPreferences = UserPreferencesRepositoryImplementation(this)
-
-                    val storedLoginState = userPreferences.tokenFlow
+                    val authenticated = App.authUser
+//                    For testing to log the user out
+//                    authenticated.signOut()
                     val startingPosition =
-                        runBlocking {
-//                            userPreferences.clearLoginToken()
-                            if (storedLoginState.first() != "") ProfileScreen else LoginNav
-                        }
+                        if (authenticated.authState.value!!) ProfileNav else LoginNav
 
                     NavHost(navController = navController, startDestination = startingPosition) {
 
@@ -57,13 +52,15 @@ class MainActivity : ComponentActivity() {
                                     viewModel = viewModel<LoginViewModel>(
                                         factory = LoginViewModel.generateViewModel(
                                             useCases = loginRegisterUseCases,
-                                            preferencesDataStore = userPreferences
+                                            authUser = authenticated
                                         )
                                     ),
                                     onRegistration = {
                                         navController.navigate(route = RegistrationNav)
                                     },
-                                    onLogin = { navController.navigate(route = ProfileScreen) },
+                                    onLogin = {
+                                        navController.navigate(route = ProfileNav)
+                                    },
                                     modifier = Modifier.padding(paddingValues = innerPadding)
                                 )
                             }
@@ -71,7 +68,12 @@ class MainActivity : ComponentActivity() {
                             navigation<RegistrationNav>(startDestination = RegisterScreen) {
                                 composable<RegisterScreen> {
                                     RegisterScreen(
-                                        viewModel = RegisterViewModel(useCases = loginRegisterUseCases),
+                                        viewModel = viewModel<RegisterViewModel>(
+                                            factory = RegisterViewModel.generateViewModel(
+                                                useCases = loginRegisterUseCases,
+                                                authUser = authenticated
+                                            )
+                                        ),
                                         onCancelRegistration = {
                                             navController.navigate(route = LoginScreen)
                                         },
@@ -87,15 +89,16 @@ class MainActivity : ComponentActivity() {
                                 composable<UserDetailsInformation> {
                                     val args = it.toRoute<UserDetailsInformation>()
                                     ExtraRegistrationDetails(
-                                        viewModel = UserDetailsViewModel(
-                                            useCases = loginRegisterUseCases,
-                                            preferencesDataStore = userPreferences
+                                        viewModel = viewModel<UserDetailsViewModel>(
+                                            factory = UserDetailsViewModel.generateViewModel(
+                                                useCases = loginRegisterUseCases
+                                            )
                                         ),
                                         onCancelUserDetails = {
                                             navController.navigate(route = LoginNav)
                                         },
                                         onRegister = {
-                                            navController.navigate(route = ProfileScreen)
+                                            navController.navigate(route = ProfileNav)
                                         },
                                         userUid = args.userUid,
                                         modifier = Modifier.padding(
@@ -105,43 +108,38 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                         }
-                        composable<ProfileScreen> { //TODO move to separate nav window
-                            ProfileScreen(
-                                viewModel = viewModel<ProfileViewModel>(
-                                    factory = ProfileViewModel.generateViewModel(
-                                        useCases = App.profile.useCases,
-                                        preferencesDataStore = userPreferences
-                                    )
+
+                        navigation<ProfileNav>(startDestination = ProfileScreen) {
+                            composable<ProfileScreen> {
+                                ProfileScreen(
+                                    viewModel = viewModel<ProfileViewModel>(
+                                        factory = ProfileViewModel.generateViewModel(
+                                            useCases = App.profile.useCases,
+                                            authUser = authenticated
+                                        )
+                                    ),
+                                    onSignOut = { navController.navigate(route = LoginNav) },
+                                    onNavShiftView = { navController.navigate(route = ShiftNav) }
                                 )
-                            )
+                            }
                         }
 
+                        navigation<ShiftNav>(startDestination = ShiftScreen) {
+                            composable<ShiftScreen> {
+                                ShiftListScreen(
+                                    viewModel = viewModel<ShiftsViewModel>(
+                                        factory = ShiftsViewModel.generateViewModel(
+                                            useCases = App.shifts.useCases,
+                                            authUser = authenticated
+                                        )
+                                    ),
+                                    onNavProfile = { navController.navigate(route = ProfileNav) }
+                                )
+                            }
+                        }
                     }
                 }
             }
         }
     }
 }
-
-
-// Navigation Serialization objects
-@Serializable
-object LoginNav
-
-@Serializable
-object RegistrationNav
-
-@Serializable
-object MainApplication
-
-@Serializable
-object LoginScreen
-
-@Serializable
-object RegisterScreen
-
-@Serializable
-data class UserDetailsInformation(val userUid: String)
-
-@Serializable
-object ProfileScreen

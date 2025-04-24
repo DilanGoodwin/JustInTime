@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -20,8 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.dbad.justintime.R
-import com.dbad.justintime.f_local_users_db.domain.model.util.PreferredContactMethod
-import com.dbad.justintime.f_local_users_db.domain.model.util.Relation
+import com.dbad.justintime.core.presentation.util.DateSelectorDropDown
 import com.dbad.justintime.core.presentation.util.DateSelectorField
 import com.dbad.justintime.core.presentation.util.DualButtonFields
 import com.dbad.justintime.core.presentation.util.ExpandableCardArea
@@ -33,6 +33,8 @@ import com.dbad.justintime.core.presentation.util.TestTagNameField
 import com.dbad.justintime.core.presentation.util.TestTagPhoneNumberField
 import com.dbad.justintime.core.presentation.util.TextInputField
 import com.dbad.justintime.core.presentation.util.ViewingSystemThemes
+import com.dbad.justintime.f_local_db.domain.model.util.PreferredContactMethod
+import com.dbad.justintime.f_local_db.domain.model.util.Relation
 import com.dbad.justintime.f_login_register.presentation.util.JustInTimeLogoDisplay
 import com.dbad.justintime.ui.theme.JustInTimeTheme
 
@@ -98,11 +100,17 @@ fun ExtraRegistrationDetails(
                     DateSelectorField(
                         currentValue = state.userDateOfBirth,
                         placeHolderText = stringResource(R.string.dateOfBirth),
-                        showDatePicker = state.showDatePicker,
                         toggleDatePicker = { onEvent(UserDetailsEvents.ToggleDatePicker) },
                         dateError = state.showDatePickerError,
-                        saveSelectedDate = { onEvent(UserDetailsEvents.SetDateOfBirth(it)) }
-                    )
+                        modifier = Modifier
+                            .width(width = 400.dp)
+                            .height(height = 80.dp)
+                    ) {
+                        DateSelectorDropDown(
+                            showDatePicker = state.showDatePicker,
+                            saveSelectedDate = { onEvent(UserDetailsEvents.SetDateOfBirth(it)) }
+                        )
+                    }
 
                     // Phone Number Field
                     TextInputField(

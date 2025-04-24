@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
@@ -25,6 +26,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -32,7 +34,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -49,8 +54,10 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import com.dbad.justintime.R
-import com.dbad.justintime.f_local_users_db.domain.model.util.PreferredContactMethod
-import com.dbad.justintime.f_local_users_db.domain.model.util.Relation
+import com.dbad.justintime.f_local_db.domain.model.util.PreferredContactMethod
+import com.dbad.justintime.f_local_db.domain.model.util.Relation
+import com.dbad.justintime.ui.theme.JustInTimeTheme
+import java.util.Calendar
 
 @Composable
 fun TextInputField(
@@ -92,6 +99,8 @@ fun LabelledTextInputFields(
     currentValue: String,
     placeHolderText: String,
     onValueChange: (String) -> Unit,
+    textFieldError: Boolean = false,
+    errorString: String = "",
     readOnly: Boolean = false,
     keyboardOptions: KeyboardOptions = KeyboardOptions(),
     testingTag: String = ""
@@ -101,13 +110,23 @@ fun LabelledTextInputFields(
         onValueChange = { onValueChange(it) },
         placeholder = { Text(text = placeHolderText) },
         label = { Text(text = placeHolderText) },
+        isError = textFieldError,
+        supportingText = {
+            if (textFieldError) {
+                Text(
+                    text = errorString,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        },
         readOnly = readOnly,
         keyboardOptions = keyboardOptions,
         singleLine = true,
         modifier = modifier
             .clip(shape = RoundedCornerShape(size = 8.dp))
             .width(400.dp)
-            .height(60.dp)
+            .height(80.dp)
             .testTag(tag = testingTag)
     )
 }
@@ -117,8 +136,8 @@ fun LabelledTextDropDownFields(
     modifier: Modifier = Modifier,
     currentValue: String,
     placeHolderText: String,
-    testTag: String,
-    readOnly: Boolean,
+    testTag: String = "",
+    readOnly: Boolean = false,
     expandedDropDown: Boolean,
     dropDownToggle: () -> Unit,
     menu: @Composable () -> Unit
@@ -136,7 +155,7 @@ fun LabelledTextDropDownFields(
                 ) {
                     Icon(
                         imageVector = if (expandedDropDown) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-                        contentDescription = "", //TODO add content description to string xml
+                        contentDescription = stringResource(R.string.textbox_toggle),
                     )
 
                     // Display specific menu dropdown content
@@ -300,7 +319,7 @@ fun DropDownField(
             ) {
                 Icon(
                     imageVector = if (expandedDropDown) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-                    contentDescription = "", //TODO add content description to string xml
+                    contentDescription = stringResource(R.string.textbox_toggle),
                 )
 
                 // Display specific menu dropdown content
@@ -319,10 +338,11 @@ fun DropDownField(
 fun DateSelectorField(
     currentValue: String,
     placeHolderText: String,
-    showDatePicker: Boolean,
     toggleDatePicker: () -> Unit,
     dateError: Boolean,
-    saveSelectedDate: (String) -> Unit
+    modifier: Modifier = Modifier,
+    errorMsg: Int = R.string.dobError,
+    datePicker: @Composable () -> Unit,
 ) {
     TextField(
         value = currentValue,
@@ -337,19 +357,18 @@ fun DateSelectorField(
                 onClick = { toggleDatePicker() },
                 modifier = Modifier.testTag(tag = TestTagDateOfBirthField)
             ) {
-                Icon(imageVector = Icons.Default.DateRange, contentDescription = "")
-                //TODO - provide content description
-                DateSelectorDropDown(
-                    showDatePicker = showDatePicker,
-                    saveSelectedDate = saveSelectedDate
+                Icon(
+                    imageVector = Icons.Default.DateRange,
+                    contentDescription = stringResource(R.string.date_range_toggle)
                 )
+                datePicker()
             }
         },
         isError = dateError,
         supportingText = {
             if (dateError) {
                 Text(
-                    text = stringResource(R.string.dobError),
+                    text = stringResource(errorMsg),
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -357,10 +376,8 @@ fun DateSelectorField(
         },
         readOnly = true,
         singleLine = true,
-        modifier = Modifier
+        modifier = modifier
             .clip(shape = RoundedCornerShape(size = 8.dp))
-            .width(400.dp)
-            .height(80.dp)
     )
 }
 
@@ -388,6 +405,99 @@ fun DateSelectorDropDown(
                 )
             }
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TimeSelectionField(
+    currentValue: String,
+    placeHolderText: String,
+    showTimePicker: Boolean,
+    timeError: Boolean,
+    toggleTimePicker: () -> Unit,
+    timePickerState: TimePickerState,
+    modifier: Modifier = Modifier
+) {
+    TextField(
+        value = currentValue,
+        onValueChange = {},
+        placeholder = {
+            Box(modifier = Modifier.fillMaxSize()) {
+                Text(text = placeHolderText)
+            }
+        },
+        trailingIcon = {
+            IconButton(
+                onClick = { toggleTimePicker() },
+                modifier = Modifier.testTag(tag = TestTagTimePickerToggle)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.AccessTime,
+                    contentDescription = stringResource(R.string.time_range_toggle)
+                )
+                TimeDialPicker(
+                    timePickerState = timePickerState,
+                    showTimePicker = showTimePicker,
+                    saveSelectedTime = toggleTimePicker
+                )
+            }
+        },
+        isError = timeError,
+        supportingText = {
+            if (timeError) {
+                Text(
+                    text = stringResource(R.string.timeError),
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        },
+        readOnly = true,
+        singleLine = true,
+        modifier = modifier.clip(shape = RoundedCornerShape(size = 8.dp))
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TimeDialPicker(
+    timePickerState: TimePickerState,
+    showTimePicker: Boolean,
+    saveSelectedTime: () -> Unit
+) {
+    if (showTimePicker) {
+        Popup(
+            onDismissRequest = {}
+        ) {
+            Column(modifier = Modifier.padding(all = 10.dp)) {
+                TimePicker(state = timePickerState)
+                Button(
+                    onClick = { saveSelectedTime() },
+                    modifier = Modifier.align(alignment = Alignment.End)
+                ) {
+                    Text(text = stringResource(R.string.save))
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@ViewingSystemThemes
+@Composable
+fun TimeDialPickerViewer() {
+    val currentTime = Calendar.getInstance()
+    JustInTimeTheme {
+        TimeDialPicker(
+            timePickerState = TimePickerState(
+                initialHour = currentTime.get(Calendar.HOUR_OF_DAY),
+                initialMinute = currentTime.get(Calendar.MINUTE),
+                is24Hour = true
+            ),
+            showTimePicker = true,
+            saveSelectedTime = {}
+        )
     }
 }
 
@@ -426,7 +536,7 @@ fun ExpandableCardArea(
                 IconButton(onClick = { expandableButtonClick() }) {
                     Icon(
                         imageVector = if (isExpanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-                        contentDescription = "", //TODO add content description to strings xml
+                        contentDescription = stringResource(R.string.textbox_toggle),
                         modifier = Modifier
                             .weight(weight = 1f)
                             .rotate(rotationState)
@@ -444,6 +554,32 @@ fun ExpandableCardArea(
                 }
             }
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BackgroundOutlineWithButtons(
+    confirmButton: () -> Unit,
+    cancelButton: () -> Unit,
+    content: @Composable () -> Unit
+) {
+    /*
+    We are utilising the DatePickerDialog here as it creates its own outline area that we can
+    just place other items within. This prevents us from needing to create an entire card view
+    structure every single time we want to display something that does not have its own backing.
+
+    Currently wrapped within a secondary function as this is an experimental feature that may
+    be removed in a future release of the Material3 API. Wrapping in a secondary function allows
+    for all instances of the function to be updated at once should the API implementation change
+    affecting the application.
+     */
+    DatePickerDialog(
+        onDismissRequest = { cancelButton() },
+        confirmButton = { TextButton(onClick = { confirmButton() }) { Text(text = "Confirm") } },
+        dismissButton = { TextButton(onClick = { cancelButton() }) { Text(text = "Cancel") } }
+    ) {
+        content()
     }
 }
 

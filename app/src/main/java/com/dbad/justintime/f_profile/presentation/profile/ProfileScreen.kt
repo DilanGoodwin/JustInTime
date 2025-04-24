@@ -13,11 +13,19 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Approval
+import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
@@ -32,11 +40,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.dbad.justintime.R
+import com.dbad.justintime.core.presentation.util.DateSelectorDropDown
 import com.dbad.justintime.core.presentation.util.DateSelectorField
 import com.dbad.justintime.core.presentation.util.ExpandableCardArea
 import com.dbad.justintime.core.presentation.util.LabelledTextDropDownFields
 import com.dbad.justintime.core.presentation.util.LabelledTextInputFields
-import com.dbad.justintime.core.presentation.util.PasswordField
 import com.dbad.justintime.core.presentation.util.PreferredContactField
 import com.dbad.justintime.core.presentation.util.RelationField
 import com.dbad.justintime.core.presentation.util.TestTagCompanyInformationCompanyNameField
@@ -47,30 +55,33 @@ import com.dbad.justintime.core.presentation.util.TestTagCompanyInformationRole
 import com.dbad.justintime.core.presentation.util.TestTagEmailField
 import com.dbad.justintime.core.presentation.util.TestTagEmergencyContactExpandableField
 import com.dbad.justintime.core.presentation.util.TestTagNameField
-import com.dbad.justintime.core.presentation.util.TestTagOldPasswordField
-import com.dbad.justintime.core.presentation.util.TestTagPasswordChangeExpandableField
-import com.dbad.justintime.core.presentation.util.TestTagPasswordField
-import com.dbad.justintime.core.presentation.util.TestTagPasswordMatchField
 import com.dbad.justintime.core.presentation.util.TestTagPhoneNumberField
 import com.dbad.justintime.core.presentation.util.TestTagPreferredName
 import com.dbad.justintime.core.presentation.util.TestTagProfileSaveButton
 import com.dbad.justintime.core.presentation.util.TestTagUserInformationExpandableField
 import com.dbad.justintime.core.presentation.util.TextInputField
 import com.dbad.justintime.core.presentation.util.ViewingSystemThemes
-import com.dbad.justintime.f_local_users_db.domain.model.util.ContractType
-import com.dbad.justintime.f_local_users_db.domain.model.util.PreferredContactMethod
-import com.dbad.justintime.f_local_users_db.domain.model.util.Relation
+import com.dbad.justintime.f_local_db.domain.model.util.ContractType
+import com.dbad.justintime.f_local_db.domain.model.util.PreferredContactMethod
+import com.dbad.justintime.f_local_db.domain.model.util.Relation
 import com.dbad.justintime.ui.theme.JustInTimeTheme
 
 @Composable
-fun ProfileScreen(viewModel: ProfileViewModel) {
+fun ProfileScreen(
+    viewModel: ProfileViewModel,
+    onSignOut: () -> Unit,
+    onNavShiftView: () -> Unit
+) {
     val state by viewModel.state.collectAsState()
+
+    val event = viewModel::onEvent
+    event(ProfileEvent.SetSignOutEvent(onSignOut))
+    event(ProfileEvent.SetShiftNavEvent(onNavShiftView))
 
     ProfileScreen(
         state = state,
-        onEvent = viewModel::onEvent,
+        onEvent = event,
         userEvent = viewModel::onUserEvent,
-        passwordEvent = viewModel::onPasswordEvent,
         emergencyContactEvent = viewModel::onEmergencyContactEvent,
         companyEvents = viewModel::onCompanyEvent
     )
@@ -81,12 +92,12 @@ fun ProfileScreen(
     state: ProfileState,
     onEvent: (ProfileEvent) -> Unit,
     userEvent: (ProfileUserEvents) -> Unit,
-    passwordEvent: (ProfilePasswordEvents) -> Unit,
     emergencyContactEvent: (ProfileEmergencyContactEvents) -> Unit,
     companyEvents: (ProfileCompanyEvents) -> Unit
 ) {
     Scaffold(
-        topBar = { ProfileTopBar() },
+        topBar = { ProfileTopBar(onEvent = onEvent) },
+        bottomBar = { BottomNavBar(onEvent = onEvent) },
         floatingActionButton = {
             if (state.changeMade) {
                 SmallFloatingActionButton(
@@ -110,20 +121,15 @@ fun ProfileScreen(
                 .padding(innerPadding)
         ) {
             Column(
+                verticalArrangement = Arrangement.spacedBy(space = 20.dp),
                 modifier = Modifier
                     .verticalScroll(rememberScrollState())
                     .padding(20.dp)
             ) {
                 UserUpdateFields(state = state, onEvent = userEvent)
-                Spacer(modifier = Modifier.height(20.dp))
 
                 // Emergency Contact Area
                 EmergencyContactArea(state = state, onEvent = emergencyContactEvent)
-                Spacer(modifier = Modifier.height(20.dp))
-
-                // Password Change Field
-                PasswordUpdateFields(state = state, onEvent = passwordEvent)
-                Spacer(modifier = Modifier.height(20.dp))
 
                 // Company Information
                 CompanyInformationArea(state = state, onEvent = companyEvents)
@@ -132,11 +138,49 @@ fun ProfileScreen(
     }
 }
 
+@Composable
+fun BottomNavBar(onEvent: (ProfileEvent) -> Unit) {
+    NavigationBar() {
+        NavigationBarItem(
+            selected = false,
+            onClick = { onEvent(ProfileEvent.NavigateToShiftView) },
+            icon = {
+                Icon(
+                    imageVector = Icons.Filled.DateRange,
+                    contentDescription = stringResource(R.string.calendar)
+                )
+            },
+            label = { Text(text = stringResource(R.string.calendar)) }
+        )
+        NavigationBarItem(
+            selected = true,
+            onClick = {},
+            icon = {
+                Icon(
+                    imageVector = Icons.Filled.Approval,
+                    contentDescription = stringResource(R.string.profile)
+                )
+            },
+            label = { Text(text = stringResource(R.string.profile)) }
+        )
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileTopBar() {
+fun ProfileTopBar(onEvent: (ProfileEvent) -> Unit) {
     CenterAlignedTopAppBar(
         title = { Text(text = stringResource(R.string.profile)) },
+        navigationIcon = {
+            IconButton(
+                onClick = { onEvent(ProfileEvent.SignOut) }
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Cancel,
+                    contentDescription = stringResource(R.string.cancel)
+                )
+            }
+        },
         modifier = Modifier.fillMaxWidth()
     )
 }
@@ -185,11 +229,17 @@ fun UserUpdateFields(
         DateSelectorField(
             currentValue = state.employee.dateOfBirth,
             placeHolderText = stringResource(R.string.dateOfBirth),
-            showDatePicker = state.showDateOfBirthPicker,
             toggleDatePicker = { onEvent(ProfileUserEvents.ToggleShowDatePicker) },
             dateError = state.dateOfBirthError,
-            saveSelectedDate = { onEvent(ProfileUserEvents.SetDateOfBirth(dateOfBirth = it)) }
-        )
+            modifier = Modifier
+                .width(width = 400.dp)
+                .height(height = 80.dp)
+        ) {
+            DateSelectorDropDown(
+                showDatePicker = state.showDateOfBirthPicker,
+                saveSelectedDate = { onEvent(ProfileUserEvents.SetDateOfBirth(dateOfBirth = it)) }
+            )
+        }
 
         // Phone Number Field
         TextInputField(
@@ -208,55 +258,6 @@ fun UserUpdateFields(
             expandDropDown = state.expandPrefContactMethod,
             dropDownToggle = { onEvent(ProfileUserEvents.TogglePrefContactDropDown) },
             selectContactMethod = { onEvent(ProfileUserEvents.SetPrefContactMethod(it)) }
-        )
-    }
-}
-
-@Composable
-fun PasswordUpdateFields(
-    state: ProfileState,
-    onEvent: (ProfilePasswordEvents) -> Unit
-) {
-    ExpandableCardArea(
-        isExpanded = state.expandPasswordArea,
-        expandableButtonClick = { onEvent(ProfilePasswordEvents.ToggleExpandableArea) },
-        cardTitle = stringResource(R.string.passwordChangeFields),
-        testTag = TestTagPasswordChangeExpandableField
-    ) {
-        // Old Password
-        PasswordField(
-            currentValue = state.oldPassword,
-            placeHolderText = stringResource(R.string.oldPassword),
-            showPassword = state.oldPasswordView,
-            textFieldError = state.oldPasswordShowError,
-            errorString = stringResource(R.string.passwordDoNotMatch),
-            onValueChange = { onEvent(ProfilePasswordEvents.OldPasswordInput(oldPassword = it)) },
-            visiblePassword = { onEvent(ProfilePasswordEvents.ToggleOldPasswordView) },
-            testingTag = TestTagOldPasswordField
-        )
-
-        // New Password
-        PasswordField(
-            currentValue = state.newPassword,
-            placeHolderText = stringResource(R.string.newPassword),
-            showPassword = state.newPasswordView,
-            textFieldError = state.newPasswordShowError,
-            errorString = stringResource(state.newPasswordErrorString.errorCode),
-            onValueChange = { onEvent(ProfilePasswordEvents.NewPasswordInput(newPassword = it)) },
-            visiblePassword = { onEvent(ProfilePasswordEvents.ToggleNewPasswordView) },
-            testingTag = TestTagPasswordField
-        )
-
-        // New Password Match
-        PasswordField(
-            currentValue = state.newMatchPassword,
-            placeHolderText = stringResource(R.string.reEnterNewPassword),
-            showPassword = state.newMatchPasswordView,
-            textFieldError = state.newMatchPasswordShowError,
-            errorString = stringResource(R.string.passwordDoNotMatch),
-            onValueChange = { onEvent(ProfilePasswordEvents.NewPasswordMatchInput(newPassword = it)) },
-            visiblePassword = { onEvent(ProfilePasswordEvents.ToggleNewPasswordMatchView) },
-            testingTag = TestTagPasswordMatchField
         )
     }
 }
@@ -426,7 +427,6 @@ fun ProfileScreenPreview() {
             state = ProfileState(),
             onEvent = {},
             userEvent = {},
-            passwordEvent = {},
             emergencyContactEvent = {},
             companyEvents = {}
         )
@@ -438,16 +438,6 @@ fun ProfileScreenPreview() {
 fun ProfileScreenUserInformationPreview() {
     JustInTimeTheme {
         UserUpdateFields(state = ProfileState(), onEvent = {})
-    }
-}
-
-@ViewingSystemThemes
-@Composable
-fun ProfileScreenPasswordChangePreview() {
-    JustInTimeTheme {
-        PasswordUpdateFields(
-            state = ProfileState(expandPasswordArea = true),
-            onEvent = {})
     }
 }
 

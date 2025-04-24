@@ -3,12 +3,12 @@ package com.dbad.justintime.f_login_register.presentation.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.dbad.justintime.f_local_datastore.domain.repository.UserPreferencesRepository
-import com.dbad.justintime.f_local_users_db.domain.model.EmergencyContact
-import com.dbad.justintime.f_local_users_db.domain.model.Employee
-import com.dbad.justintime.f_local_users_db.domain.model.User
+import com.dbad.justintime.f_local_db.domain.model.EmergencyContact
+import com.dbad.justintime.f_local_db.domain.model.Employee
+import com.dbad.justintime.f_local_db.domain.model.User
 import com.dbad.justintime.f_login_register.domain.use_case.UserUseCases
 import com.dbad.justintime.f_login_register.domain.util.PasswordErrors
+import com.dbad.justintime.f_user_auth.domain.repository.AuthRepo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.first
@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 
 class LoginViewModel(
     private val useCases: UserUseCases,
-    private val preferencesDataStore: UserPreferencesRepository
+    private val authUser: AuthRepo
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(LoginState())
@@ -54,17 +54,20 @@ class LoginViewModel(
         if (!error) {
             val tmpUser = User(
                 uid = User.generateUid(email = _state.value.email),
-                email = _state.value.email,
-                password = User.hashPassword(_state.value.password)
+                email = _state.value.email
             )
 
-            viewModelScope.launch {
-                // Get the user from the remote database that matches the passed in credentials
-                val receivedUser = useCases.getUser(user = tmpUser).first()
+            // login user
+            authUser.loginUser(
+                email = _state.value.email,
+                password = _state.value.password
+            )
 
-                if (receivedUser.uid.isBlank()) {
-                    _state.update { it.copy(showError = true) }
-                } else {
+            if (authUser.authState.value!!) {
+                viewModelScope.launch {
+                    // Get the user info
+                    val receivedUser = useCases.getUser(user = tmpUser).first()
+
                     // Grab the employee & emergency contact information
                     val employeeInfo =
                         useCases.getEmployee(employee = Employee(uid = receivedUser.employee))
@@ -86,27 +89,28 @@ class LoginViewModel(
                                 employee = employeeInfo,
                                 emergencyContact = emergencyContactInfo
                             )
-
-                            // Place user uid into datastore preferences to bypass login next time
-                            preferencesDataStore.updateLoginToken(token = receivedUser.uid)
                         }
                     }
                 }
             }
-            if (!_state.value.showError) _state.value.onLogin()
+            if (!_state.value.showError && (authUser.authState.value != false)) {
+                _state.value.onLogin()
+            } else {
+                _state.update { it.copy(showError = true) }
+            }
         }
     }
 
     companion object {
         fun generateViewModel(
             useCases: UserUseCases,
-            preferencesDataStore: UserPreferencesRepository
+            authUser: AuthRepo
         ): ViewModelProvider.Factory {
             return object : ViewModelProvider.Factory {
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
                     return LoginViewModel(
                         useCases = useCases,
-                        preferencesDataStore = preferencesDataStore
+                        authUser = authUser
                     ) as T
                 }
             }

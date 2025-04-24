@@ -8,6 +8,7 @@ import com.dbad.justintime.core.domain.use_case.ValidatePhoneNumber
 data class UserUseCases(
     val getUser: GetUser,
     val upsertUser: UpsertUser,
+    val deleteTmpUser: DeleteTmpUser,
     val getEmployee: GetEmployee,
     val upsertEmployee: UpsertEmployee,
     val getEmergencyContact: GetEmergencyContact,

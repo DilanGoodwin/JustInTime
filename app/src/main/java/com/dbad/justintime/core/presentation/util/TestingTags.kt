@@ -29,4 +29,8 @@ const val TestTagCompanyInformationRole = "CompanyInformationRole"
 
 const val TestTagProfileSaveButton = "ProfileSaveButton"
 
+const val TestTagShiftLocation = "ShiftLocation"
+
 const val TestTagCalendarView = "CalendarView"
+
+const val TestTagTimePickerToggle = "TimePickerToggle"

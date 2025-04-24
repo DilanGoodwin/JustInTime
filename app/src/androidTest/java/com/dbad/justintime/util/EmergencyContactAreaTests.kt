@@ -23,7 +23,7 @@ import com.dbad.justintime.core.presentation.util.TestTagEmergencyContactExpanda
 import com.dbad.justintime.core.presentation.util.TestTagEmergencyContactRelation
 import com.dbad.justintime.core.presentation.util.TestTagPhoneNumberField
 import com.dbad.justintime.core.presentation.util.TestTagPreferredContactMethodField
-import com.dbad.justintime.f_local_users_db.domain.model.util.Relation
+import com.dbad.justintime.f_local_db.domain.model.util.Relation
 
 class EmergencyContactAreaTests(
     private val testRule: AndroidComposeTestRule<ActivityScenarioRule<ComponentActivity>, ComponentActivity>

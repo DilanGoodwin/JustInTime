@@ -1,16 +1,18 @@
 package com.dbad.justintime.f_login_register.data.repository
 
-import com.dbad.justintime.f_local_users_db.domain.model.EmergencyContact
-import com.dbad.justintime.f_local_users_db.domain.model.Employee
-import com.dbad.justintime.f_local_users_db.domain.model.User
-import com.dbad.justintime.f_local_users_db.domain.use_case.LocalDatabaseUseCases
+import com.dbad.justintime.f_local_db.domain.model.EmergencyContact
+import com.dbad.justintime.f_local_db.domain.model.Employee
+import com.dbad.justintime.f_local_db.domain.model.User
+import com.dbad.justintime.f_local_db.domain.use_case.LocalDatabaseUseCases
 import com.dbad.justintime.f_login_register.data.data_source.UserDatabaseRegisterLogin
 import com.dbad.justintime.f_login_register.domain.repository.UserRepository
+import com.dbad.justintime.f_user_auth.domain.repository.AuthRepo
 import kotlinx.coroutines.flow.Flow
 
 class UsersRepositoryImplementation(
     private val localDatabase: LocalDatabaseUseCases,
-    private val dataStore: UserDatabaseRegisterLogin
+    private val dataStore: UserDatabaseRegisterLogin,
+    private val auth: AuthRepo
 ) : UserRepository {
 
     override fun getUser(user: User): Flow<User> {
@@ -18,8 +20,12 @@ class UsersRepositoryImplementation(
     }
 
     override suspend fun upsertUser(user: User) {
-        dataStore.upsertUser(user = user)
         localDatabase.upsertUser(user = user)
+        dataStore.upsertUser(user = user)
+    }
+
+    override fun deleteTmpUser() {
+        auth.deleteUser()
     }
 
     override suspend fun getEmployee(employee: Employee): Flow<Employee> {
@@ -27,8 +33,8 @@ class UsersRepositoryImplementation(
     }
 
     override suspend fun upsertEmployee(employee: Employee) {
-        dataStore.upsertEmployee(employee = employee)
         localDatabase.upsertEmployee(employee = employee)
+        dataStore.upsertEmployee(employee = employee)
     }
 
     override suspend fun getEmergencyContact(emergencyContact: EmergencyContact): Flow<EmergencyContact> {
@@ -36,8 +42,8 @@ class UsersRepositoryImplementation(
     }
 
     override suspend fun upsertEmergencyContact(contact: EmergencyContact) {
-        dataStore.upsertEmergencyContact(emergencyContact = contact)
         localDatabase.upsertEmergencyContact(emergencyContact = contact)
+        dataStore.upsertEmergencyContact(emergencyContact = contact)
     }
 
     override suspend fun updateLocalDatabase(

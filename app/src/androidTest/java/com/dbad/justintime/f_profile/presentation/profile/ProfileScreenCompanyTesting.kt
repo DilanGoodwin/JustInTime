@@ -12,6 +12,7 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import com.dbad.justintime.core.AuthTestingRepo
 import com.dbad.justintime.core.domain.use_case.ValidateDate
 import com.dbad.justintime.core.domain.use_case.ValidateEmail
 import com.dbad.justintime.core.domain.use_case.ValidatePassword
@@ -20,8 +21,8 @@ import com.dbad.justintime.core.presentation.util.TestTagCompanyInformationCompa
 import com.dbad.justintime.core.presentation.util.TestTagCompanyInformationExpandableField
 import com.dbad.justintime.core.presentation.util.TestTagCompanyInformationManagerNameField
 import com.dbad.justintime.core.presentation.util.TestTagCompanyInformationRole
-import com.dbad.justintime.f_local_users_db.domain.model.util.ContractType
-import com.dbad.justintime.f_profile.data.ProfileRepositoryTestingImplementation
+import com.dbad.justintime.f_local_db.domain.model.User
+import com.dbad.justintime.f_local_db.domain.model.util.ContractType
 import com.dbad.justintime.f_profile.data.ProfileRepositoryTestingImplementation.Companion.generateProfileTestRepo
 import com.dbad.justintime.f_profile.domain.repository.ProfileRepository
 import com.dbad.justintime.f_profile.domain.use_case.GetEmergencyContact
@@ -32,7 +33,6 @@ import com.dbad.justintime.f_profile.domain.use_case.UpsertEmergencyContact
 import com.dbad.justintime.f_profile.domain.use_case.UpsertEmployee
 import com.dbad.justintime.f_profile.domain.use_case.UpsertUser
 import com.dbad.justintime.f_profile.presentation.ProfileTestingNavController
-import com.dbad.justintime.util.UserPreferencesTestingImplementation
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
@@ -71,9 +71,7 @@ class ProfileScreenCompanyTesting {
         testRule.setContent {
             ProfileTestingNavController(
                 useCases = useCases,
-                userPreferencesStore = UserPreferencesTestingImplementation(
-                    passedState = ProfileRepositoryTestingImplementation.userUid
-                )
+                authUser = AuthTestingRepo(user = User(), loggedIn = true)
             )
         }
 

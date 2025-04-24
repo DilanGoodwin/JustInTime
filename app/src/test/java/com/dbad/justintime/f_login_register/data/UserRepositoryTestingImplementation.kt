@@ -1,8 +1,8 @@
 package com.dbad.justintime.f_login_register.data
 
-import com.dbad.justintime.f_local_users_db.domain.model.EmergencyContact
-import com.dbad.justintime.f_local_users_db.domain.model.Employee
-import com.dbad.justintime.f_local_users_db.domain.model.User
+import com.dbad.justintime.f_local_db.domain.model.EmergencyContact
+import com.dbad.justintime.f_local_db.domain.model.Employee
+import com.dbad.justintime.f_local_db.domain.model.User
 import com.dbad.justintime.f_login_register.domain.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,15 +32,19 @@ class UserRepositoryTestingImplementation(users: List<User>) : UserRepository {
         currentUsers.add(
             User(
                 uid = user.uid,
-                email = user.email,
-                password = user.password
+                email = user.email
             )
         )
         _usersList.value = currentUsers.toList()
     }
 
     override suspend fun getEmployee(employee: Employee): Flow<Employee> {
-        TODO("Not yet implemented")
+        for (existingEmployee in _employee.value) {
+            if (existingEmployee.uid == employee.uid) {
+                return flowOf(existingEmployee)
+            }
+        }
+        return flowOf(Employee())
     }
 
     override suspend fun upsertEmergencyContact(contact: EmergencyContact) {
@@ -69,7 +73,9 @@ class UserRepositoryTestingImplementation(users: List<User>) : UserRepository {
         employee: Employee,
         emergencyContact: EmergencyContact
     ) {
-        TODO("Not yet implemented")
+        upsertUser(user = user)
+        upsertEmployee(employee = employee)
+        upsertEmergencyContact(contact = emergencyContact)
     }
 
     override suspend fun upsertEmployee(employee: Employee) {
@@ -98,6 +104,11 @@ class UserRepositoryTestingImplementation(users: List<User>) : UserRepository {
     }
 
     override suspend fun getEmergencyContact(emergencyContact: EmergencyContact): Flow<EmergencyContact> {
-        TODO("Not yet implemented")
+        for (existingContext in _emergencyContact.value) {
+            if (existingContext.uid == emergencyContact.uid) {
+                return flowOf(existingContext)
+            }
+        }
+        return flowOf(EmergencyContact())
     }
 }
