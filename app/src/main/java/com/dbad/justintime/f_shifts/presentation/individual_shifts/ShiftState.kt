@@ -8,7 +8,19 @@ data class ShiftState(
     val holiday: List<Event> = emptyList(),
     val unavailability: List<Event> = emptyList(),
     val people: List<Person> = emptyList(),
+
     val selectedShiftOrEvent: Event = Event(),
+
+    val showSelectedShift: Boolean = false,
+    val isAdmin: Boolean = false,
+    val readOnly: Boolean = true,
+
+    val showTimePicker: Boolean = false,
+    val timeError: Boolean = false,
+    val timePickerState: Int = 0,
+    val showDatePicker: Boolean = false,
+    val dateError: Boolean = false,
+
     val shiftsCheck: Boolean = true,
     val holidayCheck: Boolean = true,
     val unavailabilityCheck: Boolean = true,

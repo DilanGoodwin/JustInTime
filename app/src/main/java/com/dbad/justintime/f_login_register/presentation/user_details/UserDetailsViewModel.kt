@@ -114,7 +114,7 @@ class UserDetailsViewModel(private val useCases: UserUseCases) : ViewModel() {
 
             // Buttons
             UserDetailsEvents.CancelEvent -> {
-                // TODO delete auth token from remote server as information not completed
+                useCases.deleteTmpUser()
                 _state.value.cancelEvent()
             }
 

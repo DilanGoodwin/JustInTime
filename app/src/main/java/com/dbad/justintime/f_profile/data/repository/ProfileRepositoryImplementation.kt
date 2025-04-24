@@ -32,4 +32,8 @@ class ProfileRepositoryImplementation(private val localDatabase: LocalDatabaseUs
     override suspend fun upsertEmployee(employee: Employee) {
         localDatabase.upsertEmployee(employee = employee)
     }
+
+    override suspend fun clearDatabase() {
+        localDatabase.clearLocalDatabase()
+    }
 }

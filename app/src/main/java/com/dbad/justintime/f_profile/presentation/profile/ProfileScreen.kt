@@ -144,13 +144,23 @@ fun BottomNavBar(onEvent: (ProfileEvent) -> Unit) {
         NavigationBarItem(
             selected = false,
             onClick = { onEvent(ProfileEvent.NavigateToShiftView) },
-            icon = { Icon(imageVector = Icons.Filled.DateRange, contentDescription = "") },
-            label = {} //TODO
+            icon = {
+                Icon(
+                    imageVector = Icons.Filled.DateRange,
+                    contentDescription = stringResource(R.string.calendar)
+                )
+            },
+            label = { Text(text = stringResource(R.string.calendar)) }
         )
         NavigationBarItem(
             selected = true,
             onClick = {},
-            icon = { Icon(imageVector = Icons.Filled.Approval, contentDescription = "") },
+            icon = {
+                Icon(
+                    imageVector = Icons.Filled.Approval,
+                    contentDescription = stringResource(R.string.profile)
+                )
+            },
             label = { Text(text = stringResource(R.string.profile)) }
         )
     }
@@ -167,7 +177,7 @@ fun ProfileTopBar(onEvent: (ProfileEvent) -> Unit) {
             ) {
                 Icon(
                     imageVector = Icons.Filled.Cancel,
-                    contentDescription = ""//TODO
+                    contentDescription = stringResource(R.string.cancel)
                 )
             }
         },

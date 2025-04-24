@@ -13,4 +13,6 @@ interface ProfileRepository {
 
     suspend fun getEmployee(employee: Employee): Employee
     suspend fun upsertEmployee(employee: Employee)
+
+    suspend fun clearDatabase()
 }

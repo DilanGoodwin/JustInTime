@@ -68,7 +68,7 @@ data class Event(
         /*
         Taking the mapping from the datastore and converting it back into our data class
          */
-        fun Map<String, Any>.toShift(): Event {
+        fun Map<String, Any>.toEvent(): Event {
             return Event(
                 uid = this["uid"] as String,
                 type = (this["type"] as Long).toShiftEventTypes(),

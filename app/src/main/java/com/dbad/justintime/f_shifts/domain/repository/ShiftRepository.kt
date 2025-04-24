@@ -11,13 +11,11 @@ interface ShiftRepository {
     suspend fun getUser(user: User): User
     suspend fun getEmployee(employee: Employee): Employee
 
-    fun getEvents(
-        type: ShiftEventTypes,
-        userOnlyEvents: Boolean,
-        userId: String
-    ): Flow<List<Event>>
+    fun getEvents(type: ShiftEventTypes): Flow<List<Event>>
 
     suspend fun upsertEvent(event: Event)
+
+    suspend fun deleteEvent(event: Event)
 
     fun getPeople(): Flow<List<Person>>
 }

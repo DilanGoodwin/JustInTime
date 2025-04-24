@@ -66,6 +66,7 @@ class ProfileViewModel(
 
         viewModelScope.launch {
             while (loadAttempts < 3) {
+                delay(timeMillis = 500L)
                 _user.value = useCases.getUser(user = User(uid = userUid))
 
                 try {
@@ -83,7 +84,6 @@ class ProfileViewModel(
                 }
 
                 loadAttempts++
-                delay(timeMillis = 1000L)
             }
         }
 
@@ -353,12 +353,10 @@ class ProfileViewModel(
         }
 
         _state.update { it.copy(changeMade = false) }
-
-        //TODO start background operation to sync to remote database
     }
 
     private fun signOut() {
-        // TODO delete local database items
+        viewModelScope.launch { useCases.clearDatabase() }
 
         authUser.signOut()
         state.value.onSignOut()

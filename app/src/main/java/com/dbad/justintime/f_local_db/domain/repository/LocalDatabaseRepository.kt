@@ -20,6 +20,7 @@ interface LocalDatabaseRepository {
 
     fun getEvents(type: ShiftEventTypes): Flow<List<Event>>
     suspend fun upsertEvent(event: Event)
+    suspend fun deleteEvent(event: Event)
 
     fun getPeople(): Flow<List<Person>>
     suspend fun upsertPerson(person: Person)

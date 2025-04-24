@@ -6,7 +6,7 @@ import com.dbad.justintime.f_local_db.data.data_source.UsersDB
 import com.dbad.justintime.f_local_db.data.repository.LocalDatabaseRepositoryImplementation
 import com.dbad.justintime.f_local_db.domain.repository.LocalDatabaseRepository
 import com.dbad.justintime.f_local_db.domain.use_case.ClearLocalDatabase
-import com.dbad.justintime.f_local_db.domain.use_case.GetCurrentUserEventsOnly
+import com.dbad.justintime.f_local_db.domain.use_case.DeleteEvent
 import com.dbad.justintime.f_local_db.domain.use_case.GetEmergencyContact
 import com.dbad.justintime.f_local_db.domain.use_case.GetEmployee
 import com.dbad.justintime.f_local_db.domain.use_case.GetEvents
@@ -34,8 +34,8 @@ class LocalDatabaseModuleImplementation(context: Context) : LocalDatabaseModule 
             getEmergencyContact = GetEmergencyContact(repo = localDatabaseRepo),
             upsertEmergencyContact = UpsertEmergencyContact(repo = localDatabaseRepo),
             getEvents = GetEvents(repo = localDatabaseRepo),
-            getCurrentUserEvents = GetCurrentUserEventsOnly(repo = localDatabaseRepo),
             upsertEvents = UpsertEvents(repo = localDatabaseRepo),
+            deleteEvent = DeleteEvent(repo = localDatabaseRepo),
             getPeople = GetPeople(repo = localDatabaseRepo),
             upsertPeople = UpsertPeople(repo = localDatabaseRepo),
             clearLocalDatabase = ClearLocalDatabase(repo = localDatabaseRepo)

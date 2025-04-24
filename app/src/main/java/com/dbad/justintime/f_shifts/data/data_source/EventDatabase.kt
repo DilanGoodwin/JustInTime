@@ -16,9 +16,18 @@ class EventDatabase() {
         dataStore.collection(eventsCollection).document(event.uid)
             .set(event.toHashMap())
             .addOnSuccessListener {
-                Log.d("RemoteDatabase", "User data successfully uploaded")
+                Log.d("RemoteDatabase", "Event uploaded successfully")
             }.addOnFailureListener {
-                Log.d("RemoteDatabase", "User data failed Upload")
+                Log.d("RemoteDatabase", "Event upload failed")
+            }
+    }
+
+    fun deleteEvent(event: Event) {
+        dataStore.collection(eventsCollection).document(event.uid).delete()
+            .addOnSuccessListener {
+                Log.d("RemoteDatabase", "Event successfully deleted")
+            }.addOnFailureListener {
+                Log.d("RemoteDatabase", "Event delete failed")
             }
     }
 }

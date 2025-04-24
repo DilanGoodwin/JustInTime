@@ -7,6 +7,7 @@ import com.dbad.justintime.core.domain.use_case.ValidatePhoneNumber
 import com.dbad.justintime.f_local_db.domain.use_case.LocalDatabaseUseCases
 import com.dbad.justintime.f_profile.data.repository.ProfileRepositoryImplementation
 import com.dbad.justintime.f_profile.domain.repository.ProfileRepository
+import com.dbad.justintime.f_profile.domain.use_case.ClearDatabase
 import com.dbad.justintime.f_profile.domain.use_case.GetEmergencyContact
 import com.dbad.justintime.f_profile.domain.use_case.GetEmployee
 import com.dbad.justintime.f_profile.domain.use_case.GetUser
@@ -26,6 +27,7 @@ class ProfileModuleImplementation(private val localDatabase: LocalDatabaseUseCas
         upsertEmployee = UpsertEmployee(repository = profileRepository),
         getEmergencyContact = GetEmergencyContact(repository = profileRepository),
         upsertEmergencyContact = UpsertEmergencyContact(repository = profileRepository),
+        clearDatabase = ClearDatabase(repository = profileRepository),
         validateEmail = ValidateEmail(),
         validatePassword = ValidatePassword(),
         validatePhoneNumber = ValidatePhoneNumber(),

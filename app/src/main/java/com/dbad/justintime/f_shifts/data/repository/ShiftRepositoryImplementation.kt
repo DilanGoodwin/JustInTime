@@ -24,17 +24,18 @@ class ShiftRepositoryImplementation(
         return localDatabase.getEmployee(employee = employee)
     }
 
-    override fun getEvents(
-        type: ShiftEventTypes,
-        userOnlyEvents: Boolean,
-        userId: String
-    ): Flow<List<Event>> {
-        return localDatabase.getEvents(type = type) //TODO
+    override fun getEvents(type: ShiftEventTypes): Flow<List<Event>> {
+        return localDatabase.getEvents(type = type)
     }
 
     override suspend fun upsertEvent(event: Event) {
         localDatabase.upsertEvents(event = event)
         eventsRemoteDatabase.upsertEvent(event = event)
+    }
+
+    override suspend fun deleteEvent(event: Event) {
+        localDatabase.deleteEvent(event = event)
+        eventsRemoteDatabase.deleteEvent(event = event)
     }
 
     override fun getPeople(): Flow<List<Person>> {

@@ -14,6 +14,7 @@ import com.dbad.justintime.f_local_db.domain.model.util.ShiftEventTypes
 import com.dbad.justintime.f_shifts.domain.use_case.ShiftUseCases
 import com.dbad.justintime.f_shifts.presentation.calendar.CalendarEvents
 import com.dbad.justintime.f_shifts.presentation.calendar.CalendarState
+import com.dbad.justintime.f_shifts.presentation.individual_shifts.ShiftEvents
 import com.dbad.justintime.f_shifts.presentation.individual_shifts.ShiftState
 import com.dbad.justintime.f_user_auth.domain.repository.AuthRepo
 import kotlinx.coroutines.delay
@@ -38,30 +39,24 @@ class ShiftsViewModel(
     private val _calendarState = MutableStateFlow(CalendarState())
 
     // Generate individual flow lists from database
-    private val _shiftsList = useCases.getEvents(
-        type = ShiftEventTypes.SHIFTS,
-        userOnlyEvents = _state.value.onlyAdminShifts,
-        userId = _state.value.employee.employeeUid
-    ).stateIn(scope = viewModelScope, started = SharingStarted.WhileSubscribed(), emptyList())
-    private val _holidayList = useCases.getEvents(
-        type = ShiftEventTypes.HOLIDAY,
-        userOnlyEvents = _state.value.onlyAdminShifts,
-        userId = _state.value.employee.employeeUid
-    ).stateIn(scope = viewModelScope, started = SharingStarted.WhileSubscribed(), emptyList())
-    private val _unavailabilityList = useCases.getEvents(
-        type = ShiftEventTypes.UNAVAILABILITY,
-        userOnlyEvents = _state.value.onlyAdminShifts,
-        userId = _state.value.employee.employeeUid
-    ).stateIn(scope = viewModelScope, started = SharingStarted.WhileSubscribed(), emptyList())
+    private val _people = useCases.getPeople()
+        .stateIn(scope = viewModelScope, started = SharingStarted.WhileSubscribed(), emptyList())
+    private val _shiftsList = useCases.getEvents(type = ShiftEventTypes.SHIFTS)
+        .stateIn(scope = viewModelScope, started = SharingStarted.WhileSubscribed(), emptyList())
+    private val _holidayList = useCases.getEvents(type = ShiftEventTypes.HOLIDAY)
+        .stateIn(scope = viewModelScope, started = SharingStarted.WhileSubscribed(), emptyList())
+    private val _unavailabilityList = useCases.getEvents(type = ShiftEventTypes.UNAVAILABILITY)
+        .stateIn(scope = viewModelScope, started = SharingStarted.WhileSubscribed(), emptyList())
 
     private var _emptyShiftState = MutableStateFlow(ShiftState())
     private val _shiftState =
-        combine(_emptyShiftState, _shiftsList, _holidayList, _unavailabilityList)
-        { emptyState, shifts, holiday, unavailable ->
+        combine(_emptyShiftState, _people, _shiftsList, _holidayList, _unavailabilityList)
+        { emptyState, people, shifts, holiday, unavailable ->
             emptyState.copy(
-                shifts = shifts,
-                holiday = holiday,
-                unavailability = unavailable
+                people = people,
+                shifts = if (_emptyShiftState.value.shiftsCheck) shifts else emptyList(),
+                holiday = if (_emptyShiftState.value.holidayCheck) holiday else emptyList(),
+                unavailability = if (_emptyShiftState.value.unavailabilityCheck) unavailable else emptyList()
             )
         }.stateIn(scope = viewModelScope, started = SharingStarted.WhileSubscribed(), ShiftState())
 
@@ -86,11 +81,6 @@ class ShiftsViewModel(
         generateCalendarInformation(month = month, year = year)
 
         getUserInformation()
-
-        if (state.value.isAdmin) {
-            //TODO Grab list of people
-            //TODO Grab requests
-        }
 
         _calendarState.update { it.copy(loadingData = false) }
     }
@@ -117,7 +107,7 @@ class ShiftsViewModel(
                                 isAdmin = employee.isAdmin
                             )
                         }
-                        _emptyShiftState.update { it.copy(people = listOf(personCreation)) }
+                        _emptyShiftState.update { it.copy(isAdmin = employee.isAdmin) }
                     }
                 } catch (e: NullPointerException) {
                     Log.d("ShiftsViewModel", "Error reading user \n Error: ${e.message}")
@@ -348,6 +338,91 @@ class ShiftsViewModel(
             }
 
             is CalendarEvents.SelectADay -> _calendarState.update { it.copy(selectedDate = event.day) }
+        }
+    }
+
+    fun onShiftEvent(event: ShiftEvents) {
+        when (event) {
+            is ShiftEvents.SelectEvent -> _emptyShiftState.update {
+                it.copy(
+                    selectedShiftOrEvent = event.event,
+                    showSelectedShift = true
+                )
+            }
+
+            ShiftEvents.ToggleSelectedEvent -> _emptyShiftState.update {
+                it.copy(showSelectedShift = !_emptyShiftState.value.showSelectedShift)
+            }
+
+            ShiftEvents.ToggleEditMode -> {
+                _emptyShiftState.update { it.copy(readOnly = !_shiftState.value.readOnly) }
+                viewModelScope.launch { useCases.upsertEvents(event = _shiftState.value.selectedShiftOrEvent) }
+            }
+
+            ShiftEvents.ToggleDatePicker -> if (!_shiftState.value.readOnly) {
+                _emptyShiftState.update { it.copy(showDatePicker = !_shiftState.value.showDatePicker) }
+            }
+
+            ShiftEvents.ToggleTimePicker -> if (!_shiftState.value.readOnly) {
+                _emptyShiftState.update { it.copy(showTimePicker = !_shiftState.value.showTimePicker) }
+            }
+
+            ShiftEvents.RemoveEvent -> {
+                viewModelScope.launch { useCases.deleteEvent(event = _shiftState.value.selectedShiftOrEvent) }
+                _emptyShiftState.update { it.copy(showSelectedShift = !_emptyShiftState.value.showSelectedShift) }
+            }
+
+            ShiftEvents.ApproveEvent -> {
+                updateOnShiftEvent(approved = true)
+                viewModelScope.launch { useCases.deleteEvent(event = _shiftState.value.selectedShiftOrEvent) }
+            }
+
+            is ShiftEvents.SetDate -> {
+                updateOnShiftEvent(startDate = event.startDate, endDate = event.endDate)
+            }
+
+            is ShiftEvents.SetTime -> {
+                if (_shiftState.value.timePickerState == 0) {
+                    updateOnShiftEvent(startTime = "${event.hour}:${event.minute}")
+                    _emptyShiftState.update { it.copy(timePickerState = 1) }
+                } else {
+                    updateOnShiftEvent(endTime = "${event.hour}:${event.minute}")
+                    _emptyShiftState.update { it.copy(showTimePicker = false, timePickerState = 0) }
+                }
+            }
+
+            is ShiftEvents.SetLocation -> updateOnShiftEvent(location = event.location)
+            is ShiftEvents.SetRole -> updateOnShiftEvent(role = event.role)
+            is ShiftEvents.SetNotes -> updateOnShiftEvent(notes = event.notes)
+        }
+    }
+
+    private fun updateOnShiftEvent(
+        startDate: String = _shiftState.value.selectedShiftOrEvent.startDate,
+        startTime: String = _shiftState.value.selectedShiftOrEvent.startTime,
+        endDate: String = _shiftState.value.selectedShiftOrEvent.endDate,
+        endTime: String = _shiftState.value.selectedShiftOrEvent.endTime,
+        role: String = _shiftState.value.selectedShiftOrEvent.rolePosition,
+        location: String = _shiftState.value.selectedShiftOrEvent.location,
+        approved: Boolean = _shiftState.value.selectedShiftOrEvent.approved,
+        notes: String = _shiftState.value.selectedShiftOrEvent.notes
+    ) {
+        _emptyShiftState.update {
+            it.copy(
+                selectedShiftOrEvent = Event(
+                    uid = _shiftState.value.selectedShiftOrEvent.uid,
+                    type = _shiftState.value.selectedShiftOrEvent.type,
+                    startDate = startDate,
+                    startTime = startTime,
+                    endDate = endDate,
+                    endTime = endTime,
+                    rolePosition = role,
+                    employees = _shiftState.value.selectedShiftOrEvent.employees,
+                    location = location,
+                    approved = approved,
+                    notes = notes
+                )
+            )
         }
     }
 

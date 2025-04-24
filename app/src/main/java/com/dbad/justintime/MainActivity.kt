@@ -24,10 +24,7 @@ import com.dbad.justintime.f_profile.presentation.profile.ProfileScreen
 import com.dbad.justintime.f_profile.presentation.profile.ProfileViewModel
 import com.dbad.justintime.f_shifts.presentation.shifts_list.ShiftListScreen
 import com.dbad.justintime.f_shifts.presentation.shifts_list.ShiftsViewModel
-import com.dbad.justintime.f_user_auth.data.data_source.UserAuthConnection
-import com.dbad.justintime.f_user_auth.domain.repository.AuthRepo
 import com.dbad.justintime.ui.theme.JustInTimeTheme
-import kotlinx.serialization.Serializable
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,7 +36,8 @@ class MainActivity : ComponentActivity() {
 
                     val navController = rememberNavController()
 
-                    val authenticated: AuthRepo = UserAuthConnection()
+                    val authenticated = App.authUser
+//                    For testing to log the user out
 //                    authenticated.signOut()
                     val startingPosition =
                         if (authenticated.authState.value!!) ProfileNav else LoginNav
@@ -145,32 +143,3 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
-
-// Navigation Serialization objects
-@Serializable
-object LoginNav
-
-@Serializable
-object RegistrationNav
-
-@Serializable
-object LoginScreen
-
-@Serializable
-object RegisterScreen
-
-@Serializable
-data class UserDetailsInformation(val userUid: String)
-
-@Serializable
-object ProfileNav
-
-@Serializable
-object ProfileScreen
-
-@Serializable
-object ShiftNav
-
-@Serializable
-object ShiftScreen

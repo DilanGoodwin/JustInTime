@@ -31,6 +31,10 @@ class UserAuthConnection : AuthRepo {
         }
     }
 
+    override fun deleteUser() {
+        auth.currentUser?.delete()
+    }
+
     override fun signUp(email: String, password: String) {
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
             _authState.value = task.isSuccessful

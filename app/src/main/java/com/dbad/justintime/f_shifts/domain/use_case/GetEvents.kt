@@ -6,11 +6,7 @@ import com.dbad.justintime.f_shifts.domain.repository.ShiftRepository
 import kotlinx.coroutines.flow.Flow
 
 class GetEvents(private val repo: ShiftRepository) {
-    operator fun invoke(
-        type: ShiftEventTypes,
-        userOnlyEvents: Boolean,
-        userId: String
-    ): Flow<List<Event>> {
-        return repo.getEvents(type = type, userOnlyEvents = userOnlyEvents, userId = userId)
+    operator fun invoke(type: ShiftEventTypes): Flow<List<Event>> {
+        return repo.getEvents(type = type)
     }
 }

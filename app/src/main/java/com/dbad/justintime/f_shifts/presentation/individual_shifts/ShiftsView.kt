@@ -29,11 +29,11 @@ import com.dbad.justintime.ui.theme.JustInTimeTheme
 
 // Stateless
 @Composable
-fun ShiftListView(state: ShiftState) {
+fun ShiftListView(state: ShiftState, onEvent: (ShiftEvents) -> Unit) {
     Column {
         Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
             Text(
-                text = "Events", //TODO
+                text = stringResource(R.string.events),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.SemiBold,
@@ -42,7 +42,7 @@ fun ShiftListView(state: ShiftState) {
         }
         LazyColumn {
             items(state.shifts) { event ->
-                IndividualShift(event = event)
+                IndividualShift(event = event, onClick = { onEvent(ShiftEvents.SelectEvent(it)) })
             }
             items(state.holiday + state.unavailability) { event ->
                 var personRequest = ""
@@ -51,27 +51,32 @@ fun ShiftListView(state: ShiftState) {
                         personRequest = person.name
                     }
                 }
-                IndividualEvents(event = event, person = personRequest)
+                IndividualEvents(
+                    event = event,
+                    person = personRequest,
+                    onClick = { onEvent(ShiftEvents.SelectEvent(it)) })
             }
         }
+
+        DetailedShiftView(state = state, onEvent = onEvent)
     }
 }
 
 @ViewingSystemThemes
 @Composable
 fun PreviewShiftListView() {
-    JustInTimeTheme { ShiftListView(state = ShiftState()) }
+    JustInTimeTheme { ShiftListView(state = ShiftState(), onEvent = {}) }
 }
 
 // Stateless
 @Composable
-fun IndividualShift(event: Event) {
+fun IndividualShift(event: Event, onClick: (Event) -> Unit) {
     Box(
         modifier = Modifier
             .padding(all = 5.dp)
             .fillMaxWidth()
             .border(width = 1.dp, color = Color.LightGray, shape = RoundedCornerShape(size = 5.dp))
-            .clickable(onClick = {})
+            .clickable(onClick = { onClick(event) })
     ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(space = 20.dp),
@@ -83,14 +88,14 @@ fun IndividualShift(event: Event) {
                 LabelledTextInputFields(
                     currentValue = event.location,
                     placeHolderText = stringResource(R.string.location),
-                    onValueChange = {},
+                    onValueChange = { onClick(event) },
                     readOnly = true,
                     modifier = Modifier.fillMaxWidth(fraction = 0.5f)
                 )
                 LabelledTextInputFields(
                     currentValue = event.rolePosition,
                     placeHolderText = stringResource(R.string.role),
-                    onValueChange = {},
+                    onValueChange = { onClick(event) },
                     readOnly = true,
                     modifier = Modifier.fillMaxWidth(fraction = 0.5f)
                 )
@@ -101,7 +106,7 @@ fun IndividualShift(event: Event) {
                 LabelledTextInputFields(
                     currentValue = event.startDate,
                     placeHolderText = stringResource(R.string.date),
-                    onValueChange = {},
+                    onValueChange = { onClick(event) },
                     readOnly = true,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -109,7 +114,7 @@ fun IndividualShift(event: Event) {
                 LabelledTextInputFields(
                     currentValue = "${event.startTime} - ${event.endTime}",
                     placeHolderText = stringResource(R.string.time),
-                    onValueChange = {},
+                    onValueChange = { onClick(event) },
                     readOnly = true,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -120,37 +125,45 @@ fun IndividualShift(event: Event) {
 
 // Stateless
 @Composable
-fun IndividualEvents(event: Event, person: String) {
+fun IndividualEvents(event: Event, person: String, onClick: (Event) -> Unit) {
     Box(
         modifier = Modifier
             .padding(all = 5.dp)
             .fillMaxWidth()
             .border(width = 1.dp, color = Color.LightGray, shape = RoundedCornerShape(size = 5.dp))
-            .clickable(onClick = {})
+            .clickable(onClick = { onClick(event) })
     ) {
-        Column(modifier = Modifier.padding(all = 5.dp)) {
+        Column(
+            modifier = Modifier
+                .padding(all = 5.dp)
+                .clickable(onClick = { onClick(event) })
+        )
+        {
             LabelledTextInputFields(
                 currentValue = stringResource(event.type.stringVal),
                 placeHolderText = stringResource(R.string.request_type),
-                onValueChange = {},
+                onValueChange = { onClick(event) },
                 readOnly = true,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
             )
 
             LabelledTextInputFields(
                 currentValue = person,
                 placeHolderText = "Person",
-                onValueChange = {},
+                onValueChange = { onClick(event) },
                 readOnly = true,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
             )
 
             LabelledTextInputFields(
                 currentValue = "${event.startDate} - ${event.endDate}",
                 placeHolderText = stringResource(R.string.date),
-                onValueChange = {},
+                onValueChange = { onClick(event) },
                 readOnly = true,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
             )
         }
     }
@@ -159,5 +172,5 @@ fun IndividualEvents(event: Event, person: String) {
 @ViewingSystemThemes
 @Composable
 fun PreviewIndividualShift() {
-    JustInTimeTheme { IndividualShift(event = Event()) }
+    JustInTimeTheme { IndividualShift(event = Event(), onClick = {}) }
 }

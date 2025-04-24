@@ -155,7 +155,7 @@ fun LabelledTextDropDownFields(
                 ) {
                     Icon(
                         imageVector = if (expandedDropDown) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-                        contentDescription = "", //TODO add content description to string xml
+                        contentDescription = stringResource(R.string.textbox_toggle),
                     )
 
                     // Display specific menu dropdown content
@@ -319,7 +319,7 @@ fun DropDownField(
             ) {
                 Icon(
                     imageVector = if (expandedDropDown) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-                    contentDescription = "", //TODO add content description to string xml
+                    contentDescription = stringResource(R.string.textbox_toggle),
                 )
 
                 // Display specific menu dropdown content
@@ -341,6 +341,7 @@ fun DateSelectorField(
     toggleDatePicker: () -> Unit,
     dateError: Boolean,
     modifier: Modifier = Modifier,
+    errorMsg: Int = R.string.dobError,
     datePicker: @Composable () -> Unit,
 ) {
     TextField(
@@ -356,8 +357,10 @@ fun DateSelectorField(
                 onClick = { toggleDatePicker() },
                 modifier = Modifier.testTag(tag = TestTagDateOfBirthField)
             ) {
-                Icon(imageVector = Icons.Default.DateRange, contentDescription = "")
-                //TODO - provide content description
+                Icon(
+                    imageVector = Icons.Default.DateRange,
+                    contentDescription = stringResource(R.string.date_range_toggle)
+                )
                 datePicker()
             }
         },
@@ -365,7 +368,7 @@ fun DateSelectorField(
         supportingText = {
             if (dateError) {
                 Text(
-                    text = stringResource(R.string.dobError),
+                    text = stringResource(errorMsg),
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -427,9 +430,12 @@ fun TimeSelectionField(
         trailingIcon = {
             IconButton(
                 onClick = { toggleTimePicker() },
-                modifier = Modifier.testTag(tag = "") //TODO
+                modifier = Modifier.testTag(tag = TestTagTimePickerToggle)
             ) {
-                Icon(imageVector = Icons.Default.AccessTime, contentDescription = "") //TODO
+                Icon(
+                    imageVector = Icons.Default.AccessTime,
+                    contentDescription = stringResource(R.string.time_range_toggle)
+                )
                 TimeDialPicker(
                     timePickerState = timePickerState,
                     showTimePicker = showTimePicker,
@@ -441,7 +447,7 @@ fun TimeSelectionField(
         supportingText = {
             if (timeError) {
                 Text(
-                    text = "", //TODO
+                    text = stringResource(R.string.timeError),
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -530,7 +536,7 @@ fun ExpandableCardArea(
                 IconButton(onClick = { expandableButtonClick() }) {
                     Icon(
                         imageVector = if (isExpanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-                        contentDescription = "", //TODO add content description to strings xml
+                        contentDescription = stringResource(R.string.textbox_toggle),
                         modifier = Modifier
                             .weight(weight = 1f)
                             .rotate(rotationState)

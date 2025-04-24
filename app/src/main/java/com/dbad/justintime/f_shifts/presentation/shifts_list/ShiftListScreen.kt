@@ -67,6 +67,7 @@ import com.dbad.justintime.core.presentation.util.formatDateToString
 import com.dbad.justintime.f_local_db.domain.model.util.ShiftEventTypes
 import com.dbad.justintime.f_shifts.presentation.calendar.CalendarEvents
 import com.dbad.justintime.f_shifts.presentation.calendar.CalendarView
+import com.dbad.justintime.f_shifts.presentation.individual_shifts.ShiftEvents
 import com.dbad.justintime.f_shifts.presentation.individual_shifts.ShiftListView
 import com.dbad.justintime.ui.theme.JustInTimeTheme
 import kotlinx.coroutines.CoroutineScope
@@ -86,7 +87,8 @@ fun ShiftListScreen(
     ShiftListScreen(
         state = state,
         onEvent = event,
-        calendarEvents = viewModel::onCalendarEvents
+        calendarEvents = viewModel::onCalendarEvents,
+        shiftEvents = viewModel::onShiftEvent
     )
 }
 
@@ -95,7 +97,8 @@ fun ShiftListScreen(
 fun ShiftListScreen(
     state: ShiftListState,
     onEvent: (ShiftListEvents) -> Unit,
-    calendarEvents: (CalendarEvents) -> Unit
+    calendarEvents: (CalendarEvents) -> Unit,
+    shiftEvents: (ShiftEvents) -> Unit
 ) {
     /*
     This is so that the side draw can be opened and closed with an animation, when trying to do this
@@ -115,7 +118,10 @@ fun ShiftListScreen(
             bottomBar = { ShiftBottomNavBar(state = state) },
             floatingActionButton = {
                 SmallFloatingActionButton(onClick = { onEvent(ShiftListEvents.ToggleNewMainScreenEventsDialog) }) {
-                    Icon(imageVector = Icons.Filled.Add, contentDescription = "")//TODO
+                    Icon(
+                        imageVector = Icons.Filled.Add,
+                        contentDescription = stringResource(R.string.new_event)
+                    )
                     NewShiftEventDialogWindow(state = state, onEvent = onEvent)
                 }
             },
@@ -138,7 +144,7 @@ fun ShiftListScreen(
 
                     Spacer(modifier = Modifier.height(height = 10.dp))
 
-                    ShiftListView(state = state.shiftState)
+                    ShiftListView(state = state.shiftState, onEvent = shiftEvents)
                 }
             }
         }
@@ -156,7 +162,10 @@ fun ShiftTopAppBar(
         navigationIcon = {
             // Side Menu for filters
             IconButton(onClick = { scope.launch { drawerState.open() } }) {
-                Icon(imageVector = Icons.Filled.Menu, contentDescription = "") //TODO
+                Icon(
+                    imageVector = Icons.Filled.Menu,
+                    contentDescription = stringResource(R.string.filter_options)
+                )
             }
         },
         modifier = Modifier.fillMaxWidth()
@@ -170,15 +179,25 @@ fun ShiftBottomNavBar(state: ShiftListState) {
         NavigationBarItem(
             selected = true,
             onClick = {},
-            icon = { Icon(imageVector = Icons.Filled.DateRange, contentDescription = "") }, //TODO
-            label = { Text(text = "Calendar") } //TODO
+            icon = {
+                Icon(
+                    imageVector = Icons.Filled.DateRange,
+                    contentDescription = stringResource(R.string.calendar)
+                )
+            },
+            label = { Text(text = stringResource(R.string.calendar)) }
         )
 
         // Profile Page
         NavigationBarItem(
             selected = false,
             onClick = { state.navProfilePage() },
-            icon = { Icon(imageVector = Icons.Filled.Approval, contentDescription = "") }, //TODO
+            icon = {
+                Icon(
+                    imageVector = Icons.Filled.Approval,
+                    contentDescription = stringResource(R.string.profile)
+                )
+            },
             label = { Text(text = stringResource(R.string.profile)) }
         )
     }
@@ -210,12 +229,13 @@ fun FilterDraw(
                 checkName = R.string.unavailability,
                 onChange = { onEvent(ShiftListEvents.ToggleFilters(R.string.unavailability)) })
 
-            Spacer(modifier = Modifier.height(height = 10.dp))
-            Text(text = "Admin") //TODO
-            CreateCheckBox(
-                checkVal = state.onlyAdminShifts,
-                checkName = R.string.onlyAdminShifts,
-                onChange = { onEvent(ShiftListEvents.ToggleFilters(R.string.onlyAdminShifts)) })
+//            TODO FUTURE - Future enhancement
+//            Spacer(modifier = Modifier.height(height = 10.dp))
+//            Text(text = "Admin")
+//            CreateCheckBox(
+//                checkVal = state.onlyAdminShifts,
+//                checkName = R.string.onlyAdminShifts,
+//                onChange = { onEvent(ShiftListEvents.ToggleFilters(R.string.onlyAdminShifts)) })
         }
     }
 }
@@ -291,7 +311,7 @@ fun NewShiftEventDialogWindow(
                     if (state.requestType == ShiftEventTypes.SHIFTS && state.isAdmin) {
                         LabelledTextDropDownFields(
                             currentValue = state.selectedPeopleString,
-                            placeHolderText = "Employees", //TODO
+                            placeHolderText = stringResource(R.string.employees),
                             expandedDropDown = state.selectedPeopleExpanded,
                             dropDownToggle = { onEvent(ShiftListEvents.ToggleSelectedPeopleDropDown) }
                         ) {
@@ -315,7 +335,7 @@ fun NewShiftEventDialogWindow(
                             placeHolderText = stringResource(R.string.role),
                             onValueChange = { onEvent(ShiftListEvents.SetRole(role = it)) },
                             textFieldError = state.roleError,
-                            errorString = "Please enter a role", //TODO
+                            errorString = stringResource(R.string.roleError),
                             testingTag = TestTagCompanyInformationRole
                         )
 
@@ -324,7 +344,7 @@ fun NewShiftEventDialogWindow(
                             placeHolderText = stringResource(R.string.location),
                             onValueChange = { onEvent(ShiftListEvents.SetLocation(location = it)) },
                             textFieldError = state.locationError,
-                            errorString = "Please enter a location", //TODO
+                            errorString = stringResource(R.string.locationError),
                             testingTag = TestTagShiftLocation
                         )
                     }
@@ -475,7 +495,8 @@ fun PreviewShiftListScreen() {
         ShiftListScreen(
             state = ShiftListState(),
             onEvent = {},
-            calendarEvents = {})
+            calendarEvents = {},
+            shiftEvents = {})
     }
 }
 

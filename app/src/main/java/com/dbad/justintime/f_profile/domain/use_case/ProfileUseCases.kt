@@ -12,6 +12,7 @@ data class ProfileUseCases(
     val upsertEmployee: UpsertEmployee,
     val getEmergencyContact: GetEmergencyContact,
     val upsertEmergencyContact: UpsertEmergencyContact,
+    val clearDatabase: ClearDatabase,
 
     val validateEmail: ValidateEmail,
     val validatePassword: ValidatePassword,

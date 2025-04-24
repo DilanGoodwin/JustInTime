@@ -92,4 +92,7 @@ dependencies {
     // DataStore
     implementation(libs.androidx.datastore.preferences.v100)
     implementation(libs.androidx.datastore.preferences.core)
+
+    // Work Manager
+    implementation(libs.androidx.work.runtime.ktx)
 }

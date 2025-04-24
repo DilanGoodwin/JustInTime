@@ -1,6 +1,7 @@
 package com.dbad.justintime.f_local_db.data.data_source
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
 import com.dbad.justintime.f_local_db.domain.model.Event
@@ -16,6 +17,9 @@ interface EventsDao {
 
     @Upsert
     suspend fun upsertEvents(event: Event)
+
+    @Delete
+    suspend fun deleteEvent(event: Event)
 
     @Query("DELETE FROM events")
     suspend fun deleteEvents()

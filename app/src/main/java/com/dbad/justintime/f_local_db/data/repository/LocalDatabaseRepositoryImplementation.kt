@@ -47,6 +47,10 @@ class LocalDatabaseRepositoryImplementation(
         eventsDao.upsertEvents(event = event)
     }
 
+    override suspend fun deleteEvent(event: Event) {
+        eventsDao.deleteEvent(event = event)
+    }
+
     override fun getPeople(): Flow<List<Person>> {
         return eventsDao.getPeople()
     }

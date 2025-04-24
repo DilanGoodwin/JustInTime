@@ -7,6 +7,7 @@ interface AuthRepo {
     val testingMode: Boolean
     fun getEmail(): String
     fun loginUser(email: String, password: String)
+    fun deleteUser()
     fun signUp(email: String, password: String)
     fun signOut()
 }

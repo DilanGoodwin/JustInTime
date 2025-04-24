@@ -21,9 +21,11 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.dbad.justintime.R
 import com.dbad.justintime.core.presentation.util.ViewingSystemThemes
 import com.dbad.justintime.ui.theme.JustInTimeTheme
 import java.time.DayOfWeek
@@ -40,7 +42,7 @@ fun CalendarView(calendarState: CalendarState, calendarEvents: (CalendarEvents) 
             IconButton(onClick = { calendarEvents(CalendarEvents.MonthGoBack) }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                    contentDescription = "" //TODO
+                    contentDescription = stringResource(R.string.previous_month)
                 )
             }
 
@@ -67,7 +69,7 @@ fun CalendarView(calendarState: CalendarState, calendarEvents: (CalendarEvents) 
             IconButton(onClick = { calendarEvents(CalendarEvents.MonthGoForward) }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                    contentDescription = "" //TODO
+                    contentDescription = stringResource(R.string.next_month)
                 )
             }
         }

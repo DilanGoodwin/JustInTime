@@ -8,8 +8,8 @@ data class LocalDatabaseUseCases(
     val getEmergencyContact: GetEmergencyContact,
     val upsertEmergencyContact: UpsertEmergencyContact,
     val getEvents: GetEvents,
-    val getCurrentUserEvents: GetCurrentUserEventsOnly,
     val upsertEvents: UpsertEvents,
+    val deleteEvent: DeleteEvent,
     val getPeople: GetPeople,
     val upsertPeople: UpsertPeople,
     val clearLocalDatabase: ClearLocalDatabase
