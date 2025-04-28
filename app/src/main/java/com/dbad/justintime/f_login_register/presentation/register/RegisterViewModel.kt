@@ -98,7 +98,7 @@ class RegisterViewModel(
                 User(uid = userUid)
             ).first()
 
-            if (receivedUser.uid.isBlank()) {
+            if (receivedUser.uid.isBlank() || receivedUser.employee.isNotBlank()) {
                 _state.update { it.copy(showEmailError = true) }
             }
 

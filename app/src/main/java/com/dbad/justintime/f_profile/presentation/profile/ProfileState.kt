@@ -10,6 +10,11 @@ data class ProfileState(
     val onShiftNav: () -> Unit = {},
     val changeMade: Boolean = false,
 
+    // Add New Employee
+    val showDialogWindowNewEmployee: Boolean = false,
+    val newEmployeeEmailAddress: String = "",
+    val newEmployeeEmailError: Boolean = false,
+
     // User Name States
     val expandUserInformationArea: Boolean = true,
     val user: User = User(),

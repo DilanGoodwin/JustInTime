@@ -17,6 +17,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -96,9 +97,46 @@ class ProfileViewModel(
         when (event) {
             is ProfileEvent.SetSignOutEvent -> _state.update { it.copy(onSignOut = event.signOut) }
             is ProfileEvent.SetShiftNavEvent -> _state.update { it.copy(onShiftNav = event.shiftNav) }
+
+            is ProfileEvent.SetNewEmployeeEmail -> _state.update {
+                it.copy(
+                    newEmployeeEmailAddress = event.email,
+                    newEmployeeEmailError = !useCases.validateEmail(email = event.email)
+                )
+            }
+
             ProfileEvent.NavigateToShiftView -> state.value.onShiftNav()
-            ProfileEvent.SaveButton -> saveData()
             ProfileEvent.SignOut -> signOut()
+            ProfileEvent.SaveButton -> saveData()
+            ProfileEvent.AddNewEmployee -> _state.update { it.copy(showDialogWindowNewEmployee = true) }
+            ProfileEvent.CancelEmployeeEmail -> _state.update { it.copy(showDialogWindowNewEmployee = false) }
+            ProfileEvent.SaveEmployeeEmail -> {
+                if (!state.value.newEmployeeEmailError) {
+                    val newUser =
+                        User(
+                            uid = User.generateUid(email = state.value.newEmployeeEmailAddress),
+                            email = state.value.newEmployeeEmailAddress
+                        )
+
+                    /*
+                    Check whether the user already exists within the database, if they do then stop the
+                    operation. If not then add them to the database
+                     */
+                    viewModelScope.launch {
+                        val checkingUser = useCases.checkUserNotExist(user = newUser)
+                        if (checkingUser.first().uid.isEmpty()) {
+                            Log.d("ProfileViewModel", "Added new user ${newUser.email}")
+                            useCases.addNewUser(user = newUser)
+                        }
+                    }
+                    _state.update {
+                        it.copy(
+                            newEmployeeEmailAddress = "",
+                            showDialogWindowNewEmployee = false
+                        )
+                    }
+                }
+            }
         }
     }
 

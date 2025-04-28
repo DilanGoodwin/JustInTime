@@ -57,7 +57,15 @@ class BackgroundSync(
                 successfulOperation = false
             }
 
-            // Update People
+            /*
+            Update People
+            If we are an Admin then we should create a list of people that we are able to assign shifts to
+            This is done by cycling through all of the Employees filling in their name and employeeUid
+            The uid is needed so that once the shift is assigned the user can download it
+
+            If we are not an admin then we only need to add the current logged in user to the list of
+            people so that when they create events we set the right employeeUid
+             */
             if (employeeData.isAdmin) {
                 dataStore.collection(employeeCollection).get().addOnSuccessListener { people ->
                     Log.d("RemoteDatabase", "Received People Successfully")

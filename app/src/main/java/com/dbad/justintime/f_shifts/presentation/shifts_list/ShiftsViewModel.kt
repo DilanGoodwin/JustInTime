@@ -48,6 +48,7 @@ class ShiftsViewModel(
     private val _unavailabilityList = useCases.getEvents(type = ShiftEventTypes.UNAVAILABILITY)
         .stateIn(scope = viewModelScope, started = SharingStarted.WhileSubscribed(), emptyList())
 
+    // Combine flows into single state instances for views
     private var _emptyShiftState = MutableStateFlow(ShiftState())
     private val _shiftState =
         combine(_emptyShiftState, _people, _shiftsList, _holidayList, _unavailabilityList)
@@ -74,6 +75,11 @@ class ShiftsViewModel(
         initialValue = ShiftListState()
     )
 
+    /*
+    Generate all the calendar information for the given day/month/year
+    Pull the information from the local database into the view so that it can be formatted for the user
+    Set loading data to false to remove the spinning wheel
+     */
     private fun onStartDetails() {
         val calInst = Calendar.getInstance()
         val month = calInst.get(Calendar.MONTH) + 1
@@ -85,7 +91,12 @@ class ShiftsViewModel(
         _calendarState.update { it.copy(loadingData = false) }
     }
 
-    // Get Employee information
+    /*
+    Get Employee information
+    We need to know whether the current user is an Admin or not
+    We also need the employeeUid for the user so that when they create events they can assign themselves
+    to it
+     */
     private fun getUserInformation() {
         var loadAttempts = 0
         val userUid = User.Companion.generateUid(email = authUser.getEmail())
@@ -428,7 +439,7 @@ class ShiftsViewModel(
 
     /*
     Performing string formatting to make the date and time organised when displayed to the end user
-    If the submitted hour & minute is 0 then we assume the time off is for the entire day
+    If the submitted hour & minute is 0 then we assume the event is for the entire day
      */
     private fun generateDatePickerStringVal() {
         var returnString: String = state.value.startDate
@@ -447,6 +458,11 @@ class ShiftsViewModel(
         _state.update { it.copy(datePickerHeadlineVal = returnString) }
     }
 
+    /*
+    From the current data work out how many days there are within the month, what day of the week the
+    month starts on. Then generate an array of all the dates to create a calendar instance to display
+    to the user.
+     */
     private fun generateCalendarInformation(month: Int, year: Int) {
         val instCalendar = Calendar.getInstance()
         val currentDay = instCalendar.get(Calendar.DAY_OF_MONTH)
@@ -476,7 +492,7 @@ class ShiftsViewModel(
 
     /*
     Need to work out whether we need to go forwards or backwards by a year depending on how many months
-    forwards/backwards the user has gone
+    forwards/backwards the user has gone, depending on how many months this could affect the year
      */
     private fun calculateNewMonthYearValue(month: Int) {
         var newMonth: Int = month

@@ -14,6 +14,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Approval
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.DateRange
@@ -40,6 +41,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.dbad.justintime.R
+import com.dbad.justintime.core.presentation.util.BackgroundOutlineWithButtons
 import com.dbad.justintime.core.presentation.util.DateSelectorDropDown
 import com.dbad.justintime.core.presentation.util.DateSelectorField
 import com.dbad.justintime.core.presentation.util.ExpandableCardArea
@@ -96,7 +98,7 @@ fun ProfileScreen(
     companyEvents: (ProfileCompanyEvents) -> Unit
 ) {
     Scaffold(
-        topBar = { ProfileTopBar(onEvent = onEvent) },
+        topBar = { ProfileTopBar(state = state, onEvent = onEvent) },
         bottomBar = { BottomNavBar(onEvent = onEvent) },
         floatingActionButton = {
             if (state.changeMade) {
@@ -120,6 +122,7 @@ fun ProfileScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
+            NewEmployeeDialog(state = state, onEvent = onEvent)
             Column(
                 verticalArrangement = Arrangement.spacedBy(space = 20.dp),
                 modifier = Modifier
@@ -168,7 +171,7 @@ fun BottomNavBar(onEvent: (ProfileEvent) -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileTopBar(onEvent: (ProfileEvent) -> Unit) {
+fun ProfileTopBar(state: ProfileState, onEvent: (ProfileEvent) -> Unit) {
     CenterAlignedTopAppBar(
         title = { Text(text = stringResource(R.string.profile)) },
         navigationIcon = {
@@ -181,8 +184,44 @@ fun ProfileTopBar(onEvent: (ProfileEvent) -> Unit) {
                 )
             }
         },
+        actions = {
+            if (state.employee.isAdmin) {
+                IconButton(
+                    onClick = { onEvent(ProfileEvent.AddNewEmployee) }
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Add,
+                        contentDescription = "Add new member to the application"
+                    )
+                }
+            }
+        },
         modifier = Modifier.fillMaxWidth()
     )
+}
+
+@Composable
+fun NewEmployeeDialog(
+    state: ProfileState,
+    onEvent: (ProfileEvent) -> Unit
+) {
+    if (state.showDialogWindowNewEmployee) {
+        BackgroundOutlineWithButtons(
+            confirmButton = { onEvent(ProfileEvent.SaveEmployeeEmail) },
+            cancelButton = { onEvent(ProfileEvent.CancelEmployeeEmail) }
+        ) {
+            Box(modifier = Modifier.padding(all = 10.dp)) {
+                TextInputField(
+                    currentValue = state.newEmployeeEmailAddress,
+                    placeHolderText = stringResource(R.string.email),
+                    onValueChange = { onEvent(ProfileEvent.SetNewEmployeeEmail(email = it)) },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                    textFieldError = state.newEmployeeEmailError,
+                    errorString = stringResource(R.string.invalidEmailError)
+                )
+            }
+        }
+    }
 }
 
 @Composable
