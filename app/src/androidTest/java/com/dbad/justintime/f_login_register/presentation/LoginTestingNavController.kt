@@ -22,6 +22,9 @@ import com.dbad.justintime.f_login_register.presentation.register.RegisterViewMo
 import com.dbad.justintime.f_login_register.presentation.user_details.ExtraRegistrationDetails
 import com.dbad.justintime.f_login_register.presentation.user_details.UserDetailsEvents
 import com.dbad.justintime.f_login_register.presentation.user_details.UserDetailsViewModel
+import com.dbad.justintime.f_profile.domain.use_case.AddNewUser
+import com.dbad.justintime.f_profile.domain.use_case.CheckUserNotExist
+import com.dbad.justintime.f_profile.domain.use_case.ClearDatabase
 import com.dbad.justintime.f_profile.domain.use_case.GetEmergencyContact
 import com.dbad.justintime.f_profile.domain.use_case.GetEmployee
 import com.dbad.justintime.f_profile.domain.use_case.GetUser
@@ -94,6 +97,9 @@ fun LoginTestingNavController(
                 upsertEmployee = UpsertEmployee(repository = profileRepo),
                 getEmergencyContact = GetEmergencyContact(repository = profileRepo),
                 upsertEmergencyContact = UpsertEmergencyContact(repository = profileRepo),
+                checkUserNotExist = CheckUserNotExist(repository = profileRepo),
+                addNewUser = AddNewUser(repository = profileRepo),
+                clearDatabase = ClearDatabase(repository = profileRepo),
                 validateEmail = ValidateEmail(),
                 validatePassword = ValidatePassword(),
                 validatePhoneNumber = ValidatePhoneNumber(),

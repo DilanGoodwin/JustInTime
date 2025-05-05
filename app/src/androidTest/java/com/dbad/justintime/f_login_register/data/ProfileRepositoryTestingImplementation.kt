@@ -4,6 +4,8 @@ import com.dbad.justintime.f_local_db.domain.model.EmergencyContact
 import com.dbad.justintime.f_local_db.domain.model.Employee
 import com.dbad.justintime.f_local_db.domain.model.User
 import com.dbad.justintime.f_profile.domain.repository.ProfileRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 
 // Empty creation instance of ProfileRepository for testing login functions
 class ProfileRepositoryTestingImplementation() : ProfileRepository {
@@ -25,4 +27,12 @@ class ProfileRepositoryTestingImplementation() : ProfileRepository {
     }
 
     override suspend fun upsertEmployee(employee: Employee) {}
+
+    override fun checkUserNotExist(user: User): Flow<User> {
+        return flowOf(User())
+    }
+
+    override suspend fun addNewUser(user: User) {}
+
+    override suspend fun clearDatabase() {}
 }

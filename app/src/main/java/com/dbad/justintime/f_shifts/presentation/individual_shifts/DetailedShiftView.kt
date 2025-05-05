@@ -206,5 +206,5 @@ fun DetailedShiftView(
 @ViewingSystemThemes
 @Composable
 fun DetailedShiftViewPreview() {
-    JustInTimeTheme { DetailedShiftView(state = ShiftState(), onEvent = {}) }
+    JustInTimeTheme { DetailedShiftView(state = ShiftState(showSelectedShift = true), onEvent = {}) }
 }

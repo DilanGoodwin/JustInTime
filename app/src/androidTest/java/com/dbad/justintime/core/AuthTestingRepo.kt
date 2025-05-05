@@ -18,6 +18,10 @@ class AuthTestingRepo(private val user: User, loggedIn: Boolean = false) : AuthR
         if (user.email == email) _authState.value = true
     }
 
+    override fun deleteUser() {
+        _authState.value = false
+    }
+
     override fun signUp(email: String, password: String) {
         if (user.email == email) _authState.value = true
     }

@@ -37,6 +37,9 @@ import com.dbad.justintime.f_local_db.domain.model.util.PreferredContactMethod
 import com.dbad.justintime.f_local_db.domain.model.util.Relation
 import com.dbad.justintime.f_profile.data.ProfileRepositoryTestingImplementation.Companion.generateProfileTestRepo
 import com.dbad.justintime.f_profile.domain.repository.ProfileRepository
+import com.dbad.justintime.f_profile.domain.use_case.AddNewUser
+import com.dbad.justintime.f_profile.domain.use_case.CheckUserNotExist
+import com.dbad.justintime.f_profile.domain.use_case.ClearDatabase
 import com.dbad.justintime.f_profile.domain.use_case.GetEmergencyContact
 import com.dbad.justintime.f_profile.domain.use_case.GetEmployee
 import com.dbad.justintime.f_profile.domain.use_case.GetUser
@@ -72,6 +75,9 @@ class ProfileScreenEmergencyContactTesting {
             upsertEmployee = UpsertEmployee(repository = profileRepo),
             getEmergencyContact = GetEmergencyContact(repository = profileRepo),
             upsertEmergencyContact = UpsertEmergencyContact(repository = profileRepo),
+            checkUserNotExist = CheckUserNotExist(repository = profileRepo),
+            addNewUser = AddNewUser(repository = profileRepo),
+            clearDatabase = ClearDatabase(repository = profileRepo),
             validateEmail = ValidateEmail(),
             validatePassword = ValidatePassword(),
             validatePhoneNumber = ValidatePhoneNumber(),

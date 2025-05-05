@@ -8,6 +8,7 @@ import com.dbad.justintime.f_local_db.domain.model.EmergencyContact
 import com.dbad.justintime.f_local_db.domain.model.Employee
 import com.dbad.justintime.f_local_db.domain.model.User
 import com.dbad.justintime.f_login_register.domain.repository.UserRepository
+import com.dbad.justintime.f_login_register.domain.use_case.DeleteTmpUser
 import com.dbad.justintime.f_login_register.domain.use_case.GetEmergencyContact
 import com.dbad.justintime.f_login_register.domain.use_case.GetEmployee
 import com.dbad.justintime.f_login_register.domain.use_case.GetUser
@@ -35,6 +36,7 @@ fun generateUseCase(
         getEmergencyContact = GetEmergencyContact(repository = userRepo),
         upsertEmergencyContact = UpsertEmergencyContact(repository = userRepo),
         updateLocalDatabase = UpdateLocalDatabase(repository = userRepo),
+        deleteTmpUser = DeleteTmpUser(repo = userRepo),
         validateEmail = ValidateEmail(),
         validatePassword = ValidatePassword(),
         validatePhoneNumber = ValidatePhoneNumber(),

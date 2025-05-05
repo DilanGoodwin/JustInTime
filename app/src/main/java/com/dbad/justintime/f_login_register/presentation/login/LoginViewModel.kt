@@ -1,5 +1,6 @@
 package com.dbad.justintime.f_login_register.presentation.login
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -66,6 +67,7 @@ class LoginViewModel(
             if (authUser.authState.value!!) {
                 viewModelScope.launch {
                     // Get the user info
+                    Log.d("LoginViewModel", "Getting User Information")
                     val receivedUser = useCases.getUser(user = tmpUser).first()
 
                     // Grab the employee & emergency contact information
@@ -84,6 +86,7 @@ class LoginViewModel(
                             _state.update { it.copy(showError = true) }
                         } else {
                             // Add details to local database
+                            Log.d("LoginViewModel", "Updating Local Database")
                             useCases.updateLocalDatabase(
                                 user = receivedUser,
                                 employee = employeeInfo,
@@ -92,11 +95,17 @@ class LoginViewModel(
                         }
                     }
                 }
-            }
-            if (!_state.value.showError && (authUser.authState.value != false)) {
-                _state.value.onLogin()
-            } else {
-                _state.update { it.copy(showError = true) }
+
+                if (!_state.value.showError && authUser.authState.value!!) {
+                    _state.value.onLogin()
+                } else {
+                    authUser.signOut()
+                    Log.d(
+                        "LoginViewModel",
+                        "There was an error logging the user in, auth state = ${authUser.authState.value!!}"
+                    )
+                    _state.update { it.copy(showError = true) }
+                }
             }
         }
     }

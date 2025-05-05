@@ -44,16 +44,16 @@ class BackgroundSync(
 
             // Update Events
             dataStore.collection(eventsCollection).get().addOnSuccessListener { events ->
-                Log.d("RemoteDatabase", "Received Events Successfully")
+                Log.d("BackgroundSync", "Received Events Successfully")
 
                 for (event in events) {
-                    val eventData = event.data.toEvent()
+                    val eventData = event.data.toEvent() // Convert event to model event
                     if ((employeeData.uid in Event.convertStringEmployees(eventData.employees)) || employeeData.isAdmin) {
                         runBlocking { localDB.upsertEvent(event = eventData) }
                     }
                 }
             }.addOnFailureListener {
-                Log.d("RemoteDatabase", "Failed to get Events")
+                Log.d("BackgroundSync", "Failed to get Events")
                 successfulOperation = false
             }
 
@@ -68,7 +68,7 @@ class BackgroundSync(
              */
             if (employeeData.isAdmin) {
                 dataStore.collection(employeeCollection).get().addOnSuccessListener { people ->
-                    Log.d("RemoteDatabase", "Received People Successfully")
+                    Log.d("BackgroundSync", "Received People Successfully")
 
                     for (person in people) {
                         val personData = person.data.toEmployee()
@@ -78,7 +78,7 @@ class BackgroundSync(
                     }
                 }
                     .addOnFailureListener {
-                        Log.d("RemoteDatabase", "Failed to get People")
+                        Log.d("BackgroundSync", "Failed to get People")
                         successfulOperation = false
                     }
             } else {

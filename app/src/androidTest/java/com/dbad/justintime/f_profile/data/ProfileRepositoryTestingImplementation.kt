@@ -6,7 +6,9 @@ import com.dbad.justintime.f_local_db.domain.model.User
 import com.dbad.justintime.f_local_db.domain.model.util.ContractType
 import com.dbad.justintime.f_local_db.domain.model.util.Relation
 import com.dbad.justintime.f_profile.domain.repository.ProfileRepository
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flowOf
 
 class ProfileRepositoryTestingImplementation(
     users: List<User>,
@@ -75,6 +77,14 @@ class ProfileRepositoryTestingImplementation(
             )
         )
     }
+
+    override fun checkUserNotExist(user: User): Flow<User> {
+        return flowOf(User())
+    }
+
+    override suspend fun addNewUser(user: User) {}
+
+    override suspend fun clearDatabase() {}
 
     override suspend fun getEmergencyContact(emergencyContact: EmergencyContact): EmergencyContact {
         for (existingEmergencyContact in _emergencyContact.value) {

@@ -45,8 +45,8 @@ class App : Application() {
         val workerConstraints =
             Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
         val backgroundSync = PeriodicWorkRequestBuilder<BackgroundSync>(
-            repeatInterval = 2,
-            repeatIntervalTimeUnit = TimeUnit.HOURS
+            repeatInterval = 30,
+            repeatIntervalTimeUnit = TimeUnit.MINUTES
         ).setConstraints(constraints = workerConstraints).build()
         WorkManager.getInstance(context = this).enqueue(request = backgroundSync)
     }
