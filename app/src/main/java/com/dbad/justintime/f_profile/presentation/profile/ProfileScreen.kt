@@ -1,5 +1,6 @@
 package com.dbad.justintime.f_profile.presentation.profile
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,7 +36,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.paint
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -116,11 +120,22 @@ fun ProfileScreen(
         },
         floatingActionButtonPosition = FabPosition.Center
     ) { innerPadding ->
-        Box(
-            contentAlignment = Alignment.TopStart,
-            modifier = Modifier
+        val mod = if (isSystemInDarkTheme()) {
+            Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
+        } else {
+            Modifier
+                .fillMaxSize()
+                .paint(
+                    painter = painterResource(R.drawable.backgroundimage),
+                    contentScale = ContentScale.Fit
+                )
+                .padding(innerPadding)
+        }
+        Box(
+            contentAlignment = Alignment.TopStart,
+            modifier = mod
         ) {
             NewEmployeeDialog(state = state, onEvent = onEvent)
             Column(

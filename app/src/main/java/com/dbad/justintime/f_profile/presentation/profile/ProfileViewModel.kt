@@ -67,24 +67,21 @@ class ProfileViewModel(
 
         viewModelScope.launch {
             while (loadAttempts < 3) {
-                delay(timeMillis = 500L)
                 _user.value = useCases.getUser(user = User(uid = userUid))
 
-                try {
-                    if (_user.value.uid.isNotEmpty() && _user.value.employee.isNotEmpty()) {
-                        _employee.value =
-                            useCases.getEmployee(employee = Employee(uid = _user.value.employee))
-                        if (_employee.value.emergencyContact.isNotEmpty()) {
-                            _emergencyContact.value = useCases.getEmergencyContact(
-                                emergencyContact = EmergencyContact(uid = _employee.value.emergencyContact)
-                            )
-                        }
+                if (_user.value.uid.isNotEmpty() && _user.value.employee.isNotEmpty()) {
+                    _employee.value =
+                        useCases.getEmployee(employee = Employee(uid = _user.value.employee))
+                    if (_employee.value.emergencyContact.isNotEmpty()) {
+                        _emergencyContact.value = useCases.getEmergencyContact(
+                            emergencyContact = EmergencyContact(uid = _employee.value.emergencyContact)
+                        )
                     }
-                } catch (e: NullPointerException) {
-                    Log.d("ProfileViewModel", "Error reading user \n Error: ${e.message}")
                 }
 
+                Log.d("ProfileViewModel", "Loading Attempt $loadAttempts: Attempt Failed")
                 loadAttempts++
+                delay(timeMillis = 500L)
             }
         }
 

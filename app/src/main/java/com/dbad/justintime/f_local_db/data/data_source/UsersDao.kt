@@ -10,7 +10,7 @@ import com.dbad.justintime.f_local_db.domain.model.User
 @Dao
 interface UsersDao {
     @Query("SELECT * FROM users WHERE uid is :uid")
-    suspend fun getUser(uid: String): User
+    suspend fun getUser(uid: String): User?
 
     @Upsert
     suspend fun upsertUser(user: User)

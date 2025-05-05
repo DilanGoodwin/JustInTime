@@ -16,7 +16,9 @@ class LocalDatabaseRepositoryImplementation(
     private val usersDao: UsersDao
 ) : LocalDatabaseRepository {
     override suspend fun getUser(user: User): User {
-        return usersDao.getUser(uid = user.uid)
+        val tmpUser = usersDao.getUser(uid = user.uid)
+        if (tmpUser == null) return User()
+        return tmpUser
     }
 
     override suspend fun upsertUser(user: User) {
