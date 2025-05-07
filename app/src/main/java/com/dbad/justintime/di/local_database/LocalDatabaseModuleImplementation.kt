@@ -18,10 +18,11 @@ import com.dbad.justintime.f_local_db.domain.use_case.UpsertEmployee
 import com.dbad.justintime.f_local_db.domain.use_case.UpsertEvents
 import com.dbad.justintime.f_local_db.domain.use_case.UpsertPeople
 import com.dbad.justintime.f_local_db.domain.use_case.UpsertUser
+import com.dbad.justintime.f_user_auth.domain.repository.AuthRepo
 
-class LocalDatabaseModuleImplementation(context: Context) : LocalDatabaseModule {
-    override val localUsersDB: UsersDB = UsersDB.getInstance(context = context)
-    override val eventsDB: EventsDB = EventsDB.getInstance(context = context)
+class LocalDatabaseModuleImplementation(context: Context, auth: AuthRepo) : LocalDatabaseModule {
+    override val localUsersDB: UsersDB = UsersDB.getInstance(context = context, auth = auth)
+    override val eventsDB: EventsDB = EventsDB.getInstance(context = context, auth = auth)
     override val localDatabaseRepo: LocalDatabaseRepository by lazy {
         LocalDatabaseRepositoryImplementation(eventsDao = eventsDB.dao, usersDao = localUsersDB.dao)
     }

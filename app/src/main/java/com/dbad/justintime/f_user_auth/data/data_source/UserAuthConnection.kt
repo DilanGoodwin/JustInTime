@@ -19,6 +19,10 @@ class UserAuthConnection : AuthRepo {
         _authState.value = auth.currentUser != null
     }
 
+    override fun getUid(): String {
+        return "AuthKey"
+    }
+
     override fun getEmail(): String {
         return auth.currentUser?.email.toString()
     }

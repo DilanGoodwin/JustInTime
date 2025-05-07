@@ -54,6 +54,7 @@ class ProfileViewModel(
      */
     fun loadInitialData() {
         var loadAttempts = 0
+        var loadingData = true
 
         /*
          During AndroidTests the SecretKeySpec fails due to not being part of the API
@@ -66,7 +67,7 @@ class ProfileViewModel(
         }
 
         viewModelScope.launch {
-            while (loadAttempts < 3) {
+            while (loadAttempts < 3 && loadingData) {
                 _user.value = useCases.getUser(user = User(uid = userUid))
 
                 if (_user.value.uid.isNotEmpty() && _user.value.employee.isNotEmpty()) {
@@ -76,18 +77,20 @@ class ProfileViewModel(
                         _emergencyContact.value = useCases.getEmergencyContact(
                             emergencyContact = EmergencyContact(uid = _employee.value.emergencyContact)
                         )
+                        loadingData = false
                     }
                 }
 
                 Log.d("ProfileViewModel", "Loading Attempt $loadAttempts: Attempt Failed")
                 loadAttempts++
-                delay(timeMillis = 500L)
+                delay(timeMillis = 1000L)
             }
+
+            if (loadAttempts >= 3) signOut()
         }
 
         //TODO error message to user
 
-        if (loadAttempts >= 3) signOut()
     }
 
     fun onEvent(event: ProfileEvent) {
@@ -391,6 +394,7 @@ class ProfileViewModel(
     }
 
     private fun signOut() {
+        Log.d("ProfileViewModel", "Logging Out Application")
         viewModelScope.launch { useCases.clearDatabase() }
 
         authUser.signOut()

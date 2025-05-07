@@ -116,7 +116,7 @@ fun passwordMatchValidation(
         }
     }
 
-    val firstPassword = "MyP@ssw0rd"
+    val firstPassword = "MyP@ssw0rds"
     testRule.onNodeWithTag(testTag = TestTagPasswordField)
         .performTextReplacement(text = firstPassword)
 

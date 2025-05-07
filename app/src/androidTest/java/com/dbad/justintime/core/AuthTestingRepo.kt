@@ -10,6 +10,10 @@ class AuthTestingRepo(private val user: User, loggedIn: Boolean = false) : AuthR
     override val authState: LiveData<Boolean> = _authState
     override val testingMode = true
 
+    override fun getUid(): String {
+        return "TestingKey"
+    }
+
     override fun getEmail(): String {
         return user.email
     }

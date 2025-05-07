@@ -33,7 +33,7 @@ class App : Application() {
         // Initialise all items
         super.onCreate()
         authUser = UserAuthConnection()
-        localDatabase = LocalDatabaseModuleImplementation(context = this)
+        localDatabase = LocalDatabaseModuleImplementation(context = this, auth = authUser)
         loginRegister = LoginRegisterModuleImplementation(
             localDatabase = localDatabase.useCases,
             auth = authUser
