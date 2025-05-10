@@ -48,6 +48,8 @@ import com.dbad.justintime.f_profile.domain.use_case.UpsertEmergencyContact
 import com.dbad.justintime.f_profile.domain.use_case.UpsertEmployee
 import com.dbad.justintime.f_profile.domain.use_case.UpsertUser
 import com.dbad.justintime.f_profile.presentation.ProfileTestingNavController
+import com.dbad.justintime.util.emailValidation
+import com.dbad.justintime.util.phoneNumberValidation
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
@@ -194,6 +196,15 @@ class ProfileScreenEmergencyContactTesting {
             .filterToOne(matcher = hasText(text = testRule.activity.getString(R.string.invalidEmailError)))
             .assertIsDisplayed()
 
+        emailValidation(
+            testRule = testRule,
+            emailField = testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField)
+                .onChildren()
+                .filterToOne(matcher = hasTestTag(testTag = TestTagEmailField)),
+            expectedError = testRule.activity.getString(R.string.invalidEmailError),
+            buttonToPress = testRule.activity.getString(R.string.save)
+        )
+
         // Re-add email & check it is displayed
         testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).onChildren()
             .filterToOne(matcher = hasTestTag(testTag = TestTagEmailField))
@@ -223,6 +234,14 @@ class ProfileScreenEmergencyContactTesting {
         testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).onChildren()
             .filterToOne(matcher = hasText(text = testRule.activity.getString(R.string.invalidPhoneNumb)))
             .assertIsDisplayed()
+
+        phoneNumberValidation(
+            testRule = testRule,
+            phoneField = testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField)
+                .onChildren()
+                .filterToOne(matcher = hasTestTag(testTag = TestTagPhoneNumberField)),
+            buttonToPress = testRule.activity.getString(R.string.save)
+        )
 
         testRule.onNodeWithTag(testTag = TestTagEmergencyContactExpandableField).onChildren()
             .filterToOne(matcher = hasTestTag(testTag = TestTagPhoneNumberField))

@@ -26,13 +26,11 @@ class RepositoryUseCaseTests {
     private val users: List<User> = listOf(
         User(
             uid = User.generateUid(email = validEmail),
-            email = validEmail,
-            password = validPassword
+            email = validEmail
         ),
         User(
             uid = User.generateUid(email = "justintime@justintime.com"),
-            email = "justintime@justintime.com",
-            password = "Th!sSh0uldB3Secure"
+            email = "justintime@justintime.com"
         )
     )
 
@@ -48,10 +46,11 @@ class RepositoryUseCaseTests {
             getEmergencyContact = GetEmergencyContact(repository = userRepo),
             upsertEmergencyContact = UpsertEmergencyContact(repository = userRepo),
             updateLocalDatabase = UpdateLocalDatabase(repository = userRepo),
+            deleteTmpUser = DeleteTmpUser(repo = userRepo),
             validateEmail = ValidateEmail(),
             validatePassword = ValidatePassword(),
             validatePhoneNumber = ValidatePhoneNumber(),
-            validateDate = ValidateDate()
+            validateDate = ValidateDate(),
         )
     }
 
@@ -63,9 +62,6 @@ class RepositoryUseCaseTests {
         userReceived = useCases.getUser(user = User(email = validEmail)).first()
         assertEquals("Received user did not match the expected user", User(), userReceived)
 
-        userReceived = useCases.getUser(user = User(password = validPassword)).first()
-        assertEquals("Received user did not match the expected user", User(), userReceived)
-
         userReceived = useCases.getUser(user = User(email = validEmail)).first()
         assertEquals("Received user did not match the expected user", userReceived, User())
 
@@ -75,8 +71,7 @@ class RepositoryUseCaseTests {
             "Received user did not match the expected user",
             User(
                 uid = User.generateUid(email = validEmail),
-                email = validEmail,
-                password = validPassword
+                email = validEmail
             ),
             userReceived
         )
@@ -87,14 +82,12 @@ class RepositoryUseCaseTests {
         val newUser = User(
             uid = User.generateUid(email = "something@something.com"),
             email = "something@something.com",
-            password = "S0mething!G0esHere"
         )
         useCases.upsertUser(user = newUser)
 
         val receivedUser: User = useCases.getUser(user = newUser).first()
 //        assertEquals("Received user matches user when it should not", newUser, receivedUser)
         assertEquals("email does not match", newUser.email, receivedUser.email)
-        assertEquals("password does not match", newUser.password, receivedUser.password)
     }
 
     @Test

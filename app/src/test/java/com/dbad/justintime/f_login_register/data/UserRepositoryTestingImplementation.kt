@@ -38,6 +38,8 @@ class UserRepositoryTestingImplementation(users: List<User>) : UserRepository {
         _usersList.value = currentUsers.toList()
     }
 
+    override fun deleteTmpUser() {}
+
     override suspend fun getEmployee(employee: Employee): Flow<Employee> {
         for (existingEmployee in _employee.value) {
             if (existingEmployee.uid == employee.uid) {
