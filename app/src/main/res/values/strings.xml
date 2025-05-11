@@ -136,5 +136,7 @@
     <string name="roleError">Please enter a role</string>
     <string name="locationError">Please enter a location</string>
 
+    <string name="errorLoading">Error Loading data, please contact your admin</string>
+
     <string name="blankValue" />
 </resources>

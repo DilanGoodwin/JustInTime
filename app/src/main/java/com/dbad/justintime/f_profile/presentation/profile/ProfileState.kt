@@ -9,6 +9,7 @@ data class ProfileState(
     val onSignOut: () -> Unit = {},
     val onShiftNav: () -> Unit = {},
     val changeMade: Boolean = false,
+    val errorLoading: Boolean = false,
 
     // Add New Employee
     val showDialogWindowNewEmployee: Boolean = false,

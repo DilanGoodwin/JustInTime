@@ -1,5 +1,6 @@
 package com.dbad.justintime.f_profile.presentation.profile
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,10 +31,14 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallFloatingActionButton
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
@@ -71,6 +76,7 @@ import com.dbad.justintime.f_local_db.domain.model.util.ContractType
 import com.dbad.justintime.f_local_db.domain.model.util.PreferredContactMethod
 import com.dbad.justintime.f_local_db.domain.model.util.Relation
 import com.dbad.justintime.ui.theme.JustInTimeTheme
+import kotlinx.coroutines.launch
 
 @Composable
 fun ProfileScreen(
@@ -93,6 +99,7 @@ fun ProfileScreen(
     )
 }
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun ProfileScreen(
     state: ProfileState,
@@ -101,9 +108,24 @@ fun ProfileScreen(
     emergencyContactEvent: (ProfileEmergencyContactEvents) -> Unit,
     companyEvents: (ProfileCompanyEvents) -> Unit
 ) {
+    // Creating variables for SnackBar within Composition Area
+    val scope = rememberCoroutineScope()
+    val snackBarState = remember { SnackbarHostState() }
+    val errorMessage: String = stringResource(R.string.errorLoading)
+
     Scaffold(
         topBar = { ProfileTopBar(state = state, onEvent = onEvent) },
         bottomBar = { BottomNavBar(onEvent = onEvent) },
+        snackbarHost = {
+            if (state.errorLoading) {
+                scope.launch {
+                    snackBarState.showSnackbar(
+                        message = errorMessage,
+                        duration = SnackbarDuration.Short
+                    )
+                }
+            }
+        },
         floatingActionButton = {
             if (state.changeMade) {
                 SmallFloatingActionButton(

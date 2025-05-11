@@ -86,10 +86,11 @@ class ProfileViewModel(
                 delay(timeMillis = 1000L)
             }
 
-            if (loadAttempts >= 3) signOut()
+            if (loadAttempts >= 3) {
+                _state.update { it.copy(errorLoading = true) }
+                signOut()
+            }
         }
-
-        //TODO error message to user
 
     }
 
