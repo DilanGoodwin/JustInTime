@@ -4,6 +4,7 @@ import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.dbad.justintime.App
 import com.dbad.justintime.core.presentation.util.DATE_FORMATTER
 import com.dbad.justintime.f_local_db.domain.model.EmergencyContact
 import com.dbad.justintime.f_local_db.domain.model.Employee
@@ -236,6 +237,7 @@ class UserDetailsViewModel(private val useCases: UserUseCases) : ViewModel() {
                     employee = employeeKey
                 )
             )
+            App.forceCalendarSync()
         }
 
         _state.value.registerEvent()

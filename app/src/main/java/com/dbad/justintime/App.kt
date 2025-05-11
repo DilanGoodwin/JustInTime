@@ -3,6 +3,8 @@ package com.dbad.justintime
 import android.app.Application
 import androidx.work.Constraints
 import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.OutOfQuotaPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.dbad.justintime.di.local_database.LocalDatabaseModule
@@ -24,6 +26,24 @@ class App : Application() {
         lateinit var shifts: ShiftsModule
         lateinit var profile: ProfileModule
         lateinit var authUser: UserAuthConnection
+        lateinit var workManInstance: WorkManager
+
+        /*
+        When the user first logs into the application we need a way of forcing the application
+        to expedite the download of the calendar information, rather than potentially waiting a
+        max of 30 minutes before downloading the new data.
+         */
+        fun forceCalendarSync() {
+            val workerConstraints =
+                Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+            val syncRequest =
+                OneTimeWorkRequestBuilder<BackgroundSync>().setConstraints(constraints = workerConstraints)
+                    .apply {
+                        setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+                    }
+                    .build()
+            workManInstance.enqueue(request = syncRequest)
+        }
     }
 
     /**
@@ -42,12 +62,13 @@ class App : Application() {
         profile = ProfileModuleImplementation(localDatabase = localDatabase.useCases)
 
         // Start work manager for background operations
+        workManInstance = WorkManager.getInstance(context = this)
         val workerConstraints =
             Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
         val backgroundSync = PeriodicWorkRequestBuilder<BackgroundSync>(
             repeatInterval = 30,
             repeatIntervalTimeUnit = TimeUnit.MINUTES
         ).setConstraints(constraints = workerConstraints).build()
-        WorkManager.getInstance(context = this).enqueue(request = backgroundSync)
+        workManInstance.enqueue(request = backgroundSync)
     }
 }

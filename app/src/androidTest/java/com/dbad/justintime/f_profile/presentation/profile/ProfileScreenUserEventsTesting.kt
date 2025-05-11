@@ -60,7 +60,7 @@ class ProfileScreenUserEventsTesting {
     val testRule = createAndroidComposeRule<ComponentActivity>()
 
     suspend fun waitOutLoadDelay() {
-        delay(timeMillis = 5000L)
+        delay(timeMillis = 1000L)
     }
 
     @Before
