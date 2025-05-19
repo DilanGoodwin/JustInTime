@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.dbad.justintime.App
 import com.dbad.justintime.f_local_db.domain.model.EmergencyContact
 import com.dbad.justintime.f_local_db.domain.model.Employee
 import com.dbad.justintime.f_local_db.domain.model.User
@@ -98,7 +97,6 @@ class LoginViewModel(
                 }
 
                 if (!_state.value.showError && authUser.authState.value!!) {
-                    App.forceCalendarSync()
                     _state.value.onLogin()
                 } else {
                     authUser.signOut()

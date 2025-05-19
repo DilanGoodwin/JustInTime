@@ -5,6 +5,7 @@ import com.dbad.justintime.f_local_db.domain.model.util.ShiftEventTypes
 sealed interface ShiftListEvents {
     data class SetProfileNavMainScreenEvents(val profileNav: () -> Unit) : ShiftListEvents
 
+    data class RefreshDisplayedEvents(val msg: String) : ShiftListEvents
     data class ToggleFilters(val filter: Int) : ShiftListEvents
 
     // New Calendar Event Dialog

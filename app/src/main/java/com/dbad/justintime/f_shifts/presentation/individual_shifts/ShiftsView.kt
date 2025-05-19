@@ -2,6 +2,8 @@ package com.dbad.justintime.f_shifts.presentation.individual_shifts
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,6 +28,7 @@ import com.dbad.justintime.R
 import com.dbad.justintime.core.presentation.util.LabelledTextInputFields
 import com.dbad.justintime.core.presentation.util.ViewingSystemThemes
 import com.dbad.justintime.f_local_db.domain.model.Event
+import com.dbad.justintime.f_shifts.presentation.util.formatTimeString
 import com.dbad.justintime.ui.theme.JustInTimeTheme
 
 // Stateless
@@ -71,6 +75,9 @@ fun PreviewShiftListView() {
 // Stateless
 @Composable
 fun IndividualShift(event: Event, onClick: (Event) -> Unit) {
+    // Interaction Source for events
+    val source = remember { MutableInteractionSource() }
+
     Box(
         modifier = Modifier
             .padding(all = 5.dp)
@@ -90,6 +97,7 @@ fun IndividualShift(event: Event, onClick: (Event) -> Unit) {
                     placeHolderText = stringResource(R.string.location),
                     onValueChange = { onClick(event) },
                     readOnly = true,
+                    interactionSource = source,
                     modifier = Modifier.fillMaxWidth(fraction = 0.5f)
                 )
                 LabelledTextInputFields(
@@ -97,6 +105,7 @@ fun IndividualShift(event: Event, onClick: (Event) -> Unit) {
                     placeHolderText = stringResource(R.string.role),
                     onValueChange = { onClick(event) },
                     readOnly = true,
+                    interactionSource = source,
                     modifier = Modifier.fillMaxWidth(fraction = 0.5f)
                 )
             }
@@ -108,24 +117,31 @@ fun IndividualShift(event: Event, onClick: (Event) -> Unit) {
                     placeHolderText = stringResource(R.string.date),
                     onValueChange = { onClick(event) },
                     readOnly = true,
+                    interactionSource = source,
                     modifier = Modifier.fillMaxWidth()
                 )
 
                 LabelledTextInputFields(
-                    currentValue = "${event.startTime} - ${event.endTime}",
+                    currentValue = "${formatTimeString(event.startTime)} - ${formatTimeString(event.endTime)}",
                     placeHolderText = stringResource(R.string.time),
                     onValueChange = { onClick(event) },
                     readOnly = true,
+                    interactionSource = source,
                     modifier = Modifier.fillMaxWidth()
                 )
             }
         }
     }
+
+    if (source.collectIsPressedAsState().value) onClick(event)
 }
 
 // Stateless
 @Composable
 fun IndividualEvents(event: Event, person: String, onClick: (Event) -> Unit) {
+    // Interaction Source for events
+    val source = remember { MutableInteractionSource() }
+
     Box(
         modifier = Modifier
             .padding(all = 5.dp)
@@ -144,6 +160,7 @@ fun IndividualEvents(event: Event, person: String, onClick: (Event) -> Unit) {
                 placeHolderText = stringResource(R.string.request_type),
                 onValueChange = { onClick(event) },
                 readOnly = true,
+                interactionSource = source,
                 modifier = Modifier
                     .fillMaxWidth()
             )
@@ -153,6 +170,7 @@ fun IndividualEvents(event: Event, person: String, onClick: (Event) -> Unit) {
                 placeHolderText = "Person",
                 onValueChange = { onClick(event) },
                 readOnly = true,
+                interactionSource = source,
                 modifier = Modifier
                     .fillMaxWidth()
             )
@@ -162,11 +180,15 @@ fun IndividualEvents(event: Event, person: String, onClick: (Event) -> Unit) {
                 placeHolderText = stringResource(R.string.date),
                 onValueChange = { onClick(event) },
                 readOnly = true,
+                interactionSource = source,
                 modifier = Modifier
                     .fillMaxWidth()
             )
         }
     }
+
+    if (source.collectIsPressedAsState().value) onClick(event)
+
 }
 
 @ViewingSystemThemes

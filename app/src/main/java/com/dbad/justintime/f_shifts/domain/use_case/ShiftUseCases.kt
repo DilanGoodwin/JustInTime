@@ -6,6 +6,7 @@ data class ShiftUseCases(
     val getEvents: GetEvents,
     val upsertEvents: UpsertEvent,
     val deleteEvent: RemoveEvent,
+    val checkEventDateAndTime: CheckEventDateAndTime,
     val getPeople: GetPeople,
     val validateDate: ValidateDate = ValidateDate()
 )

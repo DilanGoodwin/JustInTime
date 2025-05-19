@@ -32,6 +32,7 @@ import com.dbad.justintime.core.presentation.util.ViewingSystemThemes
 import com.dbad.justintime.core.presentation.util.formatDateToString
 import com.dbad.justintime.f_local_db.domain.model.util.ShiftEventTypes
 import com.dbad.justintime.f_shifts.presentation.shifts_list.TimeDialPicker
+import com.dbad.justintime.f_shifts.presentation.util.formatTimeString
 import com.dbad.justintime.ui.theme.JustInTimeTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -111,7 +112,11 @@ fun DetailedShiftView(
                     currentValue = if (state.selectedShiftOrEvent.startTime == "0:0" && state.selectedShiftOrEvent.endTime == "0:0") {
                         stringResource(R.string.full_day)
                     } else {
-                        "${state.selectedShiftOrEvent.startTime} - ${state.selectedShiftOrEvent.endTime}"
+                        "${formatTimeString(state.selectedShiftOrEvent.startTime)} - ${
+                            formatTimeString(
+                                state.selectedShiftOrEvent.endTime
+                            )
+                        }"
                     },
                     placeHolderText = stringResource(R.string.time),
                     toggleDatePicker = { onEvent(ShiftEvents.ToggleTimePicker) },
@@ -206,5 +211,9 @@ fun DetailedShiftView(
 @ViewingSystemThemes
 @Composable
 fun DetailedShiftViewPreview() {
-    JustInTimeTheme { DetailedShiftView(state = ShiftState(showSelectedShift = true), onEvent = {}) }
+    JustInTimeTheme {
+        DetailedShiftView(
+            state = ShiftState(showSelectedShift = true),
+            onEvent = {})
+    }
 }

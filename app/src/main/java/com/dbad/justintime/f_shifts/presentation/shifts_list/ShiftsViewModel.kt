@@ -4,6 +4,11 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.work.Constraints
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.OutOfQuotaPolicy
+import com.dbad.justintime.App.Companion.workManInstance
 import com.dbad.justintime.R
 import com.dbad.justintime.core.presentation.util.DATE_FORMATTER
 import com.dbad.justintime.f_local_db.domain.model.Employee
@@ -11,6 +16,7 @@ import com.dbad.justintime.f_local_db.domain.model.Event
 import com.dbad.justintime.f_local_db.domain.model.Person
 import com.dbad.justintime.f_local_db.domain.model.User
 import com.dbad.justintime.f_local_db.domain.model.util.ShiftEventTypes
+import com.dbad.justintime.f_remoteDB.domain.model.BackgroundSync
 import com.dbad.justintime.f_shifts.domain.use_case.ShiftUseCases
 import com.dbad.justintime.f_shifts.presentation.calendar.CalendarEvents
 import com.dbad.justintime.f_shifts.presentation.calendar.CalendarState
@@ -86,6 +92,7 @@ class ShiftsViewModel(
         val year = calInst.get(Calendar.YEAR)
         generateCalendarInformation(month = month, year = year)
 
+        updateCalendarEntries()
         getUserInformation()
 
         _calendarState.update { it.copy(loadingData = false) }
@@ -228,6 +235,43 @@ class ShiftsViewModel(
                     notes = state.value.newEventNotes
                 )
 
+                if (_state.value.requestType == ShiftEventTypes.SHIFTS) {
+                    // Check that the entered users do not already have events running
+                    var eventCollision = false
+                    for (per in state.value.selectedPeople) {
+                        val clashEventCheck =
+                            useCases.checkEventDateAndTime(
+                                event = newShiftOrEvent,
+                                person = per
+                            ).stateIn(
+                                scope = viewModelScope,
+                                started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 0),
+                                initialValue = false
+                            )
+                        if (clashEventCheck.value) {
+                            updateSnackBarMsg(msg = "An event already exists an employee\nEmployee removed from list")
+                            removePersonFromList(person = per)
+                            eventCollision = true
+                        }
+                    }
+                    if (eventCollision) return
+                } else {
+                    // Validate they do not already have an event running
+                    val clashEventCheck =
+                        useCases.checkEventDateAndTime(
+                            event = newShiftOrEvent,
+                            person = state.value.employee.employeeUid
+                        ).stateIn(
+                            scope = viewModelScope,
+                            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 0),
+                            initialValue = false
+                        )
+                    if (clashEventCheck.value) {
+                        updateSnackBarMsg(msg = "An event already exists. Please remove the clashing event before continuing") //TODO
+                        return
+                    }
+                }
+
                 viewModelScope.launch { useCases.upsertEvents(event = newShiftOrEvent) }
 
                 // Reset state once saved the event
@@ -249,7 +293,8 @@ class ShiftsViewModel(
                         location = "",
                         locationError = false,
                         eventApproved = false,
-                        newEventNotes = ""
+                        newEventNotes = "",
+                        selectedPeopleString = ""
                     )
                 }
 
@@ -334,6 +379,8 @@ class ShiftsViewModel(
             ShiftListEvents.ToggleSelectedPeopleDropDown -> _state.update {
                 it.copy(selectedPeopleExpanded = !state.value.selectedPeopleExpanded)
             }
+
+            is ShiftListEvents.RefreshDisplayedEvents -> updateCalendarEntries(event.msg)
         }
     }
 
@@ -524,6 +571,42 @@ class ShiftsViewModel(
         }
         _state.update { it.copy(selectedPeopleString = peopleString) }
     }
+
+    private fun removePersonFromList(person: String) {
+        val newPersonList = ArrayList(_selectedPeople.value)
+        newPersonList.remove(person)
+        _selectedPeople.value = newPersonList
+
+        var peopleString = ""
+        for (person in state.value.shiftState.people) {
+            if (person.employeeUid in _selectedPeople.value) {
+                peopleString += " ${person.name}"
+            }
+        }
+        _state.update { it.copy(selectedPeopleString = peopleString) }
+    }
+
+    private fun updateCalendarEntries(msg: String = "") {
+        updateSnackBarMsg(msg = msg)
+        val workerConstraints =
+            Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+        val syncRequest =
+            OneTimeWorkRequestBuilder<BackgroundSync>().setConstraints(constraints = workerConstraints)
+                .apply {
+                    setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+                }
+                .build()
+        workManInstance.enqueue(request = syncRequest)
+    }
+
+    private fun updateSnackBarMsg(msg: String) {
+        _state.update { it.copy(snackBarMsg = msg) }
+        viewModelScope.launch {
+            delay(timeMillis = 5L)
+            _state.update { it.copy(snackBarMsg = "") }
+        }
+    }
+
 
     companion object {
         fun generateViewModel(

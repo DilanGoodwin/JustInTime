@@ -17,5 +17,7 @@ interface ShiftRepository {
 
     suspend fun deleteEvent(event: Event)
 
+    fun checkEventDateAndTime(event: Event, person: String): Flow<Boolean>
+
     fun getPeople(): Flow<List<Person>>
 }

@@ -4,6 +4,7 @@ import com.dbad.justintime.f_local_db.domain.use_case.LocalDatabaseUseCases
 import com.dbad.justintime.f_shifts.data.data_source.EventDatabase
 import com.dbad.justintime.f_shifts.data.repository.ShiftRepositoryImplementation
 import com.dbad.justintime.f_shifts.domain.repository.ShiftRepository
+import com.dbad.justintime.f_shifts.domain.use_case.CheckEventDateAndTime
 import com.dbad.justintime.f_shifts.domain.use_case.GetEmployee
 import com.dbad.justintime.f_shifts.domain.use_case.GetEvents
 import com.dbad.justintime.f_shifts.domain.use_case.GetPeople
@@ -27,6 +28,7 @@ class ShiftsModuleImplementation(localDatabase: LocalDatabaseUseCases) :
         getEvents = GetEvents(repo = shiftsRepository),
         upsertEvents = UpsertEvent(repo = shiftsRepository),
         deleteEvent = RemoveEvent(repo = shiftsRepository),
+        checkEventDateAndTime = CheckEventDateAndTime(repo = shiftsRepository),
         getPeople = GetPeople(repo = shiftsRepository)
     )
 }

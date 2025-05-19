@@ -9,6 +9,8 @@ data class ShiftListState(
     val navProfilePage: () -> Unit = {},
     val isAdmin: Boolean = false,
     val employee: Person = Person(),
+    val showSnackBar: Boolean = false,
+    val snackBarMsg: String = "",
 
     // Side Draw CheckBoxes
     val onlyAdminShifts: Boolean = false,

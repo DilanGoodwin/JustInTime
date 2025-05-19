@@ -38,6 +38,10 @@ class ShiftRepositoryImplementation(
         eventsRemoteDatabase.deleteEvent(event = event)
     }
 
+    override fun checkEventDateAndTime(event: Event, person: String): Flow<Boolean> {
+        return eventsRemoteDatabase.validateExternalUsersEvents(newEvent = event, person = person)
+    }
+
     override fun getPeople(): Flow<List<Person>> {
         return localDatabase.getPeople()
     }

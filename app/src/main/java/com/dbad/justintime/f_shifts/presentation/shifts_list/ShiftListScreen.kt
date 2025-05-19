@@ -1,5 +1,6 @@
 package com.dbad.justintime.f_shifts.presentation.shifts_list
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Approval
+import androidx.compose.material.icons.filled.Autorenew
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Card
@@ -37,6 +39,9 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallFloatingActionButton
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TimePicker
@@ -46,6 +51,7 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -93,6 +99,7 @@ fun ShiftListScreen(
 }
 
 // Stateless
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun ShiftListScreen(
     state: ShiftListState,
@@ -108,14 +115,35 @@ fun ShiftListScreen(
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
+    // Setting up SnackBar for messages
+    val snackBarState = remember { SnackbarHostState() }
+
     ModalNavigationDrawer(
         drawerContent = { FilterDraw(state = state, onEvent = onEvent) },
         drawerState = drawerState,
         gesturesEnabled = true
     ) {
         Scaffold(
-            topBar = { ShiftTopAppBar(scope = scope, drawerState = drawerState) },
+            topBar = {
+                ShiftTopAppBar(
+                    scope = scope,
+                    drawerState = drawerState,
+                    onEvent = onEvent
+                )
+            },
             bottomBar = { ShiftBottomNavBar(state = state) },
+            snackbarHost = {
+                SnackbarHost(hostState = snackBarState)
+
+                if (state.snackBarMsg.isNotBlank()) {
+                    scope.launch {
+                        snackBarState.showSnackbar(
+                            message = state.snackBarMsg,
+                            duration = SnackbarDuration.Short
+                        )
+                    }
+                }
+            },
             floatingActionButton = {
                 SmallFloatingActionButton(onClick = { onEvent(ShiftListEvents.ToggleNewMainScreenEventsDialog) }) {
                     Icon(
@@ -155,7 +183,8 @@ fun ShiftListScreen(
 @Composable
 fun ShiftTopAppBar(
     scope: CoroutineScope,
-    drawerState: DrawerState
+    drawerState: DrawerState,
+    onEvent: (ShiftListEvents) -> Unit
 ) {
     CenterAlignedTopAppBar(
         title = { Text(text = stringResource(R.string.calendar)) },
@@ -165,6 +194,14 @@ fun ShiftTopAppBar(
                 Icon(
                     imageVector = Icons.Filled.Menu,
                     contentDescription = stringResource(R.string.filter_options)
+                )
+            }
+        },
+        actions = {
+            IconButton(onClick = { onEvent(ShiftListEvents.RefreshDisplayedEvents(msg = "Updating Events")) }) {
+                Icon(
+                    imageVector = Icons.Filled.Autorenew,
+                    contentDescription = ""
                 )
             }
         },

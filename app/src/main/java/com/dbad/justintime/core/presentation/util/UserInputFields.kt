@@ -3,6 +3,8 @@ package com.dbad.justintime.core.presentation.util
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.InteractionSource
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -103,6 +105,7 @@ fun LabelledTextInputFields(
     errorString: String = "",
     readOnly: Boolean = false,
     keyboardOptions: KeyboardOptions = KeyboardOptions(),
+    interactionSource: MutableInteractionSource? = null,
     testingTag: String = ""
 ) {
     TextField(
@@ -123,6 +126,7 @@ fun LabelledTextInputFields(
         readOnly = readOnly,
         keyboardOptions = keyboardOptions,
         singleLine = true,
+        interactionSource = interactionSource,
         modifier = modifier
             .clip(shape = RoundedCornerShape(size = 8.dp))
             .width(400.dp)

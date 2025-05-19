@@ -72,8 +72,10 @@ class BackgroundSync(
 
                     for (person in people) {
                         val personData = person.data.toEmployee()
-                        val newPerson =
-                            Person(employeeUid = personData.uid, name = employeeData.name)
+                        val newPerson = Person(
+                            employeeUid = personData.uid,
+                            name = personData.name
+                        )
                         runBlocking { localDB.upsertPerson(person = newPerson) }
                     }
                 }
