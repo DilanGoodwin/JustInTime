@@ -247,7 +247,9 @@ class UserDetailsViewModel(private val useCases: UserUseCases) : ViewModel() {
         ): ViewModelProvider.Factory {
             return object : ViewModelProvider.Factory {
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return UserDetailsViewModel(useCases = useCases) as T
+                    return UserDetailsViewModel(
+                        useCases = useCases
+                    ) as T
                 }
             }
         }

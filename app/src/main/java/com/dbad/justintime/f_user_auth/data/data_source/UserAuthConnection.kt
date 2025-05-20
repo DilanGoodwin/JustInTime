@@ -36,7 +36,7 @@ class UserAuthConnection : AuthRepo {
     }
 
     override fun deleteUser() {
-        auth.currentUser?.delete()
+        auth.currentUser!!.delete()
     }
 
     override fun signUp(email: String, password: String) {

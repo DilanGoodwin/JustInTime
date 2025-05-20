@@ -1,5 +1,6 @@
 package com.dbad.justintime.f_login_register.presentation.register
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -18,6 +19,7 @@ class RegisterViewModel(
     private val useCases: UserUseCases,
     private val authUser: AuthRepo
 ) : ViewModel() {
+    private val _checkingUser = MutableStateFlow(true)
     private val _state = MutableStateFlow(RegisterState())
     val state = _state.stateIn(
         viewModelScope,
@@ -42,16 +44,19 @@ class RegisterViewModel(
 
             is RegisterEvent.SetEmail -> {
                 _state.update { it.copy(email = event.email) }
+                _checkingUser.update { true }
                 showEmailError()
             }
 
             is RegisterEvent.SetPassword -> {
                 _state.update { it.copy(password = event.password) }
+                _checkingUser.update { true }
                 showPasswordError(password = event.password)
             }
 
             is RegisterEvent.SetPasswordMatch -> {
                 _state.update { it.copy(passwordMatch = event.password) }
+                _checkingUser.update { true }
                 showMatchPasswordError(event.password)
             }
 
@@ -99,19 +104,36 @@ class RegisterViewModel(
             ).first()
 
             if (receivedUser.uid.isBlank() || receivedUser.employee.isNotBlank()) {
-                _state.update { it.copy(showEmailError = true) }
-            }
-
-            if (!state.value.showEmailError) useCases.upsertUser(
-                User(
-                    uid = receivedUser.uid,
-                    email = _state.value.email
+                Log.d(
+                    "RegisterViewModel",
+                    "The user was not within the remote database, flagging error"
                 )
-            )
+                _state.update { it.copy(showEmailError = true) }
+            } else {
+                _checkingUser.update { false }
+            }
         }
 
-        if (!state.value.showEmailError) {
+        /*
+        We need to wait for the email checks to take place before we continue, this is a delayed
+        operation as we are waiting on the remote database which could take some time.
+         */
+        if (!state.value.showEmailError && !_checkingUser.value) {
             authUser.signUp(email = state.value.email, password = state.value.password)
+
+            viewModelScope.launch {
+                val receivedUser: User = useCases.getUser(
+                    User(uid = userUid)
+                ).first()
+
+                if (!state.value.showEmailError) useCases.upsertUser(
+                    User(
+                        uid = receivedUser.uid,
+                        email = _state.value.email
+                    )
+                )
+            }
+
             _state.value.onRegistration(userUid)
         }
     }

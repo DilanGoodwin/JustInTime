@@ -11,7 +11,11 @@ import com.dbad.justintime.f_local_db.domain.model.User
 import com.dbad.justintime.f_user_auth.domain.repository.AuthRepo
 import net.sqlcipher.database.SupportFactory
 
-@Database(entities = [User::class, Employee::class, EmergencyContact::class], version = 1)
+@Database(
+    entities = [User::class, Employee::class, EmergencyContact::class],
+    version = 1,
+    exportSchema = false
+)
 abstract class UsersDB : RoomDatabase() {
     abstract val dao: UsersDao
 

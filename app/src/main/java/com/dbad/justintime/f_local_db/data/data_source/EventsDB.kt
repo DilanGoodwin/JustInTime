@@ -10,7 +10,7 @@ import com.dbad.justintime.f_local_db.domain.model.Person
 import com.dbad.justintime.f_user_auth.domain.repository.AuthRepo
 import net.sqlcipher.database.SupportFactory
 
-@Database(entities = [Event::class, Person::class], version = 1)
+@Database(entities = [Event::class, Person::class], version = 1, exportSchema = false)
 abstract class EventsDB : RoomDatabase() {
     abstract val dao: EventsDao
 
